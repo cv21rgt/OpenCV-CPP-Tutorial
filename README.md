@@ -8,8 +8,11 @@
 ## Motivation
 
 :bulb: A lot of tutorials do not cover the majority of Computer Vision concepts. Most just cover the basic concepts. After that you are on your own.
+
 :bulb: The majority of tutorials and code examples are written in Python. Very few are written in C++.
+
 :bulb: C++ code examples online are mainly written using concepts from older C++ standards - C++11, C++14. You even see this in most <a href = "https://docs.opencv.org/4.8.0/d9/df8/tutorial_root.html">**examples**</a> provided in the OpenCV documentation.
+
 :bulb: I am using this opportunity to learn OpenCV and C++. As such, some of the code I will provide may not be the best - if you have any suggestions please leave a comment and will take the opportunity to improve my coding skills.
 
 ## Prerequisites
