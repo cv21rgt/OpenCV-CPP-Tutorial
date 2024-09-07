@@ -18,11 +18,17 @@
 ## Prerequisites
 
 :bulb: OpenCV 4.8.0 or later
+
 :bulb: C++ compiler with C++17 capability
+
 :bulb: CMake - minimum version 3.25
+
 :bulb: C++ plotting library
+
 :bulb: An IDE - I am using Visual Studio Code, but you can use any you are familiar with.
+
 :bulb: Doxygen - for code documentation
+
 :bulb: Good knowledge of C++. You should at least understand advanced C++ concepts up to and including **classes**, **inheritance** and **templates**. This is important because even the basic core data types in OpenCV are implemented as class templates and to use these data types you need to have a good basic understanding of templates. Some core types make use of inheritance to implement some of their functions. If you are not confident in these advanced topics, a good starting point is going over <a href = "https://www.learncpp.com/">**this**</a> tutorial. It provides a very solid foundation, advanced and modern C++ concepts.
 
 ## Topics covered
