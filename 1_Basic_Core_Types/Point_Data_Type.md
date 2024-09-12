@@ -434,3 +434,196 @@ int main()
     Cross product between [3.4, 9.8, 0.9] and [2.65, 4.97, 3.2] is [26.887, -8.495, -9.072]
     Data type of cross product is: N2cv7Point3_IdEE
 
+
+## Math operators
+
+:notebook_with_decorative_cover: Besides member functions, a number of operators are also implemented for the Point data type in order to perform simple math operations. These include addition (+), subtraction (-), multiplication (*), division(/) and compound operators (+=, -=, *=, /=). 
+
+:notebook_with_decorative_cover: When using these operators make sure your statements make sense. Remember you are dealing with Point objects not mathematical numeric values. For example, dividing a Point object by another Point object does not make sense as far as Point objects are concerned. What exactly are you trying to achieve? is the first question you should ask yourself before using these operators.
+
+**Example 6**
+```c++
+#include "opencv2/core.hpp" // include path to header file with all our basic data types
+#include <iostream>         // for std::cout
+
+int main()
+{
+    // 1. Create Point objects with default values
+
+    cv::Point2i p1 {}; // 2-dimensional point object with default integer coordinates (0, 0)
+    cv::Point3f p2 {}; // 3-dimensional point object with default floating point coordinates (0.0, 0.0, 0.0)
+
+    // 2. Create Point objects with values provided by the user 
+    
+    cv::Point2i p3 {5, 6};              // 2-dimensional point whose coordinates are integers
+    cv::Point3i p4 {12, -18, 9};        // 3-dimensional point whose coordinates are integers
+    cv::Point3f p5 {3.4f, 9.8f, 0.9f};  // 3-dimensional point whose coordinates are 32-bit float
+    cv::Point2d p6 {2.65, 4.97};        // 2-dimensional point whose coordinates have double precision
+
+
+    /*                                 
+     *                                 Simple Math operations
+     *                                 ======================
+     * 
+     * We can perform simple math operations on Point data.
+     * 
+    */ 
+
+    cv::Point2i add = p1 + p3; 
+    std::cout << "\nAdd two points: " << p1 << " + " << p3 
+              << " = " << add << '\n';
+
+    cv::Point3f subtract = p5 - p2;  
+    std::cout << "Subtract two points: " << p5 << " - " << p5 
+              << " = " << subtract << '\n';
+
+    cv::Point2d multiplyBySingleValue = p6 * 5;
+    std::cout << "Multiply by a scalar value: " << p6 << " x " << 5 
+              << " = " << multiplyBySingleValue << '\n';
+
+    // Be careful when dividing integers, C++ will get rid of the decimal 
+    // part if both values are integers. If you want to keep the decimal 
+    // part do this instead: p3 / 2.0
+    cv::Point2i integerDivision = p3 / 2; 
+    std::cout << "Integer division: " << p3 << " / " << 2 
+              << " = " << integerDivision << '\n';
+
+    // Compare with above, there is no loss of decimal part if using double 
+    // or float Point objects       
+    cv::Point2d division = p6 / 2;               
+    std::cout << "Float/Double division: " << p6 << " / " << 2 
+              << " = " << division << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    Add two points: [0, 0] + [5, 6] = [5, 6]
+    Subtract two points: [3.4, 9.8, 0.9] - [3.4, 9.8, 0.9] = [3.4, 9.8, 0.9]
+    Multiply by a scalar value: [2.65, 4.97] x 5 = [13.25, 24.85]
+    Integer division: [5, 6] / 2 = [2, 3]
+    Float/Double division: [2.65, 4.97] / 2 = [1.325, 2.485]
+
+
+## Comparison operators
+
+:notebook_with_decorative_cover: We can use comparison operators to see if two Point objects are the same. There are two comparison operators: 
+
+1. Equal to (==)
+2. Not equal to (!=)
+
+:notebook_with_decorative_cover: You can only compare Point objects with the same primitive data types and same dimension
+
+**Example 7**
+```c++
+#include "opencv2/core.hpp" // include path to header file with all
+                            // OpenCV basic data types
+#include <iostream>         // for std::cout
+
+int main()
+{
+    cv::Point2i p1 {}; 
+    
+    cv::Point2i p3 {5, 6}; 
+
+    cv::Point3f p5 {3.4f, 9.8f, 0.9f};  
+    
+    cv::Point3f p7(p5); 
+
+    /*
+     *                                 Comparison operators
+     *                                 ====================
+     * 
+     * We can use comparison operators to see if two Point objects are the same
+     * There are two comparison operators: equal to (==), not equal to (!=)
+     * You can only compare Point objects with the same primitive data types
+     * and same dimension
+     * 
+    */ 
+
+    // The following statement lets you print 'true' or 'false' 
+    // rather than `1` (default value for `true`) or 
+    // `0` (default value for `false`)
+    std::cout << std::boolalpha;
+
+    std::cout << '\n';
+
+    std::cout << p1 << " is equal to " << p3 << ": " << (p1 == p3) << '\n';
+
+    std::cout << p7 << " is not equal to " << p5 << ": " << (p7 != p5) << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    [0, 0] is equal to [5, 6]: false
+    [3.4, 9.8, 0.9] is not equal to [3.4, 9.8, 0.9]: false
+
+
+## Casting
+
+:notebook_with_decorative_cover: As mentioned in the notes at the top of this page, Point data types can be cast or converted to/and from other data types such as the fixed **Vector** class or the fixed **Matrix** classes, when needed. The opposite is also true, we can cast other types to type Point.  
+
+:notebook_with_decorative_cover: By default OpenCV offers *implicit casting*. However modern C++ includes the ability to perform *explicit casting* using the **static_cast** template, which has the syntax: `static_cast<type>(expression)`, where `type` is the data type you want to convert to, and `expression` is the object whose data type you want to convert. Note that the original  `expression` itself is not altered, actually a new object is created when using **static_cast**.
+
+:notebook_with_decorative_cover: Prefer explicit casting so as not to leave anything to chance.
+
+**Example 8**
+```c++
+#include "opencv2/core.hpp" 
+#include <iostream>              
+
+int main()
+{
+    
+    cv::Point3f p5 {3.4f, 9.8f, 0.9f}; 
+
+    // 1. Explicitly cast Point object to Vector object
+
+    cv::Vec3f v2 = static_cast<cv::Vec3f>(p5); 
+    std::cout << "\nExplicitly cast Point object to Fixed Vector Class: " << v2 << '\n';
+
+    // 2. Explicitly cast Vector object to Point object
+
+    cv::Vec2i v3 {9, 10}; // Create Vector object here
+    cv::Point2i p10_ = static_cast<cv::Point2i>(v3); // Cast to Point object
+    std::cout << "Explicitly cast vector object to point object: " << p10_ << '\n';
+
+    // 3. Implicitly cast Point object to Vector
+
+    cv::Vec3f v4 { 1.0f, 2.0f, 3.0f}; // Create Vector object with 3 values
+
+    // In the following statement, we use the function mul() to perform
+    // per element multiplication between a Vector and a Point object.
+    // However, the signature for mul() expects another Vector object
+    // between the brackets. Because Point objects can be cast to Vector
+    // objects, our compiler will implicitly cast our Point object to a Vector
+    // object hence we can use the function.
+    auto vector_times_point = v4.mul(p5); 
+    std::cout << "Vector " << v4 << " x " << " Point " << p5 
+              << " = " << vector_times_point << '\n';
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    Explicitly cast Point object to Fixed Vector Class: [3.4, 9.8, 0.9]
+    Explicitly cast vector object to point object: [9, 10]
+    Vector [1, 2, 3] x  Point [3.4, 9.8, 0.9] = [3.4, 19.6, 2.7]
+
+
+
+
+
+
+
+
+
