@@ -90,7 +90,7 @@ int main()
 
 int main()
 {    
-    cv::Size   sz1 { 345, 890 };                        
+    const cv::Size   sz1 { 345, 890 };                        
 
     // Access individual elements using the key data members 'width' & 'height'
     std::cout << "\nObject sz1 has width: " << sz1.width << " and height: " 
@@ -109,9 +109,9 @@ Object sz1 has width: 345 and height: 890
 
 :notebook_with_decorative_cover: The Size data type has 3 member functions directly associated with it.
 
-1. `T area() const` - compute the area using $width * height$
-2. `double aspectRatio() const` - compute aspect ratio using $width / height$
-3. `bool empty() const` - Check if a Size object is empty, that is its values are (0, 0)
+1. `T cv::Size_<T>::area() const` - compute the area using $width * height$
+2. `double cv::Size_<T>::aspectRatio() const` - compute aspect ratio using $width / height$
+3. `bool cv::Size_<T>::empty() const` - Check if a Size object is empty, that is its values are (0, 0)
 
 **Example 3**
 ```c++
@@ -121,10 +121,10 @@ Object sz1 has width: 345 and height: 890
 int main()
 {
     // Use Default Constructor - values will be set to width = 0 & height = 0
-    cv::Size sz {}; 
+    const cv::Size sz {}; 
     
     // integer Size object (default alias) of width = 345 & height = 890 
-    cv::Size   sz1 { 345, 890 };  
+    const cv::Size   sz1 { 345, 890 };  
 
     //                              Member Functions
     //                              ================
