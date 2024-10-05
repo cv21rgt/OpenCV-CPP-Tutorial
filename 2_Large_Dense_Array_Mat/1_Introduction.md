@@ -255,3 +255,279 @@ int main()
     All values have been set to 3.14 = 
     [3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14;
     3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 3.14]
+
+**Example 3**: Create 2-D cv::Mat objects from pre-existing data. Here we have two types of constructors:
+
+1. Constructors that do not copy or allocate the actual pre-existing data. Instead, they just initialize the cv::Mat object header with a **pointer**  that points to the source data. This makes them very efficient and can be used to process external data using OpenCV functions. The external data is not automatically deallocated, so you should take care of it. One of the most widely used source of such data is a 1-dimensional C-style array - which decays to a pointer when passed to a function. If creating a 2D cv::Mat arrays you need to make sure the number of elements in your pre-existing dataset can be converted to a 2-D array you want to create e.g. 8 elements can be converted to a (4 x 2) array, (2 x 4) array, (1 x 8) array etc. These constructors are as follows: 
+
+   * `cv::Mat(int rows, int cols, int type, void* data, cv::size_t step= cv::AUTO_STEP)` - The function parameters `rows`, `cols` and `type` all mean the same as in previous constructors above. The parameter `data` is a pointer to the source data. The parameter `step` is the number of bytes each matrix row occupies. The value should include the padding bytes at the end of each row, if any. *Remember we have already mentioned that in memory some high dimensional arrays are stored one row after another and sometimes the rows are seperated by a padding.* If the parameter is missing (set to AUTO_STEP), no padding is assumed and the actual step value is calculated as `cols*elemSize()`. In most cases you leave this with the default value.
+   * `cv::Mat(cv::Size size, int type, void* data, cv::size_t = cv::AUTO_STEP)`
+   * `cv::Mat(int ndims, const int* sizes, int type, void* data, const cv::size_t* steps = 0)` 
+   * `cv::Mat(const std::vector<int>& sizes, int type, void* data, const cv::size_t* steps = 0)`
+
+**N:B** - Be careful when dealing with integers. Most people when declaring an integer value use the reserved word `int` e.g. `int number {34}`. However, you have to take into account the number of bits used to represent that value in memory. `int` uses a minimum of 16-bits up to 64-bits for `long long int`. When it comes to OpenCV, you will later realize that a lot of images use 8-bit unsigned or signed integers and to declare such types in basic C++ use `std::uint8_t` or `std::int8_t`, respectively. These wil match up with the OpenCV types `CV_8U` and `CV_8S`.
+
+**Example 3a** 
+
+```c++
+#include "opencv2/core.hpp"
+#include <iostream>
+#include <vector>
+
+int main()
+{
+    // Create a 1-D C-style arrays with 16 elements. 
+    float data_float[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+                          11, 12, 13, 14, 15, 16
+                         }; 
+    double data_double[] {0.01, 0.02, 0.03, 0.04, 0.05, 
+                            0.06, 0.07, 0.08, 0.09, 0.10, 
+                            0.11, 0.12, 0.13, 0.14, 0.15, 0.16
+                           };
+
+    // Array with 8-bit unsigned values with range (0 to 255)
+    std::uint8_t data_eight_bit_unsigned[] {10, 20, 30, 40, 50, 
+                                            60, 70, 80, 90, 100, 
+                                            110, 120, 130, 140, 150, 160 
+                                           };
+
+    // Array with 8-bit signed values with range (-128 to 127)
+    std::int8_t data_eight_bit_signed[] {-10, -20, -30, -40, -50, -60, 
+                                         -70, -80, 0, 10, 20, 30, 40, 
+                                         50, 60, 70,
+                                        };
+
+    // 1. cv::Mat(int rows, int cols, int type, void* data, 
+    //            cv::size_t step= cv::AUTO_STEP)
+    const cv::Mat m5 { 2, 8, CV_32F, data_float }; // create a 2 x 8 array
+    std::cout << "\ncv::Mat array with 2 rows and 8 columns. "
+              << "\nData type is 32-bit float " 
+              << "\nPre-existing data is from a C-style array = \n"
+              << m5 << '\n';
+
+    // 2. cv::Mat(cv::Size size, int type, void* data, 
+    //            cv::size_t = cv::AUTO_STEP) 
+    // create a 4 x 4 array
+    const cv::Mat m6 { cv::Size(4, 4), CV_64F, data_double }; 
+    std::cout << "\ncv::Mat array with 4 rows and 4 columns. "
+              << "\nData type is 64-bit float " 
+              << "\nPre-existing data is from a C-style array = \n"
+              << m6 << '\n';
+
+    // 3. cv::Mat(int ndims, const int* sizes, int type, 
+    //            void* data, const cv::size_t* steps = 0)
+    const int ndims_m7 {2};
+    const int sizes_m7[] {8, 2};
+    // create a 8 x 2 array
+    const cv::Mat m7 {ndims_m7, sizes_m7, CV_8U, data_eight_bit_unsigned}; 
+    std::cout << "\ncv::Mat array with 8 rows and 2 columns. "
+              << "\nData type is 8-bit unsigned integer" 
+              << "\nPre-existing data is from a C-style array = \n"
+              << m7 << '\n';
+    
+    // 4. cv::Mat(const std::vector<int>& sizes, int type, 
+    //            void* data, const cv::size_t* steps = 0)
+    const std::vector<int> sizes_m8 {1, 16};
+    // create a 1 x 16 array
+    const cv::Mat m8 {sizes_m8, CV_8S, data_eight_bit_signed};  
+    std::cout << "\ncv::Mat array with 1 row and 16 columns. "
+              << "\nData type is 8-bit signed integer" 
+              << "\nPre-existing data is from a C-style array = \n"
+              << m8 << '\n';
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    cv::Mat array with 2 rows and 8 columns. 
+    Data type is 32-bit float 
+    Pre-existing data is from a C-style array = 
+    [1, 2, 3, 4, 5, 6, 7, 8;
+    9, 10, 11, 12, 13, 14, 15, 16]
+
+    cv::Mat array with 4 rows and 4 columns. 
+    Data type is 64-bit float 
+    Pre-existing data is from a C-style array = 
+    [0.01, 0.02, 0.03, 0.04;
+    0.05, 0.06, 0.07000000000000001, 0.08;
+    0.09, 0.1, 0.11, 0.12;
+    0.13, 0.14, 0.15, 0.16]
+
+    cv::Mat array with 8 rows and 2 columns. 
+    Data type is 8-bit unsigned integer
+    Pre-existing data is from a C-style array = 
+    [ 10,  20;
+    30,  40;
+    50,  60;
+    70,  80;
+    90, 100;
+    110, 120;
+    130, 140;
+    150, 160]
+
+    cv::Mat array with 1 row and 16 columns. 
+    Data type is 8-bit signed integer
+    Pre-existing data is from a C-style array = 
+    [-10, -20, -30, -40, -50, -60, -70, -80,   
+    0,  10,  20,  30,  40,  50,  60,  70]
+
+2. Constructors that allow you to copy or share the source data. The data is stored in other OpenCV types (cv::Matx, cv::Vec) and C++ containers such as std::vector and std::array. These constructors accept the templated forms of the source containers as you will see in their definitions. Examples will show you how to easily use them. Although the following constructors allow you to copy the source data - only do so if the source data is going to be de-allocated, otherwise share the data. This is because with cv::Mat objects you are dealing with large data that consumes a lot of memory - the last thing you want is to make unnecessary copies of such data.
+
+    * `cv::Mat(const std::vector<T>& vec, bool copyData = False)` - The parameter `vec` is the C++ STL vector whose elements will be used to form a 1-column cv::Mat array. The `copyData`	parameter is used to specify whether the underlying data of the STL vector should be copied to (`copyData = true`) or shared with (`copyData = False`) the newly constructed cv::Mat array. When the data is **copied**, the allocated buffer is managed using cv::Mat reference counting mechanism (which we have discussed in section **Crucial information about cv::Mat** above). While the data is **shared**, the reference counter is NULL, and you should not deallocate the data until the cv::Mat array/matrix is destructed. 
+    * `cv::Mat(const std::array<T, n>& arr, bool copyData = False)` - `arr` is a 1-dimensional std::array object. This function creates a 1-column cv::Mat object.
+    * `cv::Mat(const cv::Vec<T, n>& vec, bool copyData = true)` - `vec` is a 1-column matrix. This function creates a 1-column cv::Mat object.
+    * `cv::Mat(const cv::Matx<T, m, n>& mtx, bool copyData = true)` - `mtx` is a 2D matrix with `m` rows and `n` columns. This function creates a cv::Mat object with `m` rows and `n` columns.
+    * `cv::Mat(const cv::Point_<T>& pt, bool copyData = true)` - `pt` is a cv::Point object with 2 values. This function creates a 1-column cv::Mat object.
+    * `cv::Mat(const cv::Point3_<T>& pt, bool copyData = true)` - `pt` is a cv::Point object with 3 values. This function creates a 1-column cv::Mat object.
+
+**Example 3b**
+
+```c++
+#include "opencv2/core.hpp"
+#include <iostream>
+#include <array>
+#include <vector>
+
+int main()
+{
+    // 1. cv::Mat(const std::vector<T>& vec, bool copyData = False)
+    const std::vector<float> vector_data_float {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+                                                11, 12, 13, 14, 15, 16
+                                               }; 
+    const cv::Mat m9 {vector_data_float};
+    std::cout << "\ncv::Mat array with 16 rows and 1 column. "
+              << "\nData type is 32-bit float (CV_32F)" 
+              << "\nPre-existing data is from a std::vector = \n"
+              << m9 << '\n';
+    
+    // 2. cv::Mat(const cv::Vec<T, n>& vec, bool copyData = true)
+    const cv::Vec<double, 16> vec_data_double {0.01, 0.02, 0.03, 0.04, 0.05, 
+                            0.06, 0.07, 0.08, 0.09, 0.10, 
+                            0.11, 0.12, 0.13, 0.14, 0.15, 0.16
+                           };
+    bool copy_vec_data {false}; // We do not want to copy any data
+    const cv::Mat m10 {vec_data_double, copy_vec_data};
+    std::cout << "\ncv::Mat array with 16 rows and 1 column. "
+              << "\nData type is 64-bit float (CV_64F)" 
+              << "\nPre-existing data is from a cv::Vec = \n"
+              << m10 << '\n';
+
+    // 3. cv::Mat(const std::array<T, n>& arr, bool copyData = False)
+    // Array with 8-bit unsigned values with range (0 to 255)
+    const std::array<std::uint8_t, 16> array_data_eight_bit_unsigned {10, 20, 30, 40, 50, 
+                                            60, 70, 80, 90, 100, 
+                                            110, 120, 130, 140, 150, 160 
+                                           };
+    const cv::Mat m11 {array_data_eight_bit_unsigned};
+    std::cout << "\ncv::Mat array with 16 rows and 1 column. "
+              << "\nData type is 8-bit unsigned integer (CV_8U)" 
+              << "\nPre-existing data is from a std::array = \n"
+              << m11 << '\n';
+
+    // 4. cv::Mat(const cv::Matx<T, m, n>& mtx, bool copyData = true)
+    // Array with 8-bit signed values with range (-128 to 127)
+    const cv::Matx<std::int8_t, 4, 4> matx_data_eight_bit_signed {-10, -20, -30, -40, -50, -60, 
+                                         -70, -80, 0, 10, 20, 30, 40, 
+                                         50, 60, 70,
+                                        };
+    bool copy_matx_data {false}; // We do not want to copy data
+    const cv::Mat m12 {matx_data_eight_bit_signed, copy_matx_data};
+    std::cout << "\ncv::Mat array with 4 rows and 4 columns. "
+              << "\nData type is 8-bit signed integer (CV_8S)" 
+              << "\nPre-existing data is from a cv::Matx = \n"
+              << m12 << '\n';
+
+    // 5. cv::Mat(const cv::Point_<T>& pt, bool copyData = true)
+    const cv::Point2d pt {0.0039, 9.8765};
+    bool copy_point_data {false};
+    const cv::Mat m13 {pt, copy_point_data};
+    std::cout << "\ncv::Mat array with 2 rows and 1 column. "
+              << "\nData type is 64-bit float (CV_64F)" 
+              << "\nPre-existing data is from a cv::Point = \n"
+              << m13 << '\n';   
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    cv::Mat array with 16 rows and 1 column. 
+    Data type is 32-bit float (CV_32F)
+    Pre-existing data is from a std::vector = 
+    [1;
+    2;
+    3;
+    4;
+    5;
+    6;
+    7;
+    8;
+    9;
+    10;
+    11;
+    12;
+    13;
+    14;
+    15;
+    16]
+
+    cv::Mat array with 16 rows and 1 column. 
+    Data type is 64-bit float (CV_64F)
+    Pre-existing data is from a cv::Vec = 
+    [0.01;
+    0.02;
+    0.03;
+    0.04;
+    0.05;
+    0.06;
+    0.07000000000000001;
+    0.08;
+    0.09;
+    0.1;
+    0.11;
+    0.12;
+    0.13;
+    0.14;
+    0.15;
+    0.16]
+
+    cv::Mat array with 16 rows and 1 column. 
+    Data type is 8-bit unsigned integer (CV_8U)
+    Pre-existing data is from a std::array = 
+    [ 10;
+    20;
+    30;
+    40;
+    50;
+    60;
+    70;
+    80;
+    90;
+    100;
+    110;
+    120;
+    130;
+    140;
+    150;
+    160]
+
+    cv::Mat array with 4 rows and 4 columns. 
+    Data type is 8-bit signed integer (CV_8S)
+    Pre-existing data is from a cv::Matx = 
+    [-10, -20, -30, -40;
+    -50, -60, -70, -80;
+    0,  10,  20,  30;
+    40,  50,  60,  70]
+
+    cv::Mat array with 2 rows and 1 column. 
+    Data type is 64-bit float (CV_64F)
+    Pre-existing data is from a cv::Point = 
+    [0.0039;
+    9.8765]
