@@ -531,3 +531,101 @@ int main()
     Pre-existing data is from a cv::Point = 
     [0.0039;
     9.8765]
+
+
+### Using Static functions to create cv::Mat objects
+
+:notebook_with_decorative_cover: The cv::Mat class also provides a number of static member functions that you can use to create certain kinds of commonly used arrays e.g. an array full of zeros, an array full of ones etc. These functions are `static` functions, which means you don't need to instantiate an object to use them. Simply use them through the class name e.g. `cv::Mat::zeros()`. You will also notice that in these function definitions they return a type <a href = "https://docs.opencv.org/4.8.0/d1/d10/classcv_1_1MatExpr.html">**`cv::MatExpr`**</a>. This is a special class in OpenCV that handles any matrix operations e.g. multiplication, division, transpose, scaling, inversion, cross-product, comparisons etc. Because of the high volume of matrix operations OpenCV deals with, they are mainly handled through this class. The class `cv::MatExpr` works in conjuction with other OpenCV data types that create matrix data structures, that is, mainly `cv::Mat` and `cv::Matx`.
+
+1. `static cv::MatEpr cv::Mat::zeros(int rows, int cols, int type)` - Returns an array filled with `0`'s. It has 2 other overloaded functions which only differ in what arguments they accept, `static cv::MatExpr cv::Mat::zeros(cv::Size, int type)` and `static cv::MatExpr cv::Mat::zeros(int ndims, const int* sz, int type)`.
+2. `static cv::MatEpr cv::Mat::ones(int rows, int cols, int type` - Returns an array filled with `1`'s. It has 2 other overloaded functions which only differ in what arguments they accept, `static cv::MatExpr cv::Mat::ones(cv::Size, int type)` and `static cv::MatExpr cv::Mat::ones(int ndims, const int* sz, int type)`. One other clever use of this function is to use a scale operation to create a matrix filled values other than `1` e.g. `cv::Mat A = cv::Mat::ones(2, 3, CV_8U) * 5` would make `A` a 2x3 matrix filled with `5`'s.
+3. `static cv::MatExpr cv::Mat::eye(int rows, int cols, int type)` - Returns an identity matrix. An identity matrix is a square matrix (same number of rows and columns) in which the main diagonal is filled with `1`'s and every other position is filled with `0`'s. It has one other overloaded function `static cv::MatExpr cv::Mat::eye(cv::Size size, int type)`. One other clever use of this function is to use a scale operation to create a  matrix whose diagonal values are not `1` e.g. `cv::Mat A = cv::Mat::eye(4, 4, CV_32F) * 0.1` - this would make `A` a 4x4 square matrix with `0.1`'s on the diagonal.
+
+**Example 4**
+
+```c++
+#include "opencv2/core.hpp"
+#include <iostream>
+
+int main()
+{
+
+    // 1. Create a cv::Mat object filled with zeros
+    const cv::Mat m14 {cv::Mat::zeros(10, 15, CV_8U)}; // create a 10 x 15 array 
+    std::cout << "\ncv::Mat filled with zeros = \n" << m14 << '\n';
+
+    // 2a. Create a cv::Mat object filled with ones
+    const cv::Mat m15 {cv::Mat::ones(8, 8, CV_8U)}; // create an 8 x 8 array
+    std::cout << "\ncv::Mat filled with ones = \n" << m15 << '\n';
+
+    // 2b. Create a cv::Mat object filled with 9's
+    const cv::Mat m16 {cv::Mat::ones(4, 4, CV_8U) * 9};
+    std::cout << "\ncv::Mat filled with nines = \n" << m16 << '\n';
+
+    // 2c. Create a cv::Mat object filled with 0.05 32-bit floating values
+    const cv::Mat m17 {cv::Mat::ones(4, 4, CV_32F) * 0.05};
+    std::cout << "\ncv::Mat filled with 32-bit floating values 0.05 = \n" 
+              << m17 << '\n'; 
+
+    // 3a. Create a cv::Mat object with an Identity matrix
+    const cv::Mat m18 {cv::Mat::eye(5, 5, CV_8U)}; // create a 5 x 5 array
+    std::cout << "\nIdentity cv::Mat = \n" << m18 << '\n';
+
+    // 3b. Create a cv::Mat object with 5's in the main diagonal
+    const cv::Mat m19 {cv::Mat::eye(5, 5, CV_8U) * 5};
+    std::cout << "\ncv::Mat filled with 5's in main diagonal = \n" 
+              << m19 << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    cv::Mat filled with zeros = 
+    [  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0;
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0]
+
+    cv::Mat filled with ones = 
+    [  1,   1,   1,   1,   1,   1,   1,   1;
+    1,   1,   1,   1,   1,   1,   1,   1;
+    1,   1,   1,   1,   1,   1,   1,   1;
+    1,   1,   1,   1,   1,   1,   1,   1;
+    1,   1,   1,   1,   1,   1,   1,   1;
+    1,   1,   1,   1,   1,   1,   1,   1;
+    1,   1,   1,   1,   1,   1,   1,   1;
+    1,   1,   1,   1,   1,   1,   1,   1]
+
+    cv::Mat filled with nines = 
+    [  9,   9,   9,   9;
+    9,   9,   9,   9;
+    9,   9,   9,   9;
+    9,   9,   9,   9]
+
+    cv::Mat filled with 32-bit floating values 0.05 = 
+    [0.050000001, 0.050000001, 0.050000001, 0.050000001;
+    0.050000001, 0.050000001, 0.050000001, 0.050000001;
+    0.050000001, 0.050000001, 0.050000001, 0.050000001;
+    0.050000001, 0.050000001, 0.050000001, 0.050000001]
+
+    Identity cv::Mat = 
+    [  1,   0,   0,   0,   0;
+    0,   1,   0,   0,   0;
+    0,   0,   1,   0,   0;
+    0,   0,   0,   1,   0;
+    0,   0,   0,   0,   1]
+
+    cv::Mat filled with 5's in main diagonal = 
+    [  5,   0,   0,   0,   0;
+    0,   5,   0,   0,   0;
+    0,   0,   5,   0,   0;
+    0,   0,   0,   5,   0;
+    0,   0,   0,   0,   5]
