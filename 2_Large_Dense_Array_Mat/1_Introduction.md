@@ -45,7 +45,11 @@
 
 :notebook_with_decorative_cover: cv::Mat data types are actually stored as integer types within OpenCV. You will notice this if you look at the constructors for cv::Mat objects as the data type for **type** is **int**, short for integer. The following figure can help you identify which integer value represents which data type.
 
+**Figure 1**: OpenCV data types
+
 ![Image showing OpenCV data types](./images/opencv_data_types.png)
+
+Image source: https://medium.com/@nullbyte.in/part-2-exploring-the-data-types-in-opencv4-a-comprehensive-guide-49272f4a775
 
 :notebook_with_decorative_cover: Using the above figure, **CV_32F** or **CV_32FC1** is represented by the integer value **5**, **CV_8UC3** is represented by the integer value **16**, **CV_8U** or **CV_8UC1** is represented by the integer value **0**. This means if you were to ask OpenCV what data type is held by a cv::Mat object using a function like `type()`, OpenCV will return the integer value and it will be up to you to know the full description of the data type. The problem with these integer values is they are not descriptive and do not give you a full picture of a cv::Mat objects data type hence they are not used that often unless you offer a full explanation. In addition, there are too many integer values to remember. To help, I have created a function with the signature (`std::string_view openCVDescriptiveDataType(int value)`) that I can use to find out the full description of a data type given its integer value equivalent. This function has been added to a header and source files with the names **utility_functions.h** and **utility_functions.cpp**. As we go along our journey, we will add more utility functions or classes to these files. At the end we can build a library that can be used with any other computer vision project. Check the **include** and **src** folders for these files.
 
@@ -533,7 +537,7 @@ int main()
     9.8765]
 
 
-### Using Static functions to create cv::Mat objects
+### Using Static functions to create cv::Mat arrays
 
 :notebook_with_decorative_cover: The cv::Mat class also provides a number of static member functions that you can use to create certain kinds of commonly used arrays e.g. an array full of zeros, an array full of ones etc. These functions are `static` functions, which means you don't need to instantiate an object to use them. Simply use them through the class name e.g. `cv::Mat::zeros()`. You will also notice that in these function definitions they return a type <a href = "https://docs.opencv.org/4.8.0/d1/d10/classcv_1_1MatExpr.html">**`cv::MatExpr`**</a>. This is a special class in OpenCV that handles any matrix operations e.g. multiplication, division, transpose, scaling, inversion, cross-product, comparisons etc. Because of the high volume of matrix operations OpenCV deals with, they are mainly handled through this class. The class `cv::MatExpr` works in conjuction with other OpenCV data types that create matrix data structures, that is, mainly `cv::Mat` and `cv::Matx`.
 
@@ -629,3 +633,156 @@ int main()
     0,   0,   5,   0,   0;
     0,   0,   0,   5,   0;
     0,   0,   0,   0,   5]
+
+
+### Create 2D cv::Mat arrays with channels
+
+:notebook_with_decorative_cover: We will start to talk in detail about arrays with channels when dealing with image data. For example, some color images can be represented as 2D arrays with 3 channels (for the Red, Green and Blue intensity values). Figure 2 below is such an example. 
+
+**Figure 2**: 2D array with 3 channels
+
+![3 channel array](./images/ThreeChannelArray.png)
+
+Image source: https://www.bogotobogo.com/OpenCV/opencv_3_tutorial_creating_mat_objects.php
+
+
+:notebook_with_decorative_cover: Grayscale or black and white images have 1 channel.
+
+**Figure 3**: 2D array with 1 channel
+
+![1 channel array](./images/OneChannelArray.png)
+
+Image source: https://www.bogotobogo.com/OpenCV/opencv_3_tutorial_creating_mat_objects.php
+
+
+:notebook_with_decorative_cover: It can be difficult to wrap your head around the concept of channels at this early stage, but we will discuss more about them when we start dealing with image data. Right now we just want to lay out the foundation and for you to know that such kind of large arrays exists.
+
+:notebook_with_decorative_cover: Key points:
+
+* The data types will start to have the form e.g. `CV_8UC3`, where the value after the character `C` represents the number of channels. In OpenCV, you can have up to 4 channels. Data type for 1 channel arrays can use the form `CV_8U` or `CV_8UC1` - they both mean an 8-bit unsigned array with 1 channel.
+* The number of elements at each array location or index will be equal to the number of channels. For example location `(0,0)` (the top left location) in Figure 2 will have the values `[34, 0, 54]` for each channnel. In OpenCV the channels are in the order **Blue - Green - Red**, also known as the BGR format. Blue channel has value `34`, green channel has the value `0` and blue channel has the value `54`. In Figure 3, location `(0,0)` will have 1 value, `[54]` since it is a 1 channel array.
+
+:notebook_with_decorative_cover:  For the most part, you will not have to create multi-channel arrays directly and fill them with image data yourself. OpenCV provides functions (which we will discuss later) to help you achieve this. 
+
+:notebook_with_decorative_cover: However, if you have to do this yourself, OpenCV provides constructors that you can use to create and initialize cv::Mat multi-channel arrays with the same value in each channel. Such constructors have the form `cv::Mat(int rows, int cols, int type, const cv::Scalar& s)`. You should by now be familiar with such constructors and their variations. The important bit to point out here is the parameter `s` which provides the initialization values for the array. For a 1 channel array `s` has the form `cv::Scalar(value)`, for a 2 channel array this becomes `cv::Scalar(channel_1_value, channel_2_value)` etc., up to 4 channel arrays.
+
+:notebook_with_decorative_cover: In the following example, take note of how the output for arrays with 2 or more channels is displayed when printed. Read the comments in the code - this will explain how to interpret the printed output in OpenCV. 
+
+
+**Example 5**
+```c++
+#include "opencv2/core.hpp"
+#include <iostream>
+
+int main()
+{
+    // a) Create a 3x10 2-D array with 1 channel. The array will have the 
+    //    the value '255' at each index. This can be interpreted as a 
+    //    an array representing a grayscale image
+    const cv::Mat m20 { 3, 10, CV_8UC1, cv::Scalar(255) }; 
+    std::cout << "\n3 x 10 dense array with 1 channel" 
+              << "\nThe array has the value 255 at all locations = \n" 
+              << m20 << '\n';
+
+    // b) Create a 3x10 2-D array with 2 channels. Channel 1 will have the 
+    //    value 1.2 and channel 2 will have the value 0.5 at all locations. 
+    //    Take note of how the data is displayed when printed e.g. for each 
+    //    row you will notice 20 values, that is because we have 2 values 
+    //    per location (one value for each channel).
+    const cv::Mat m21 {3, 10, CV_32FC2, cv::Scalar(1.2f, 0.5f)}; 
+    std::cout << "\n3 x 10 dense array with 2 channels " 
+              << "\nChannel 1 will have the value 1.2 and " 
+              << "channel 2 will have the value 0.5 at all locations = \n" 
+              << m21 << '\n';
+    
+    // c) Create a 3x10 2-D array with 3 channels. Channels will have the 
+    //    values 1.2, 1.7 and 2.5, respectively. This could represent a 
+    //    color image. 
+    //    Take note of how the data is displayed. Each row you will notice 
+    //    30 values, that is because we have 3 values per location (one for 
+    //    each channel).
+    const cv::Mat m22 {3, 10, CV_32FC3, cv::Scalar(1.2f, 1.7f, 2.5f)}; 
+    std::cout << "\n3 x 10 dense array with 3 channels " 
+              << "\nChannels have the values 1.2, 1.7 and 2.5, respectively = \n" 
+              << m22 << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    3 x 10 dense array with 1 channel
+    The array has the value 255 at all locations = 
+    [255, 255, 255, 255, 255, 255, 255, 255, 255, 255;
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255;
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255]
+
+    3 x 10 dense array with 2 channels 
+    Channel 1 will have the value 1.2 and channel 2 will have the value 0.5 at all locations = 
+    [1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5;
+    1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5;
+    1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5, 1.2, 0.5]
+
+    3 x 10 dense array with 3 channels 
+    Channels have the values 1.2, 1.7 and 2.5, respectively = 
+    [1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5;
+    1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5;
+    1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5, 1.2, 1.7, 2.5]
+
+
+### cv::Mat Attributes
+
+:notebook_with_decorative_cover: All along we have been creating our own cv::Mat arrays by providing the necessary details such as array size (rows and columns), data type, number of channels etc. What if you are using a cv::Mat array created by someone else? What if you use an OpenCV function to read an image and store its data into a cv::Mat array? - something you will oftenly have to do in future tutorials. How do we find such kind of information pertaining to that array. The cv::Mat class gives us access to a few attributes and functions that describe the characteristics of each instantiated object. These include:
+
+1. `int cv::Mat::cols` - this is a public attribute that returns the number of columns in a cv::Mat array
+2. `int cv::Mat::rows` - this is a public attribute that returns the number of rows in a cv::Mat array
+3. `int cv::Mat::dims` - this is a public attribute that returns the dimensions of a cv::Mat array
+4. `cv::MatSize cv::Mat::size` - this is a public attribute that returns the size of a cv::Mat array as a cv::Size object.
+5. `cv::size_t cv::Mat::total() const` - a member function that returns the total number of array elements.
+6. `int cv::Mat::channels() const` - a member function that returns the number of channels
+7. `int cv::Mat::type() const` - a member function that returns the data type of the array elements. This function returns an integer value which is not very descriptive e.g. the integer `16` is not very descriptive and does not tell you much about the data type of the array elements. You will need something like Figure 1 to decipher what the integer actually means. Or, we could write our own function that returns a more descriptive string. If you read the README file for this repository you will remember I mentioned we will want to create our own library of functions and classes that we can use in our everyday computer vision projects. The header file will be in the `include/UtilityFunctions` directory path, while the source file will be in the `src/UtilityFunctions` directory path. Our first function in this library is `std::string_view openCVDescriptiveDataType(int value)` - it accepts an integer value returned by the function `type()` and returns a more descriptive string. You will find this function in the namespace `CPP_CV::General`
+
+**Example 6**
+
+```c++
+#include "opencv2/core.hpp"
+#include <UtilityFunctions/utility_functions.h>     // header file with function that returns full description of OpenCV data types
+#include <iostream>
+
+int main()
+{
+    float testData[] = {1, 2, 3, 4, 5, 6, 7, 8, 9}; 
+    const cv::Mat testMat { 3, 3, CV_32F, testData };     
+
+    int arrayDimensions = testMat.dims;       // no. of dimenions of array
+    int noRows          = testMat.rows;       // no. of rows in array
+    int noColumns       = testMat.cols;       // no. of columns in array
+    int noChannels      = testMat.channels(); // no. of channels in array
+    int noElements      = testMat.total();    // total no. of elements in array 
+    int dataType        = testMat.type();     // data type returned as an integer
+
+    std::cout << "\ntestMat array has the following attributes: \n" 
+              << "\tNo. of dimensions = " << arrayDimensions 
+              << "\n\tNo. of rows     = " << noRows
+              << "\n\tNo. of columns  = " << noColumns
+              << "\n\tNo. of channels = " << noChannels
+              << "\n\tNo. of elements = " << noElements
+              << "\n\tData type       = " << CPP_CV::General::openCVDescriptiveDataType(dataType); 
+
+
+    std::cout << '\n';
+    return 0;
+
+}
+```
+
+**Output**
+
+    testMat array has the following attributes: 
+            No. of dimensions = 2
+            No. of rows     = 3
+            No. of columns  = 3
+            No. of channels = 1
+            No. of elements = 9
+            Data type       = CV_32F or CV_32FC1 -> Array with 1 channel and primitive data type 32-bit decimal values of type float with range (-3.40282347E+38 to 3.40282347E+38)
