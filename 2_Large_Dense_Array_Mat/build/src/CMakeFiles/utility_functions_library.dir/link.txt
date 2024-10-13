@@ -1,0 +1,2 @@
+/usr/bin/ar qc libutility_functions_library.a CMakeFiles/utility_functions_library.dir/UtilityFunctions/utility_functions.cpp.o
+/usr/bin/ranlib libutility_functions_library.a

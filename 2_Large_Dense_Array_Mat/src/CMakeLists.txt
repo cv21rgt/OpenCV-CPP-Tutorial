@@ -1,11 +1,10 @@
-# Note that headers are optional, and do not affect add_library, but they will not
-# show up in IDEs unless they are listed in add_library.
-
-# Optionally glob, but only for CMake 3.12 or later:
-# file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${ModernCMakeExample_SOURCE_DIR}/include/modern/*.hpp")
+# Set variable with paths to header and source files
 set(HEADER_LIST "${PROJECT_SOURCE_DIR}/include/UtilityFunctions/utility_functions.h")
 set(SOURCE_LIST "${PROJECT_SOURCE_DIR}/src/UtilityFunctions/utility_functions.cpp")
-# Make an automatic library - will be static or dynamic based on user setting
+
+# Make an automatic library called 'utility_functions_library'- will be static or dynamic based on user setting
+# Note that headers are optional, and do not affect add_library, but they will not
+# show up in IDEs unless they are listed in add_library.
 add_library(utility_functions_library STATIC ${SOURCE_LIST} ${HEADER_LIST})
 
 # We need this directory, and users of our library will need it too
@@ -24,9 +23,12 @@ source_group(
 # Our 'utility_functions_library' needs access to the OpenCV package
 
 # Set path to directory with OpenCVConfig.cmake file
+# Instead of installing OpenCV to the usual path /usr/local/include ( on Linux O/S) I have installed
+# mine in a different directory /home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed 
+# I do this for every version of OpenCV I install.
 set(OpenCV_DIR "/home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib/cmake/opencv4")
 
-# We only want access to the `core` module
+# For now, we only want access to the OpenCV `core` module which contains the core data types
 find_package(OpenCV REQUIRED core)
 
 if(OpenCV_FOUND)
