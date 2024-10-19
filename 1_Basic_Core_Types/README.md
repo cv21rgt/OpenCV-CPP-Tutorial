@@ -27,23 +27,32 @@
 :memo: To run code, you need to be in the **Example-Code** directory and type the following commands in your terminal. Our executable file will be called **BasicCoreTypes-app** (see CMakeLists.txt file in directory **BASIC_CORE_TYPES-app**). In the following, **text in bold** are the commands to type in terminal (don't copy and paste). <mark>Highlighted text</mark> are comments explaining what the command does.
 
 
-~/Example-Code$ **mkdir build**  <mark>Create a directory called 'build'</mark>
+* ~/Example-Code$ **mkdir build**  <mark>Create a directory called 'build'</mark>
 
-~/Example-Code$ **cd build** <mark>Move into the 'build' directory</mark>
+* ~/Example-Code$ **cd build** <mark>Move into the 'build' directory</mark>
 
-~/Example-Code/build$ **cmake ..** <mark>Configure CMake. You should expect output almost similar/close to the following</mark>
+* ~/Example-Code/build$ **cmake ..** <mark>Configure CMake. You should expect output almost similar/close to the following</mark>
 
--- The CXX compiler identification is GNU 12.2.0
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Found OpenCV: /Path/To/OpenCV/ (found version "4.8.0") found components: core 
--- Configuring done
--- Generating done
--- Build files have been written to: /Path/To/build/directory
+    -- The CXX compiler identification is GNU 12.2.0
 
-~/Example-Code/build$ **make** <mark>Build your source files into an executable using CMAKE. Your executable should be in '/build/BASIC_CORE_TYPES-app'</mark>
+    -- Detecting CXX compiler ABI info
 
-~/Example-Code/build/BASIC_CORE_TYPES-app$ **./BasicCoreTypes-app** <mark>Run the executable file</mark>
+    -- Detecting CXX compiler ABI info - done
+
+    -- Check for working CXX compiler: /usr/bin/c++ - skipped
+
+    -- Detecting CXX compile features
+
+    -- Detecting CXX compile features - done
+
+    -- Found OpenCV: /Path/To/OpenCV/ (found version "4.8.0") found components: core 
+
+    -- Configuring done
+
+    -- Generating done
+    
+    -- Build files have been written to: /Path/To/build/directory
+
+* ~/Example-Code/build$ **make** <mark>Build your source files into an executable using CMAKE. Your executable should be in '/build/BASIC_CORE_TYPES-app'</mark>
+
+* ~/Example-Code/build/BASIC_CORE_TYPES-app$ **./BasicCoreTypes-app** <mark>Run the executable file</mark>
