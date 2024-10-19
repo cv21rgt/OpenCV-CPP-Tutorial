@@ -12,7 +12,7 @@
 #    You need the path to this folder. For most people on Linux the path would be '/usr/local/lib/cmake/opencv4'
 
 # Set path to directory with OpenCVConfig.cmake file
-set(OpenCV_DIR "/Your/Own/Path/Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib/cmake/opencv4")
+set(OpenCV_DIR "$ENV{HOME}Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib/cmake/opencv4")
 
 # OpenCV package comes with quite a lot of modules/libraries - which we don't usually need all at once
 # For now, we only want access to the 'core' module which contains the 'core basic data types'

@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/build/BASIC_CORE_TYPES-app",
-  "command": "/usr/bin/g++  -isystem /home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/include/opencv4 -g -o CMakeFiles/BasicCoreTypes-app.dir/main.cpp.o -c /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/Example-Code/BASIC_CORE_TYPES-app/main.cpp",
-  "file": "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/Example-Code/BASIC_CORE_TYPES-app/main.cpp"
-}
-]

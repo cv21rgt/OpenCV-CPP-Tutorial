@@ -1,1 +1,0 @@
-/usr/bin/g++ -g "CMakeFiles/BasicCoreTypes-app.dir/main.cpp.o" -o BasicCoreTypes-app  -Wl,-rpath,/home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib /home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib/libopencv_core.so.4.8.0 
