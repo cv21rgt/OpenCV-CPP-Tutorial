@@ -1,4 +1,4 @@
-# Install script for directory: /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app
+# Install script for directory: /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

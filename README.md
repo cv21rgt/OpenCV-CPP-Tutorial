@@ -55,18 +55,19 @@
 :memo: Where necessary, any code files provided will follow a directory/folder structure which will allow you to build the projects using CMake. At a minimum, such a project should have the following directory structure:
 
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">project</span>
-  <span class="o">-</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span>
-  <span class="o">-</span> <span class="n">Notes</span><span class="o">.</span><span class="n">md</span>
-  <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt</span>  
-  <span class="o">-</span> <span class="n">include</span>
+  <span class="o">-</span> <span class="n">README</span><span class="o">.</span><span class="n">md -> explains what will be covered in that topic/project</span>
+  <span class="o">-</span> <span class="n">Notes</span><span class="o">.</span><span class="n">md -> project notes will be sub-divided into smaller sections - you may have more than 1 file for notes</span>
+  <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt -> main CMakeLists file</span>  
+  <span class="o">-</span> <span class="n">include -> will contain header files</span>
     <span class="o">-</span> <span class="n">project</span>
       <span class="o">-</span> <span class="n">example</span><span class="o">.</span><span class="n">hpp</span>
-  <span class="o">-</span> <span class="n">src</span>
-    <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt</span>
-    <span class="o">-</span> <span class="n">example</span><span class="o">.</span><span class="n">cpp</span>
-  <span class="o">-</span> <span class="n">project-app</span>
-    <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt</span>
-    <span class="o">-</span> <span class="n">main</span><span class="o">.</span><span class="n">cpp</span>
+  <span class="o">-</span> <span class="n">src -> will contain source files</span>
+    <span class="o">-</span> <span class="n">project</span>
+      <span class="o">-</span> <span class="n">example</span><span class="o">.</span><span class="n">cpp</span>
+    <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt - CMakeLists that builds a library using the include/project and src/project files </span>    
+  <span class="o">-</span> <span class="n">project-app -> will contain the main.cpp file</span>
+    <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt - builds our executable file using any external libraries e.g OpenCV</span>
+    <span class="o">-</span> <span class="n">main</span><span class="o">.</span><span class="n">cpp - were you write your main code </span>
 </pre></div>
 </div>
 
@@ -89,7 +90,7 @@
 
 ## Other relevant information
 
-:memo: As we go through each tutorial, you will notice that we will create our own functions to perform certain tasks relevant to computer vision projects. We will try to generalize these functions as much as possible - sometimes making use of templates - so that they can be used in a variety of scenarios. To save us time in future, we will use this opportunity to create our own library with these functions. That way you can incorporate this library in your own computer vision projects. To keep things simple I will use a single header file. I am naming my library `utility_functions.h` and will have the directory structure **UtilityFunctions\include\utility_functions.h**. Within the file, I will use namespaces to give the code a bit of structure - which will make it easier to look for functions within the file. You can opt to use a different structure if you want.
+:memo: As we go through each tutorial, you will notice that we will create our own functions to perform certain tasks relevant to computer vision projects. We will try to generalize these functions as much as possible - sometimes making use of templates - so that they can be used in a variety of scenarios. To save us time in future, we will use this opportunity to create our own library with these functions. That way you can incorporate this library in your own computer vision projects. The header and source files will have the directory structure **../include/UtilityFunctions/utility_functions.h** and **../src/UtilityFunctions/utility_functions.cpp**, respectively. Within the file, I will use namespaces to give the code a bit of structure - which will make it easier to look for functions within the file. You can opt to use a different structure if you want. The main namespace is `CPP_CV`. There will be other namespaces within this namespace e.g. `General` - for functions that apply to any computer vision function. You then access functions in `General` as `CPP_CV::General::function_name()`.
 
 ## Author
 

@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "BASIC_CORE_TYPES-app",
+		"source" : "BASIC_CORE_TYPES-app"
+	}
+}

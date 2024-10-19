@@ -1,0 +1,76 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.25"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "BASIC_CORE_TYPES-app",
+					"jsonFile" : "directory-BASIC_CORE_TYPES-app-Debug-98c9c834ebdef066a013.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.25"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "BASIC_CORE_TYPES-app",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "BASIC_CORE_TYPES",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "BasicCoreTypes-app::@3338e26aee4238a47332",
+					"jsonFile" : "target-BasicCoreTypes-app-Debug-80523158d0ca095569ac.json",
+					"name" : "BasicCoreTypes-app",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/build",
+		"source" : "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/Example-Code"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}

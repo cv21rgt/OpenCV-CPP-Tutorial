@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app/Main.cpp" "Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o" "gcc" "Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o.d"
+  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app/Main.cpp" "Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o" "gcc" "Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o.d"
   )
 
 # Targets to which this target links.

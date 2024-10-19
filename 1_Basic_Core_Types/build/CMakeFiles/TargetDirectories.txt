@@ -1,0 +1,5 @@
+/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/build/CMakeFiles/edit_cache.dir
+/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/build/CMakeFiles/rebuild_cache.dir
+/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/build/BASIC_CORE_TYPES-app/CMakeFiles/BasicCoreTypes-app.dir
+/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/build/BASIC_CORE_TYPES-app/CMakeFiles/edit_cache.dir
+/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/1_Basic_Core_Types/build/BASIC_CORE_TYPES-app/CMakeFiles/rebuild_cache.dir

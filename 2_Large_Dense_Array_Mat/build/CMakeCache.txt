@@ -210,7 +210,7 @@ N-DIMENSIONAL-DENSE-ARRAYS_BINARY_DIR:STATIC=/home/gy08rgt/Documents/OpenCV/Open
 N-DIMENSIONAL-DENSE-ARRAYS_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-N-DIMENSIONAL-DENSE-ARRAYS_SOURCE_DIR:STATIC=/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat
+N-DIMENSIONAL-DENSE-ARRAYS_SOURCE_DIR:STATIC=/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code
 
 
 ########################
@@ -279,7 +279,7 @@ CMAKE_GENERATOR_PLATFORM:INTERNAL=
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/g++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/src/../include -isystem /home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/include/opencv4
+CXX_INCLUDES = -I/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/src/../include -isystem /home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/include/opencv4
 
 CXX_FLAGS = -g
 

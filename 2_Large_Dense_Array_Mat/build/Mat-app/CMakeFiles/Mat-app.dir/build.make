@@ -53,7 +53,7 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat
+CMAKE_SOURCE_DIR = /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build
@@ -70,18 +70,18 @@ include Mat-app/CMakeFiles/Mat-app.dir/progress.make
 include Mat-app/CMakeFiles/Mat-app.dir/flags.make
 
 Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o: Mat-app/CMakeFiles/Mat-app.dir/flags.make
-Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o: /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app/Main.cpp
+Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o: /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app/Main.cpp
 Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o: Mat-app/CMakeFiles/Mat-app.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o"
-	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o -MF CMakeFiles/Mat-app.dir/Main.cpp.o.d -o CMakeFiles/Mat-app.dir/Main.cpp.o -c /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app/Main.cpp
+	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.o -MF CMakeFiles/Mat-app.dir/Main.cpp.o.d -o CMakeFiles/Mat-app.dir/Main.cpp.o -c /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app/Main.cpp
 
 Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Mat-app.dir/Main.cpp.i"
-	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app/Main.cpp > CMakeFiles/Mat-app.dir/Main.cpp.i
+	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app/Main.cpp > CMakeFiles/Mat-app.dir/Main.cpp.i
 
 Mat-app/CMakeFiles/Mat-app.dir/Main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Mat-app.dir/Main.cpp.s"
-	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app/Main.cpp -o CMakeFiles/Mat-app.dir/Main.cpp.s
+	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app && /usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app/Main.cpp -o CMakeFiles/Mat-app.dir/Main.cpp.s
 
 # Object files for target Mat-app
 Mat__app_OBJECTS = \
@@ -108,6 +108,6 @@ Mat-app/CMakeFiles/Mat-app.dir/clean:
 .PHONY : Mat-app/CMakeFiles/Mat-app.dir/clean
 
 Mat-app/CMakeFiles/Mat-app.dir/depend:
-	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app/CMakeFiles/Mat-app.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app /home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/build/Mat-app/CMakeFiles/Mat-app.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : Mat-app/CMakeFiles/Mat-app.dir/depend
 

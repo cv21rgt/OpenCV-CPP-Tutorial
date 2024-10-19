@@ -7,11 +7,11 @@ set(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
-  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/CMakeLists.txt"
-  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Mat-app/CMakeLists.txt"
+  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/CMakeLists.txt"
+  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/Mat-app/CMakeLists.txt"
+  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/Example-Code/src/CMakeLists.txt"
   "CMakeFiles/3.25.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.25.1/CMakeSystem.cmake"
-  "/home/gy08rgt/Documents/OpenCV/OpenCV_and_CPP_Repository/OpenCV-CPP-Tutorial/2_Large_Dense_Array_Mat/src/CMakeLists.txt"
   "/home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib/cmake/opencv4/OpenCVConfig-version.cmake"
   "/home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib/cmake/opencv4/OpenCVConfig.cmake"
   "/home/gy08rgt/Third_Party_Libraries/OpenCV_4.8.0/release/installed/lib/cmake/opencv4/OpenCVModules-release.cmake"
