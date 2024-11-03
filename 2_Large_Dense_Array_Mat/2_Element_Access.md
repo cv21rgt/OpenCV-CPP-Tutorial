@@ -328,3 +328,378 @@ int main ()
     Iterate through an array m8 with 2 channels: [-1, 1] [-1, 1] [-1, 1] [-1, 1] [-1, 1] [-1, 1] [-1, 1] [-1, 1] [-1, 1] 
 
 
+## Accessing Array Elements in Blocks/Chunks
+
+:notebook_with_decorative_cover: In the above sections  we saw ways to access individual elements of an array either singularly or by iterating sequencially through them all. Another common situation that arises is when you need to access a subset of an array as another array. This might include selecting  a single row, column or any subregion of the original array. 
+
+:notebook_with_decorative_cover: **cv::Mat** provides member functions that allow us to access a subset of an array. Just remember that when using these member functions, the data in the original array is not copied to the new arrays, as mentioned before a new data pointer will be created pointing to the subset of data required by the new array. Therefore, any modification of data in the new sub-array will result in modification of the original array data as well. If your intention is to modify the new sub-array data, it is best to copy the data by using functions such as `copyTo()` or `clone()`. 
+
+:notebook_with_decorative_cover: The majority of member functions for accessing blocks/chunks of an array apply to cv::Mat arrays whose dimensions are equal to 2.
+
+1. `cv::Mat row(int y) const` and `cv::Mat col(int y) const` are the simplest member functions. They accept a single integer `y` and return the indicated row or column of the array whose member we are calling. `y` starts from `0`. These functions make a new header for the specified matrix row/column and returns it. This is an $O(1)$ operation, regardless of the matrix size. The underlying data of the new matrix is shared with the original matrix. When we use the `row()` and `col()` functions, the returned arrays will have the shapes `[1 x No. of columns in original cv::Mat array]` and `[No. of rows in original cv::Mat array x 1]`, respectively. 
+
+**Example 3**
+
+```c++
+#include "opencv2/core.hpp" 
+#include <iostream>
+
+int main ()
+{
+  // Create a 10x10 2-D array with random values between 1 and 100 
+  const cv::Mat m9 {cv::Matx<int, 10, 10>::randu(1, 100)}; 
+  std::cout << "\nm9 = \n" << m9 << '\n';
+
+  // 5x5 2-D array with 3 channels
+  const cv::Mat m10 { 5, 5, CV_32FC3, cv::Scalar(-1.0f, 1.0f, 0.6f) }; 
+  std::cout << "\nm10 = \n" << m10 << '\n';
+
+  // (a) Extract a single row
+  //     Remember we start counting rows from 0
+
+  // Create an array using first row of original matrix
+  auto firstRow_m9 = m9.row(0); 
+  std::cout << "\nFirst row of m9 = \n" << firstRow_m9 << '\n';
+
+  // Create an array using third row of original matrix
+  auto thirdRow_m10 = m10.row(2); 
+  std::cout << "\nThird row of m10 = \n" << thirdRow_m10 << '\n';
+
+  // (b) Extract a single column. 
+  //     Remember we start counting columns from 0
+
+  // Create an array using the second column. 
+  auto secondColumn_m9 =  m9.col(1); 
+  std::cout << "\nSecond column of m9 = \n" << secondColumn_m9 << '\n';
+
+  // Create an array using the second column
+  auto secondColumn_m10 = m10.col(1); 
+  std::cout << "\nSecond column of m10 = \n" << secondColumn_m10 << '\n';
+
+  std::cout << '\n';
+
+  return 0;
+
+}
+```
+
+**Output**
+
+    m9 = 
+    [8, 25, 93, 38, 61, 73, 41, 13, 28, 34;
+    19, 15, 6, 59, 66, 61, 46, 61, 38, 95;
+    92, 64, 78, 43, 95, 26, 87, 74, 72, 88;
+    10, 88, 83, 98, 59, 44, 75, 85, 13, 56;
+    75, 72, 86, 61, 37, 63, 46, 16, 42, 24;
+    15, 84, 42, 16, 77, 54, 1, 7, 14, 2;
+    85, 60, 65, 53, 61, 94, 20, 26, 93, 78;
+    11, 12, 40, 18, 77, 99, 17, 27, 36, 59;
+    4, 35, 58, 47, 82, 46, 38, 51, 32, 87;
+    45, 81, 49, 86, 6, 6, 39, 91, 68, 8]
+
+    m10 = 
+    [-1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002]
+
+    First row of m9 = 
+    [8, 25, 93, 38, 61, 73, 41, 13, 28, 34]
+
+    Third row of m10 = 
+    [-1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002]
+
+    Second column of m9 = 
+    [25;
+    15;
+    64;
+    88;
+    72;
+    84;
+    60;
+    12;
+    35;
+    81]
+
+    Second column of m10 = 
+    [-1, 1, 0.60000002;
+    -1, 1, 0.60000002;
+    -1, 1, 0.60000002;
+    -1, 1, 0.60000002;
+    -1, 1, 0.60000002]
+
+
+2. `cv::Mat rowRange(int start, int end) const` and `cv::Mat colRange(int start, int end) const` member functions will extract a sub-array with contiguous rows or columns. You can call both functions by specifying an integer  `start` and `end` row or column, that indicates the desired rows or columns. In both cases the range is inclusive of the `start` index but exclusive of the `end` index. Both functions are overloaded with the functions `cv::Mat rowRange(cv::Range& r) const` and `cv::Mat colRange(cv::Range& r) const`, respectively. <a href = "https://docs.opencv.org/4.8.0/da/d35/classcv_1_1Range.html">**cv::Range**</a> is a template class for specifying a continuous sub-sequence (slice) of a sequence by providing the inclusive `start` index and exclusive `end` index as we will observe in the following example.
+
+**Example 4**
+
+```c++
+#include "opencv2/core.hpp" 
+#include <iostream>
+
+int main ()
+{
+  // Create a 10x10 2-D array with random values between 1 and 100 
+  const cv::Mat m9 {cv::Matx<int, 10, 10>::randu(1, 100)}; 
+  std::cout << "\nm9 = \n" << m9 << '\n';
+
+  // 5x5 2-D array with 3 channels
+  const cv::Mat m10 { 5, 5, CV_32FC3, cv::Scalar(-1.0f, 1.0f, 0.6f) }; 
+  std::cout << "\nm10 = \n" << m10 << '\n';
+
+  // (c) Extract an array  from multiple rows
+
+  // Create a sub-array using elements from row=0 to row=1
+  auto multipleRows_m9 = m9.rowRange(0, 2); 
+  std::cout << "\nRows 0 to 1 (inclusive) from m9 = \n" 
+            << multipleRows_m9 << '\n';
+
+  // We can achieve the same as above by passing a cv::Range 
+  // object to cv::rowRange
+  auto usingCVRange_rows = m9.rowRange(cv::Range(0, 2));
+  //std::cout << "\nusingCVRange_rows = \n" << usingCVRange_rows << '\n';
+
+  // Create a sub-array using elements from row=1 to row=3
+  auto multipleRows_m10 = m10.rowRange(1, 4); 
+  std::cout << "\nRows 1 to 3 (inclusive) from m10 = \n" 
+            << multipleRows_m10 << '\n';
+
+  // (d) Extract an array from multiple columns
+
+  // Create a sub-array using elements from columns ranging 
+  // from 1 to 2 (inclusive)
+  auto multipleColumns_m9 = m9.colRange(1, 3); 
+  std::cout << "\nColumns 1 & 2 from m9 = \n" << multipleColumns_m9 << '\n';
+
+  // We can achieve the same as above by passing a cv::Range object 
+  // to cv::colRange
+  auto usingCVRange_columns = m9.colRange(cv::Range(1, 3));
+  //std::cout << "\nusingCVRange_columns = \n" << usingCVRange_columns << '\n';
+
+  // Create a sub-array using elements from columns 1 to 2 (inclusive)
+  auto multiColumns_m10 = m10.colRange(1, 3); 
+  std::cout << "\nColumns 1 & 2 from m10 = \n" << multiColumns_m10 << '\n';
+
+  std::cout << '\n';
+
+  return 0;
+
+}
+```
+
+**Output**
+
+    m9 = 
+    [8, 25, 93, 38, 61, 73, 41, 13, 28, 34;
+    19, 15, 6, 59, 66, 61, 46, 61, 38, 95;
+    92, 64, 78, 43, 95, 26, 87, 74, 72, 88;
+    10, 88, 83, 98, 59, 44, 75, 85, 13, 56;
+    75, 72, 86, 61, 37, 63, 46, 16, 42, 24;
+    15, 84, 42, 16, 77, 54, 1, 7, 14, 2;
+    85, 60, 65, 53, 61, 94, 20, 26, 93, 78;
+    11, 12, 40, 18, 77, 99, 17, 27, 36, 59;
+    4, 35, 58, 47, 82, 46, 38, 51, 32, 87;
+    45, 81, 49, 86, 6, 6, 39, 91, 68, 8]
+
+    m10 = 
+    [-1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002]
+
+    Rows 0 to 1 (inclusive) from m9 = 
+    [8, 25, 93, 38, 61, 73, 41, 13, 28, 34;
+    19, 15, 6, 59, 66, 61, 46, 61, 38, 95]
+
+    Rows 1 to 3 (inclusive) from m10 = 
+    [-1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002]
+
+    Columns 1 & 2 from m9 = 
+    [25, 93;
+    15, 6;
+    64, 78;
+    88, 83;
+    72, 86;
+    84, 42;
+    60, 65;
+    12, 40;
+    35, 58;
+    81, 49]
+
+    Columns 1 & 2 from m10 = 
+    [-1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002]
+
+3. The member function `cv::Mat diag(int d = 0) const` extracts the diagonal elements of a matrix/array. It expects an integer value that indicates which diagonal is to be extracted. If the integer is 0, then it will be the main diagonal. If the integer is positive, it will be offset from the main diagonal by that amount in the upper half of the array. If the integer is negative, then it will be from the lower half of the array. The returned array is represented as a single-column array.
+
+**Example 5**
+
+```c++
+#include "opencv2/core/core.hpp" 
+#include <iostream>
+
+int main ()
+{
+  // Create a 10x10 2-D array with random values between 1 and 100 
+  const cv::Mat m9 {cv::Matx<int, 10, 10>::randu(1, 100)}; 
+  std::cout << "\nm9 = \n" << m9 << '\n';
+
+  // Extract the main diagonal
+  auto mainDiagonal_m9 = m9.diag(0); 
+  std::cout << "\nMain diagonal of m9 = \n" << mainDiagonal_m9 << '\n';
+
+  // Extract diagonal in the upper half of array offset 
+  // by 1 from the main diagonal 
+  auto upperHalfDiagonal_m9 = m9.diag(1); 
+  std::cout << "\nUpper half diagonal offset by 1 from main diagonal = \n" 
+            << upperHalfDiagonal_m9 << '\n';
+
+  // Extract diagonal in the lower half of array offset by 2 from 
+  // the main diagonal
+  auto lowerHalfDiagonal_m9 = m9.diag(-2); 
+  std::cout << "\nLower half diagonal offset by 2 from main diagonal = \n" 
+            << lowerHalfDiagonal_m9 << '\n';
+
+  std::cout << '\n';
+
+  return 0;
+}
+```
+
+**Output**
+
+    m9 = 
+    [8, 25, 93, 38, 61, 73, 41, 13, 28, 34;
+    19, 15, 6, 59, 66, 61, 46, 61, 38, 95;
+    92, 64, 78, 43, 95, 26, 87, 74, 72, 88;
+    10, 88, 83, 98, 59, 44, 75, 85, 13, 56;
+    75, 72, 86, 61, 37, 63, 46, 16, 42, 24;
+    15, 84, 42, 16, 77, 54, 1, 7, 14, 2;
+    85, 60, 65, 53, 61, 94, 20, 26, 93, 78;
+    11, 12, 40, 18, 77, 99, 17, 27, 36, 59;
+    4, 35, 58, 47, 82, 46, 38, 51, 32, 87;
+    45, 81, 49, 86, 6, 6, 39, 91, 68, 8]
+
+    Main diagonal of m9 = 
+    [8;
+    15;
+    78;
+    98;
+    37;
+    54;
+    20;
+    27;
+    32;
+    8]
+
+    Upper half diagonal offset by 1 from main diagonal = 
+    [25;
+    6;
+    43;
+    59;
+    63;
+    1;
+    26;
+    36;
+    87]
+
+    Lower half diagonal offset by 2 from main diagonal = 
+    [92;
+    88;
+    86;
+    16;
+    61;
+    99;
+    38;
+    91]
+
+4. We can also use `operator()` to extract elements to create a sub-array. Using this operator, you can pass either a pair of ranges (a **cv::Range** for rows, and a **cv::Range** for columns) or a **cv::Rect** to specify the region you want.
+
+**Example 6**
+
+```c++
+#include "opencv2/core.hpp" 
+#include <iostream>
+
+int main ()
+{
+  // Create a 10x10 2-D array with random values between 1 and 100 
+  const cv::Mat m9 {cv::Matx<int, 10, 10>::randu(1, 100)}; 
+  std::cout << "\nm9 = \n" << m9 << '\n';
+
+  // 5x5 2-D array with 3 channels
+  const cv::Mat m10 { 5, 5, CV_32FC3, cv::Scalar(-1.0f, 1.0f, 0.6f) }; 
+  std::cout << "\nm10 = \n" << m10 << '\n';
+
+  // Extract elements from sub-region defined by rows 0 to 2 (inclusive) 
+  // and columns 0 to 1 (inclusive) 
+  auto subregion_m9 =  m9(cv::Range(0, 3), cv::Range(0, 2)); 
+  std::cout << "\nExtract sub-region defined by rows 0 to 2 and columns 0 to 1 from m9 = \n" 
+            << subregion_m9 << '\n';
+
+  // In the following extract an array corresponding to the sub-rectangle of array m9
+  // with one corner at (row = 1, column = 1) and opposite corner at (row = 4, column = 3)
+  auto subregion2_m9 = m9(cv::Rect(1, 1, 3, 4));
+  std::cout << "\nSub-rectangle of array m9 with one corner at (row = 1, column = 1) and " 
+            << "opposite corner at (row = 4, column = 3) = \n" 
+            << subregion2_m9 << '\n';
+
+  // Extract elements from sub-region defined by rows 0 to 2 (inclusive) 
+  // and columns 0 to 2 (inclusive) 
+  auto subregion_m10 = m10(cv::Range(0, 3), cv::Range(0, 3)); 
+  std::cout << "\nExtract sub-region defined by rows 0 to 2 and columns 0 to 2 from m10 = \n" 
+            << subregion_m10 << '\n';
+
+  std::cout << '\n';
+
+  return 0;
+}
+```
+
+**Output**
+
+    m9 = 
+    [8, 25, 93, 38, 61, 73, 41, 13, 28, 34;
+    19, 15, 6, 59, 66, 61, 46, 61, 38, 95;
+    92, 64, 78, 43, 95, 26, 87, 74, 72, 88;
+    10, 88, 83, 98, 59, 44, 75, 85, 13, 56;
+    75, 72, 86, 61, 37, 63, 46, 16, 42, 24;
+    15, 84, 42, 16, 77, 54, 1, 7, 14, 2;
+    85, 60, 65, 53, 61, 94, 20, 26, 93, 78;
+    11, 12, 40, 18, 77, 99, 17, 27, 36, 59;
+    4, 35, 58, 47, 82, 46, 38, 51, 32, 87;
+    45, 81, 49, 86, 6, 6, 39, 91, 68, 8]
+
+    m10 = 
+    [-1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002]
+
+    Extract sub-region defined by rows 0 to 2 and columns 0 to 1 from m9 = 
+    [8, 25;
+    19, 15;
+    92, 64]
+
+    Sub-rectangle of array m9 with one corner at (row = 1, column = 1) and opposite corner at (row = 4, column = 3) = 
+    [15, 6, 59;
+    64, 78, 43;
+    88, 83, 98;
+    72, 86, 61]
+
+    Extract sub-region defined by rows 0 to 2 and columns 0 to 2 from m10 = 
+    [-1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002;
+    -1, 1, 0.60000002, -1, 1, 0.60000002, -1, 1, 0.60000002]
+
+
+
+
