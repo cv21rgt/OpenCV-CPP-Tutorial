@@ -13,7 +13,7 @@
 * Transposition: $A.t()$ (means $A^T$)
 * Matrix inversion and pseudo-inversion, solving linear systems and least-squares problems: $A.inv([method])$ $(\sim A<sup>-1</sup>)$, $A.inv([method])*B$ $(\sim X: AX=B)$
 * Comparison: $A$ `cmpop` $B$, $A$ `cmpop` $alpha$, $alpha$ `cmpop` $A$, where `cmpop` is one of $>, >=, ==, !=, <=, <$. The result of comparison is an 8-bit single channel mask whose elements are set to `255` (if the particular element or pair of elements satisfy the condition) or `0`.
-* Bitwise logical operations: $A$ `logicop` $B$, $A$ `logicop` $s$, $s$ `logicop` $A$, $\sim A$, where `logicop` is one of $\&$, $|$, $\hat{}$.
+* Bitwise logical operations: $A$ `logicop` $B$, $A$ `logicop` $s$, $s$ `logicop` $A$, $\sim A$, where `logicop` is one of `&` (AND), `|` (or), `^` (NOT).
 * Element-wise minimum and maximum: $min(A, B)$, $min(A, alpha)$, $max(A, B)$, $max(A, alpha)$
 * Element-wise absolute value: $abs(A)$
 * Cross-product, dot-product: $A.cross(B)$, $A.dot(B)$
