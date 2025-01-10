@@ -52,22 +52,27 @@
 
 :memo: Material relevant to each topic will be found in a folder named after each topic. The material notes are provided as **markdown** files e.g. Histograms.md
 
-:memo: Where necessary, any code files provided will follow a directory/folder structure which will allow you to build the projects using CMake. At a minimum, such a project should have the following directory structure:
+:memo: You should expect each topic to have the following directory/folder structure. However, some early topics might not have all the directories/folders as they are not required. All relevant C++ code files will be found in the sub-directory **Example-Code** - the files are structured in a way which will allow you to build the projects using CMake.
 
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">project</span>
-  <span class="o">-</span> <span class="n">README</span><span class="o">.</span><span class="n">md -> explains what will be covered in that topic/project</span>
-  <span class="o">-</span> <span class="n">Notes</span><span class="o">.</span><span class="n">md -> project notes will be sub-divided into smaller sections - you may have more than 1 file for notes</span>
-  <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt -> main CMakeLists file</span>  
-  <span class="o">-</span> <span class="n">include -> will contain header files</span>
-    <span class="o">-</span> <span class="n">project</span>
-      <span class="o">-</span> <span class="n">example</span><span class="o">.</span><span class="n">hpp</span>
-  <span class="o">-</span> <span class="n">src -> will contain source files</span>
-    <span class="o">-</span> <span class="n">project</span>
-      <span class="o">-</span> <span class="n">example</span><span class="o">.</span><span class="n">cpp</span>
-    <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt - CMakeLists that builds a library using the include/project and src/project files </span>    
-  <span class="o">-</span> <span class="n">project-app -> will contain the main.cpp file</span>
-    <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt - builds our executable file using any external libraries e.g OpenCV</span>
-    <span class="o">-</span> <span class="n">main</span><span class="o">.</span><span class="n">cpp - were you write your main code </span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">project -> main project directory/folder - usually named after topic under discussion</span>
+  <span class="o">-</span> <span class="n">README</span><span class="o">.</span><span class="n">md -> markdown file explaining what will be covered in that topic/project</span>
+  <span class="o">-</span> <span class="n">Notes</span><span class="o">.</span><span class="n">md -> markdown file with project notes - this will be sub-divided into smaller sub-sections - you may have more than 1 file for notes</span>
+  <span class="o">-</span> <span class="n">Example-Code -> directory/folder with code files</span>
+    <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt -> main CMakeLists file</span>  
+    <span class="o">-</span> <span class="n">include -> main directory/folder that contains header files</span>
+      <span class="o">-</span> <span class="n">project -> sub-directory/folder for header files </span>
+        <span class="o">-</span> <span class="n">example</span><span class="o">.</span><span class="n">hpp</span>
+      <span class="o">-</span> <span class="n">UtilityFunctions -> sub-directory/folder for header files only relevant to our library we want to build </span>
+        <span class="o">-</span> <span class="n">utility_functions</span><span class="o">.</span><span class="n">hpp</span>
+    <span class="o">-</span> <span class="n">src -> main directory/folder that contains source files</span>
+      <span class="o">-</span> <span class="n">project -> sub-directory/folder for source files</span>
+        <span class="o">-</span> <span class="n">example</span><span class="o">.</span><span class="n">cpp</span>
+      <span class="o">-</span> <span class="n">UtilityFunctions -> sub-directory/folder for source files only relevant to our library we want to build </span>
+        <span class="o">-</span> <span class="n">utility_functions</span><span class="o">.</span><span class="n">cpp</span>
+      <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt - CMakeLists that builds a library using the include/UtilityFunctions and src/UtilityFunctions files </span>    
+    <span class="o">-</span> <span class="n">project-app -> directory/folder with the main.cpp file</span>
+      <span class="o">-</span> <span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt - builds our executable file using any external libraries e.g OpenCV and our own library</span>
+      <span class="o">-</span> <span class="n">main</span><span class="o">.</span><span class="n">cpp - were you write your main code </span>
 </pre></div>
 </div>
 
