@@ -542,7 +542,7 @@ int main ()
 **Example 5**
 
 ```c++
-#include "opencv2/core/core.hpp" 
+#include "opencv2/core.hpp" 
 #include <iostream>
 
 int main ()
