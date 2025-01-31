@@ -2,13 +2,13 @@
 
 :memo: In this topic we will cover the basic core types provided by the OpenCV library:
 
-* `cv::Point`
-* `cv::Size`
-* `cv::Scalar`
-* `cv::Rect`
-* `cv::RotatedRect`
-* `cv::Matx`
-* `cv::Vec`
+* <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/1_Basic_Core_Types/1_Point_Data_Type.md">**`cv::Point`**</a>
+* <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/1_Basic_Core_Types/2_Size_Data_Type.md">**`cv::Size`**</a>
+* <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/1_Basic_Core_Types/3_Scalar_Data_Type.md">**`cv::Scalar`**</a>
+* <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/1_Basic_Core_Types/4_Rect_Data_Type.md">**`cv::Rect`**</a>
+* <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/1_Basic_Core_Types/5_RotatedRectangle_Data_Type.md">**`cv::RotatedRect`**</a>
+* <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/1_Basic_Core_Types/6_Fixed_Matrix_Data_Type.md">**`cv::Matx`**</a>
+* <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/1_Basic_Core_Types/7_Vector_Data_Type.md">**`cv::Vec`**</a>
 
 ## How to run the examples
 
