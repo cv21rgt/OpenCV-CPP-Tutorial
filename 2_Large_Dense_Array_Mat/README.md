@@ -1,6 +1,16 @@
 ## Introduction
 
-:memo: In this topic we will cover the **cv::Mat** data type. This is the data type you will use for storing large dense arrays e.g. images 
+:memo: In this topic we will cover the **cv::Mat** data type. This is the data type you will use for storing large dense arrays e.g. images
+
+:memo: It is not possible to cover all the literature on the cv::Mat data type in these notes. Some of the stuff will be explored in later tutorials.
+
+:memo: To make it easier for you to follow these notes, the topic on large dense array cv::Mat has been split into the following sub-topics - which you should follow in order:
+
+1. <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/2_Large_Dense_Array_Mat/1_Introduction.md">**Introduction**</a>
+2. <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/2_Large_Dense_Array_Mat/2_Element_Access.md">**Element_Access**</a>
+3. <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/2_Large_Dense_Array_Mat/3_Copy_Mat_Objects.md">**Copy_Mat_Objects**</a>
+4. <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/2_Large_Dense_Array_Mat/4_Large_Array_Algebra.md">**Large_Array_Algebra**</a>
+5. <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/2_Large_Dense_Array_Mat/5_More_cvMat_Functions.md">**More_cvMat_Functions**</a>
 
 ## How to run the examples
 
