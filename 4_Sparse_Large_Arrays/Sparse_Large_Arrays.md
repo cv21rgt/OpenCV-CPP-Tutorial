@@ -1174,3 +1174,350 @@ int main()
     Value at position (6, 0) returned using cv::SparseMat::find<>() = 7
 
     Value at position (1, 1, 4, 4) returned using cv::SparseMat::find<>() = 8
+
+
+### Using Iterators to Access Sparse Arrays
+
+:notebook_with_decorative_cover: We can also access the elements of a sparse array through **iterators**.
+We mainly use iterators if we want to access all the elements in a sparse array. OpenCV offers templated and non-templated iterators for sparse arrays, both of which contain **const** and **non-const** versions. The templated iterators are <a href = "https://docs.opencv.org/4.8.0/d3/d24/classcv_1_1SparseMatIterator__.html">cv::SparseMatIterator_<></a> and <a href = "https://docs.opencv.org/4.8.0/d9/d29/classcv_1_1SparseMatConstIterator__.html">cv::SparseMatConstIterator_<></a>. The non-templated forms are <a href = "https://docs.opencv.org/4.8.0/d5/d9b/classcv_1_1SparseMatIterator.html">cv::SparseMatIterator</a> and <a href = "https://docs.opencv.org/4.8.0/df/dec/classcv_1_1SparseMatConstIterator.html">cv::SparseMatConstIterator</a>. 
+
+:notebook_with_decorative_cover: Both versions are accompanied by the usual **begin()** and **end()** functions. 
+
+1. The **begin()** function returns an iterator pointing to the first sparse array element. 
+2. The **end()** function returns an iterator pointing to the element following the last sparse matrix element. *N.B: - You should never try to access the element pointed to by the **end()** iterator, it does not exist in memory and will likely crash your program or lead to undefined behaviour*.
+
+:notebook_with_decorative_cover: If you go through the class definitions of the iterators you will notice they all contain a common template function called `value<>()`. The `const` iterators have this function signature defined as `const T& value() const` - meaning you get a reference to an array element for **reading** only. The non-const iterators define this function as `T& value() const` - meaning you get a reference to an array element for **reading** or **writing**. If you do not want to use this function to access an array element you can always use the *good old, but proven*, dereference operator (`*`).
+
+**Example 10** - Using **const** iterators to traverse through a sparse array. Use `const` iterators if you have **no intention** of altering array element values during iteration - for example, if you just want to print the array elements.
+
+```c++
+#include "opencv2/core.hpp" // for all OpenCV core data types 
+#include "UtilityFunctions/utility_functions.h"  // Header file with our own functions we have written
+#include <iostream>
+#include <vector>
+
+int main()
+{
+    // We want to use the following data to create Sparse Arrays    
+    const std::vector<double> data { 1, 0, 0, 2, 0, 4, 1, 0, 0, 0, 
+                    5, 0, 0, 0, 3, 0, 4, 0, 0, 5, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 2, 6, 
+                    0, 0, 2, 0, 7, 0, 0, 4, 0, 0, 
+                    0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 
+                    0, 3, 4, 0, 0, 0, 0, 0, 5, 6, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 8, 0, 
+                    0, 0, 0, 0, 3, 0, 0, 9, 0, 4, 
+                    0, 8, 0, 0, 0, 2, 0, 0, 0, 2, 
+                    0, 0, 0, 0, 5, 7, 3, 5, 0, 8 };
+    
+    ///////////// Create a 2-D Sparse array ////////////////
+    //            =========================
+
+    // // 10x10 2-D array 
+    const int arrayDims[] { 10, 10 }; 
+    
+    // Create Sparse Array by calling our user defined function.
+    // Since we are only interested in accessing/reading array elements
+    // we will declare our array as 'const'
+    const cv::SparseMat sm4  = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data); 
+
+    // 1. Using 'const' iterators
+    //    =======================
+    
+    //    It is best to use 'const' iterators if you know you are not 
+    //    going to alter any of the array elements e.g. printing all the 
+    //    elements of a sparse array
+    
+    // a. Use the template cv::SparseMatConstIterator_ iterator to  
+    //    iterate through all the elements in a 2-D sparse array 
+    //    (this includes the zero elements) and print them
+    //    The elements are printed in a random order
+    
+    // Define iterators pointing to 'start' and '1 + end of array' positions
+    // Don't forget to specify the data types inside angle brackets
+    // Since array 'sm4' has elements of type 'CV_64F', use type 'double'
+    cv::SparseMatConstIterator_<double> it { sm4.begin<double>() };
+    cv::SparseMatConstIterator_<double> it_end { sm4.end<double>() };
+
+    // Iterate through array making sure we don't go beyong array size
+    for(it; it != it_end; ++it)
+    {
+        // Print each array element
+        // The following statement could have read: 
+        //      std::cout << *(it) << " ";
+        // when using the dereference operator
+        std::cout << it.value<double>() << " ";
+    }
+
+    // b. Use the non-template cv::SparseMatConstIterator iterator to 
+    //    iterate over all the elements in a 2-D sparse array and find their sum 
+
+    // Define iterators pointing to 'start' and '1 + end of array' positions
+    // There is no need to specify the data types inside angle brackets
+    cv::SparseMatConstIterator it_2 { sm4.begin() };
+    cv::SparseMatConstIterator it_end_2 { sm4.end() };
+
+    // Variable to hold the final sum of all the array elements
+    double sum { 0 }; 
+
+    // Iterate through array making sure we don't go beyong array size
+    for(it_2; it_2 != it_end_2; ++it_2)
+    {
+        // Sum all the elements
+        // The following is the same as: 
+        //      sum = sum + it_2.value<double>;
+        sum += it_2.value<double>();
+    }
+
+    std::cout << "\nSum of array elements in sm4 = " << sum << '\n';  
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 8 4 1 8 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 8 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
+
+    Sum of array elements in sm4 = 146
+
+:notebook_with_decorative_cover: If you look at **Example 10** above, the code for printing all the array elements of a sparse array is a candidate for code we might re-use in future, hence we will create a function to place this code in. It will be a function template, thereby allowing us to print array elements of any data type.
+
+```c++
+/**
+ * @brief Template function to print all the elements of a sparse array (including the zero's).
+ *        The elements are not printed in any logical order.
+ * 
+ * @tparam T Data type of sparse array elements e.g. if using 'CV_32F' then T == 'float'.
+ *           When using 'CV_64F' then T == 'double' etc.
+ * @param sparseArray sparse array whose elements you want to print.
+ */
+template <typename T>
+void printAllSparseArrayElements(const cv::SparseMat_<T>& sparseArray)
+{
+    // Define iterators pointing to 'start' and '1 + end of array' positions
+    // Don't forget to specify the data types inside angle brackets
+    cv::SparseMatConstIterator_<T> it { sparseArray.begin() };
+    cv::SparseMatConstIterator_<T> it_end { sparseArray.end() };
+
+    // Iterate through array making sure we don't go beyong array size
+    for(it; it != it_end; ++it)
+    {
+        /* 
+         * Print each array element
+         * 
+         * Please take note of the following points: 
+         *  1. The following statement could have read: 
+         *      std::cout << *(it) << " ";
+         *     when using the dereference operator
+         *  2. The keyword 'template' between 'it.' and 'value<T>' is required. 
+         *     See the following for the reasons why: 
+         *     https://stackoverflow.com/questions/60062567/c-why-is-the-template-keyword-required-here
+         * 
+        */
+        std::cout << it. template value<T>() << " ";
+    }
+
+}
+```
+
+:notebook_with_decorative_cover: We then add the above function to our library we are creating. As previously explained, template functions are added directly to our **utility_functions.h** header file under the **SparseArrays** namespace. We can then access this function as `CPP_CV::SparseArrays::printAllSparseArrayElements()`.
+
+**Example 11** - We will be using **non-const** iterators to traverse through a sparse array. You will notice in the following example that when using an iterator of the class `cv::SparseMatIterator_` we will not use the template function `value()<>` to get a reference of the array elements. Instead we fall back onto using dereference operator (`*`), which can be used to both access and/or modify array elements. This is because the class `cv::SparseMatIterator_` does not implement its own version of the `value()<>` template function - instead, it inherits one directly from `cv::SparseMatConstIterator`, which has the signature `const T& value() const` - meaning the function returns a reference to a `const` value, which cannot be altered.
+
+```c++
+#include "opencv2/core.hpp" // for all OpenCV core data types 
+#include "UtilityFunctions/utility_functions.h"  // Header file with our own functions we have written
+#include <iostream>
+#include <vector>
+
+int main()
+{
+    // We want to use the following data to create Sparse Arrays    
+    const std::vector<double> data { 1, 0, 0, 2, 0, 4, 1, 0, 0, 0, 
+                    5, 0, 0, 0, 3, 0, 4, 0, 0, 5, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 2, 6, 
+                    0, 0, 2, 0, 7, 0, 0, 4, 0, 0, 
+                    0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 
+                    0, 3, 4, 0, 0, 0, 0, 0, 5, 6, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 8, 0, 
+                    0, 0, 0, 0, 3, 0, 0, 9, 0, 4, 
+                    0, 8, 0, 0, 0, 2, 0, 0, 0, 2, 
+                    0, 0, 0, 0, 5, 7, 3, 5, 0, 8 };
+    
+    ///////////// Create a 2-D Sparse array ////////////////
+    //            =========================
+
+    // // 10x10 2-D array 
+    const int arrayDims[] { 10, 10 }; 
+    
+    // Create Sparse Array by calling our user defined function.
+    // Since we are also interested in both reading and modifying array elements
+    // we will NOT declare our array as 'const'
+    cv::SparseMat sm4  = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data); 
+
+    // 1. Using 'non-const' iterators
+    //    ===========================
+
+    //    It is best to use 'non-const' iterators if you know you are  
+    //    going to alter any of the array elements 
+
+    // a. Use the non-template cv::SparseMatIterator iterator to 
+    //    iterate over a 2-D sparse array, multiply each element 
+    //    with a value equal to 8 by 2
+
+    // We will print the sparse array elements before alteration
+    std::cout << "\nBefore = ";
+
+    // Use our library function to print the array elements 
+    // before we make any alterations
+    CPP_CV::SparseArrays::printAllSparseArrayElements<double>(sm4);
+
+    // Define iterators pointing to 'start' and '1 + end of array' positions
+    cv::SparseMatIterator it_3 { sm4.begin() };
+    cv::SparseMatIterator it_end_3 { sm4.end() };
+
+    // Iterate through array making sure we don't go beyong array size
+    for(it_3; it_3 != it_end_3; ++it_3)
+    {
+        // Get hold of the reference to each array element
+        auto& element = it_3.value<double>();
+
+        if(element == 8) // Check if element is equal to '8'
+        {
+            // Multiply each value equal to '8' by 2
+            // The following statement could have been written as:
+            //  element = element * 2;
+            element *= 2; 
+        }
+    }
+
+    // We will now print the sparse array elements after alteration
+    std::cout << "\nAfter = ";
+
+    // Use our library function to print the array elements
+    // You will notice all values equal to '8' have been altered to '16' 
+    CPP_CV::SparseArrays::printAllSparseArrayElements<double>(sm4);
+
+    // b. Use the template cv::SparseMatIterator_ iterator to 
+    //    iterate over the previous altered 2-D sparse array,  
+    //    then subtract '1' from each element equal to '16'
+
+    // Define iterators pointing to 'start' and '1 + end of array' positions
+    cv::SparseMatIterator_<double> it_4 { sm4.begin<double>() };
+    cv::SparseMatIterator_<double> it_end_4 { sm4.end<double>() };
+
+    // Iterate through array making sure we don't go beyong array size
+    for(it_4; it_4 != it_end_4; ++it_4)
+    {
+        // You cannot use the function value<>() here since it returns
+        // a reference to a 'const' value, which you cannot alter. 
+        auto element = *(it_4);
+
+        if(element == 16)
+        {
+            // Subtract '1' from each array element equal to '16'
+            // Use the dereference operator (*) to both 'access' and 
+            // alter array elements
+            *(it_4) = *(it_4) - 1; 
+        }
+    }
+
+    // We will print the sparse array elements after another alteration
+    std::cout << "\nAfter another alteration = ";
+
+    // Use our library function to print the array elements
+    CPP_CV::SparseArrays::printAllSparseArrayElements<double>(sm4);  
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    Before = 0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 8 4 1 8 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 8 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
+
+    After = 0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 16 4 1 16 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 16 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
+
+    After another alteration = 0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 15 4 1 15 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 15 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
+
+:notebook_with_decorative_cover: Typing out the full class names for iterator classes can be time consuming especially when you have a lot of iterator variables to declare. One solution is to use type deduction by taking advantage of the `auto` keyword. However, using `auto` can be tricky especially with `const` iterators. Just using the keyword `auto` will not suffice. Although there are a lot of <a href = "https://stackoverflow.com/questions/15233188/how-do-i-get-a-const-iterator-using-auto">solutions</a> out there, I prefer to use the function `std::as_const`, which was introduced in C++17 and can be found in the `<utility>` header file. You use `std::as_const` to wrap around the object whose type you want deducted as `const`. In the following example we will just show the declaration parts of iterators. You can always substitute these in the above examples.
+
+**Example 12** - Using `auto` when declaring objects of iterator classes
+
+```c++
+#include "opencv2/core.hpp" // for all OpenCV core data types 
+#include "UtilityFunctions/utility_functions.h" // Header file with our own functions we have written
+#include <utility> // for std::as_const
+
+int main()
+{
+    // We want to use the following data to create Sparse Arrays    
+    const std::vector<double> data { 1, 0, 0, 2, 0, 4, 1, 0, 0, 0, 
+                    5, 0, 0, 0, 3, 0, 4, 0, 0, 5, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 2, 6, 
+                    0, 0, 2, 0, 7, 0, 0, 4, 0, 0, 
+                    0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 
+                    0, 3, 4, 0, 0, 0, 0, 0, 5, 6, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 8, 0, 
+                    0, 0, 0, 0, 3, 0, 0, 9, 0, 4, 
+                    0, 8, 0, 0, 0, 2, 0, 0, 0, 2, 
+                    0, 0, 0, 0, 5, 7, 3, 5, 0, 8 };
+    
+    ///////////// Create a 2-D Sparse array ////////////////
+    //            =========================
+
+    // // 10x10 2-D array 
+    const int arrayDims[] { 10, 10 }; 
+    
+    // Create Sparse Array by calling our user defined function.
+    // Since we are also interested in both reading and modifying array elements
+    // we will NOT declare our array as 'const'
+    cv::SparseMat sm4  = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data); 
+
+    /* 
+     * 1. Using the template cv::SparseMatConstIterator_ iterator 
+     *    =======================================================
+
+     *    Use 'std::as_const' around the sparse array to make sure the  
+     *    deducted type is cv::SparseMatConstIterator_, otherwise
+     *    it will be cv::SparseMatIterator_
+     * 
+    */
+
+    auto it { std::as_const(sm4).begin<double>() };
+    auto it_end { std::as_const(sm4).end<double>() };
+
+    /*
+     * 2. Using the non-template cv::SparseMatConstIterator iterator 
+     *    ==========================================================
+     * 
+     *    Use 'std::as_const' around the sparse array to make sure the 
+     *    deducted type is  cv::SparseMatConstIterator, otherwise 
+     *    it will be cv::SparseMatIterator
+     * 
+    */ 
+    auto it_2 { std::as_const(sm4).begin() };
+    auto it_end_2 { std::as_const(sm4).end() };
+
+    // 3. Using the non-template cv::SparseMatIterator iterator
+    //    =====================================================
+
+    auto it_3 { sm4.begin() };
+    auto it_end_3 { sm4.end() };
+
+    // 4. Using the template cv::SparseMatIterator_ iterator
+    //    =====================================================
+
+    auto it_4 { sm4.begin<double>() };
+    auto it_end_4 { sm4.end<double>() };
+
+    return 0;
+}
+```
+
+:notebook_with_decorative_cover: Using `auto` for type deduction can save the programmer a lot of typing especially if dealing with long class names. However, it may not be so easy for someone else to read and understand your code. If the data type is not so obvious add a helpful comment. Another way to deal with long class name declarations is to use aliases - where you can use a shorter name as a substitute for a longer name. We will not go into greater detail about aliases here but there is a good tutorial which you can find <a href = "https://www.learncpp.com/cpp-tutorial/typedefs-and-type-aliases/">here</a>.
