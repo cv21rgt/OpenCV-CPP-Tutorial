@@ -2,8 +2,8 @@
 #define UTILITY_FUNCTIONS_H
 
 #include "opencv2/core.hpp" 
-
 #include <string_view>
+#include <iostream>
 
 namespace CPP_CV {
 
