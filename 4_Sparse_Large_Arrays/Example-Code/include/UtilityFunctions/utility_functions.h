@@ -214,6 +214,43 @@ namespace CPP_CV {
             return sparseArray;
         }
 
+
+        /**
+         * @brief Template function to print all the elements of a sparse array (including the zero's).
+         *        The elements are not printed in any logical order.
+         * 
+         * @tparam T Data type of sparse array elements e.g. if using 'CV_32F' then T == 'float'.
+         *           When using 'CV_64F' then T == 'double' etc.
+         * @param sparseArray sparse array whose elements you want to print.
+         */
+        template <typename T>
+        void printAllSparseArrayElements(const cv::SparseMat_<T>& sparseArray)
+        {
+            // Define iterators pointing to 'start' and '1 + end of array' positions
+            // Don't forget to specify the data types inside angle brackets
+            cv::SparseMatConstIterator_<T> it { sparseArray.begin() };
+            cv::SparseMatConstIterator_<T> it_end { sparseArray.end() };
+
+            // Iterate through array making sure we don't go beyong array size
+            for(it; it != it_end; ++it)
+            {
+                /* 
+                * Print each array element
+                * 
+                * Please take note of the following points: 
+                *  1. The following statement could have read: 
+                *      std::cout << *(it) << " ";
+                *     when using the dereference operator
+                *  2. The keyword 'template' between 'it.' and 'value<T>' is required. 
+                *     See the following for the reasons why: 
+                *     https://stackoverflow.com/questions/60062567/c-why-is-the-template-keyword-required-here
+                * 
+                */
+                std::cout << it. template value<T>() << " ";
+            }
+
+        }
+
     }
 }
 
