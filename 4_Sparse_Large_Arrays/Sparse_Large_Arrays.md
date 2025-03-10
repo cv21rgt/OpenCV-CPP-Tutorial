@@ -17,6 +17,8 @@
 
 :notebook_with_decorative_cover: Sparse representation therefore means we only store non-zero elements so that we can save a great deal on memory. In any case, most sparse objects are too huge memory wise and make it impractical to store them using dense objects like cv::Mat.
 
+:notebook_with_decorative_cover: However, as a result of operations on a sparse matrix, some of its stored elements can actually become `0`. It is up to you to detect such elements and delete them using a function like `cv::SparseMat::erase()`. 
+
 :notebook_with_decorative_cover: One downside of sparse representation is that per-element computations can be slow. However this is usually balanced off by the fact that since we only store relevant data, there can be a great economy in not having to perform a lot of operations using zero or empty entries.
 
 :notebook_with_decorative_cover: OpenCV uses the <a href = "https://docs.opencv.org/4.8.0/dd/da9/classcv_1_1SparseMat.html">cv::SparseMat</a> class to handle sparse arrays. This class works similarly to the large dense array class, cv::Mat. They both support most of the same operations and can handle the same data types. The main difference is how data is organized internally. There is also a template form (<a href = "https://docs.opencv.org/4.8.0/d7/d8a/classcv_1_1SparseMat__.html">cv::SparseMat_</a>) for sparse arrays, which inherits from cv::SparseMat. Remember that when using the template form, you have to specify the underlying data type within angle brackets e.g. **cv::SparseMat_\<float>** when the underlying data type of the array elements is `CV_32F`. Use **cv::SparseMat_\<double>** when the underlying data type of the array elements is `CV_64F`
@@ -122,6 +124,16 @@ cv::SparseMat fill1DSparseArray(const int* size0fDimensions, int dataType, const
         // value from C++ container    
         sparseArray.ref<T>(i0) += element; 
 
+        // 1. If the element is '0' we erase it from our sparse array
+        // because we only want to keep non-zero elements
+        // 2. Use 'static_cast' so we compare values of same data type
+        if(sparseArray.ref<T>(i0) == static_cast<T>(0))
+        {
+            const int element_index[] {i0};
+                    
+            sparseArray.erase(element_index);
+        }
+
         ++i0; // increment index counter
     }
 
@@ -131,7 +143,7 @@ cv::SparseMat fill1DSparseArray(const int* size0fDimensions, int dataType, const
 
 :notebook_with_decorative_cover: The function above is a template function and because we may need it in future tutorials or projects we will add it to our own library (**utility_functions_library**) we are currently creating. When dealing with template functions which you want to use in multiple files, add their full definition in the header file (*Example-Code/include/UtilityFunctions/utility_functions.h*) - see notes <a href = "https://www.learncpp.com/cpp-tutorial/using-function-templates-in-multiple-files/">here</a> for the reasoning behind it. Before we add the function, we will create another namespace called **SparseArrays** inside our main namespace **CPP_CV**. We can then access this function as `CPP_CV::SparseArrays::fill1DSparseArray()` as in the following example.
 
-**Example 2**
+**Example 2** - Fill a 1-D sparse array and also print some relevant information such as number of dimensions (use the function `int cv::SparseMat::dims() const`), data type (use the function `int cv::SparseMat::type() const`), size of array (use `int cv::SparseMat::size(int i) const`), and number of non-zero elements (use the function `cv::size_t cv::SpatMat.nzcount() const`).
 
 ```c++
 #include "opencv2/core.hpp" // for all OpenCV core data types 
@@ -165,7 +177,8 @@ int main()
     std::cout << "No. of Dimensions = " << sm4.dims() << '\n';
     std::cout << "Data type of values = " 
               << CPP_CV::General::openCVDescriptiveDataType(sm4.type()) << '\n';
-    std::cout << "Size of array= " << *(sm4.size()) << '\n';
+    std::cout << "Size of array = " << *(sm4.size()) << '\n';
+    std::cout << "No. of non-zero elements = " << sm4.nzcount() << '\n';
 
     // Create a template form of the same array
     cv::SparseMat_<float> sm5 = CPP_CV::SparseArrays::fill1DSparseArray(sizeOfDimension, CV_32F, data);
@@ -180,9 +193,11 @@ int main()
 
     No. of Dimensions = 1
     Data type of values = CV_32F or CV_32FC1 -> Array with 1 channel and primitive data type 32-bit decimal values of type float with range (-3.40282347E+38 to 3.40282347E+38)
-    Size of array= 100
+    Size of array = 100
+    No. of non-zero elements = 34
 
-2. `T& cv::SparseMat::ref(int i0, int i1, cv::size_t* hashval = 0)` - Used for 2D arrays. Requires two indices (`i0` and `i1`) for the element in question. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 2-Dimensional `cv::SparseMat` from data contained in a std::vector.
+2. `T& cv::SparseMat::ref(int i0, int i1, cv::size_t* hashval = 0)` - Used for 2D arrays. Requires two indices (`i0` and `i1`) for the element in question. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 2-Dimensional `cv::SparseMat` from data contained in a std::vector. Take note of the fact we use the function `void cv::SpatMat::erase(int i0, int i1, cv::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
+
 
 ```c++
 /**
@@ -220,6 +235,13 @@ cv::SparseMat fill2DSparseArray(const int* size0fDimensions, int dataType, const
             // then override it with value from std::vector    
             sparseArray.ref<T>(i0, i1) += vec[i];
 
+            // If the element is '0' we erase it from our sparse array
+            // because we only want to keep non-zero elements
+            if(sparseArray.ref<T>(i0, i1) == static_cast<T>(0))
+            {
+                sparseArray.erase(i0, i1);
+            }
+
             ++i; // increment std::vector index counter
         }
     }  
@@ -229,7 +251,7 @@ cv::SparseMat fill2DSparseArray(const int* size0fDimensions, int dataType, const
 ```
 :notebook_with_decorative_cover: We also add the above template function to our header file under the namespace **SparseArrays** inside our main namespace **CPP_CV**. We can then access this function as `CPP_CV::SparseArrays::fill2DSparseArray()` as in the following example.
 
-**Example 3**
+**Example 3** - Fill a 2-D sparse array and print some relevant information.
 
 ```c++
 #include "opencv2/core.hpp" // for all OpenCV core data types 
@@ -262,14 +284,16 @@ int main()
     std::cout << "No. of Dimensions = " << sm4.dims() << '\n';
     std::cout << "Data type of values = " 
               << CPP_CV::General::openCVDescriptiveDataType(sm4.type()) << '\n';
-    std::cout << "Size of array= " << sm4.size(0) << " x " << sm4.size(1) << '\n';
+    std::cout << "Size of array = " << sm4.size(0) << " x " << sm4.size(1) << '\n';
+    std::cout << "No. of non-zero elements = " << sm4.nzcount() << '\n';
 
     // Create a template form of the same array
     cv::SparseMat_<double> sm5 = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data);
     std::cout << "No. of Dimensions = " << sm5.dims() << '\n';
     std::cout << "Data type of values = " 
               << CPP_CV::General::openCVDescriptiveDataType(sm5.type()) << '\n';
-    std::cout << "Size of array= " << sm4.size(0) << " x " << sm4.size(1) << '\n';
+    std::cout << "Size of array= " << sm5.size(0) << " x " << sm5.size(1) << '\n';
+    std::cout << "No. of non-zero elements = " << sm5.nzcount() << '\n';
     
     std::cout << '\n';
 
@@ -281,13 +305,15 @@ int main()
 
     No. of Dimensions = 2
     Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 10
+    Size of array = 10 x 10
+    No. of non-zero elements = 34
 
     No. of Dimensions = 2
     Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 10
+    Size of array = 10 x 10
+    No. of non-zero elements = 34
 
-3. `T& cv::SparseMat::ref(int i0, int i1, int i2, cv::size_t* hashval = 0)` - Used for 3D arrays. This requires 3 indices, `i0`, `i1` and `i2`. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 3-Dimensional `cv::SparseMat` from data contained in a std::vector. 
+3. `T& cv::SparseMat::ref(int i0, int i1, int i2, cv::size_t* hashval = 0)` - Used for 3D arrays. This requires 3 indices, `i0`, `i1` and `i2`. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 3-Dimensional `cv::SparseMat` from data contained in a std::vector. Take note of the fact we use the function `void cv::SpatMat::erase(int i0, int i1, int i2, cv::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
 
 ```c++
 /**
@@ -326,6 +352,13 @@ cv::SparseMat fill3DSparseArray(const int* size0fDimensions, int dataType, const
                 // Get reference to 3-D Sparse array value at index (i0, i1, i2), 
                 // then override it with value from std::vector    
                 sparseArray.ref<T>(i0, i1, i2) += vec[i];
+
+                // If the element is '0' we erase it from our sparse array
+                // because we only want to keep non-zero elements
+                if(sparseArray.ref<T>(i0, i1, i2) == static_cast<T>(0))
+                {
+                    sparseArray.erase(i0, i1, i2);
+                }
                 
                 ++i; // increment std::vector index counter
             }
@@ -337,7 +370,7 @@ cv::SparseMat fill3DSparseArray(const int* size0fDimensions, int dataType, const
 ```
 :notebook_with_decorative_cover: We also add the above template function to our header file under the namespace **SparseArrays** inside our main namespace **CPP_CV**. We can then access this function as `CPP_CV::SparseArrays::fill3DSparseArray()` as in the following example.
 
-**Example 4**
+**Example 4** - fill a 3-D sparse array and print some relevant information
 
 ```c++
 #include "opencv2/core.hpp" // for all OpenCV core data types 
@@ -371,14 +404,16 @@ int main()
     std::cout << "Data type of values = " << CPP_CV::General::openCVDescriptiveDataType(sm4.type()) << '\n';
     std::cout << "Size of array= " << sm4.size(0) << " x " << sm4.size(1) << " x " << sm4.size(2) 
               << '\n';
+    std::cout << "No. of non-zero elements = " << sm4.nzcount() << '\n';
   
     // Create a template form of the same array
     cv::SparseMat_<double> sm5 = CPP_CV::SparseArrays::fill3DSparseArray(arrayDims, CV_64F, data);
     std::cout << "\nNo. of Dimensions = " << sm5.dims() << '\n';
     std::cout << "Data type of values = " 
               << CPP_CV::General::openCVDescriptiveDataType(sm5.type()) << '\n';
-    std::cout << "Size of array= " << sm4.size(0) << " x " << sm4.size(1) << " x " << sm4.size(2) 
+    std::cout << "Size of array = " << sm5.size(0) << " x " << sm5.size(1) << " x " << sm5.size(2) 
               << '\n';
+    std::cout << "No. of non-zero elements = " << sm5.nzcount() << '\n';
     
     std::cout << '\n';
 
@@ -390,13 +425,15 @@ int main()
 
     No. of Dimensions = 3
     Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 5 x 2
+    Size of array = 10 x 5 x 2
+    No. of non-zero elements = 34
 
     No. of Dimensions = 3
     Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 5 x 2
+    Size of array = 10 x 5 x 2
+    No. of non-zero elements = 34
 
-4. `T& cv::SparseMat::ref(const int* idx, cv::size_t* hashval = 0)` - Mainly used for n-Dimensional cases where `n > 3`, but can also be used in place of the above functions for `n == 1, 2 or 3`. The parameter `idx` is a pointer to a C-style array of integers, which represent the indices of the element in question. This might be confusing for some people especially if they are not comfortable with C-style arrays, hence the need to take a short detour here using a simple example. If dealing with a 2D sparse array and you are interested in element at position (2, 3), you declare your C-style array of element indices as `const int idx[] {2,3};`. By default C-style arrays decay to pointers with the same data type as the original array, hence when passed to our function the data type of `idx` becomes `const int*`. I hope this helps. You can also read this detailed material <a href = "https://www.learncpp.com/cpp-tutorial/introduction-to-c-style-arrays/">here</a> on C-style arrays.  The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 4-Dimensional `cv::SparseMat` from data contained in a std::vector. Using this function you can adapt it to create your own 5-Dimensional or higher sparse arrays. 
+4. `T& cv::SparseMat::ref(const int* idx, cv::size_t* hashval = 0)` - Mainly used for n-Dimensional cases where `n > 3`, but can also be used in place of the above functions for `n == 1, 2 or 3`. The parameter `idx` is a pointer to a C-style array of integers, which represent the indices of the element in question. This might be confusing for some people especially if they are not comfortable with C-style arrays, hence the need to take a short detour here using a simple example. If dealing with a 2D sparse array and you are interested in element at position (2, 3), you declare your C-style array of element indices as `const int idx[] {2,3};`. By default C-style arrays decay to pointers with the same data type as the original array, hence when passed to our function the data type of `idx` becomes `const int*`. I hope this helps. You can also read this detailed material <a href = "https://www.learncpp.com/cpp-tutorial/introduction-to-c-style-arrays/">here</a> on C-style arrays.  The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 4-Dimensional `cv::SparseMat` from data contained in a std::vector. Using this function you can adapt it to create your own 5-Dimensional or higher sparse arrays. Take note of the fact we use the function `void cv::SpatMat::erase(const int* idx, cv::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
 
 ```c++
 /**
@@ -452,6 +489,13 @@ cv::SparseMat fill4DSparseArray(const int* size0fDimensions, int dataType, const
                     //    are provided in a C- style array 'idx' 
                     // 2. Override empty index value with value from std::vector    
                     sparseArray.ref<T>(idx) += vec[i];
+
+                    // If the element is '0' we erase it from our sparse array
+                    // because we only want to keep non-zero elements
+                    if(sparseArray.ref<T>(idx) == static_cast<T>(0))
+                    {
+                        sparseArray.erase(idx);
+                    }
     
                     ++i; // increment std::vector index counter
                 }              
@@ -465,7 +509,7 @@ cv::SparseMat fill4DSparseArray(const int* size0fDimensions, int dataType, const
 
 :notebook_with_decorative_cover: We also add the above template function to our header file under the namespace **SparseArrays** inside our main namespace **CPP_CV**. We can then access this function as `CPP_CV::SparseArrays::fill4DSparseArray()` as in the following example. 
 
-**Example 5**
+**Example 5** - fill a 4-D sparse array
 
 ```c++
 #include "opencv2/core.hpp" // for all OpenCV core data types 
@@ -488,27 +532,29 @@ int main()
                     0, 0, 0, 0, 5, 7, 3, 5, 0, 8 };
     
 
-    // Provide size of each dimension in a C-styloe array
-    const int arrayDims[] { 2, 2, 5, 5 }; // 2x2x5x5 4-D array 
+    // 2x2x5x5 4-D array 
+    const int arrayDims_4D[] { 2, 2, 5, 5 }; 
     
     // Create Sparse Array by calling our user defined function.
     // N.B: If you intend to later access a Sparse Array elements using a function 
     //      like ref(),  DO NOT make your array 'const'
-    cv::SparseMat sm4  = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims, CV_64F, data); 
+    cv::SparseMat sm6  = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims_4D, CV_64F, data); 
     
-    // Print some relevant information about sparse array
-    std::cout << "\nNo. of Dimensions = " << sm4.dims() << '\n';
-    std::cout << "Data type of values = " << CPP_CV::General::openCVDescriptiveDataType(sm4.type()) << '\n';
-    std::cout << "Size of array= " << sm4.size(0) << " x " << sm4.size(1) 
-              << " x " << sm4.size(2) << " x " << sm4.size(3) << '\n';
-        
+    // Print some relevant information about the 4-D array
+    std::cout << "\nNo. of Dimensions = " << sm6.dims() << '\n';
+    std::cout << "Data type of values = " << CPP_CV::General::openCVDescriptiveDataType(sm6.type()) << '\n';
+    std::cout << "Size of array= " << sm6.size(0) << " x " << sm6.size(1) 
+              << " x " << sm6.size(2) << " x " << sm6.size(3) << '\n';
+    std::cout << "No. of non-zero elements = " << sm6.nzcount() << '\n'; 
+
     // Create a template form of the same array
-    cv::SparseMat_<double> sm5 = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims, CV_64F, data);
-    std::cout << "\nNo. of Dimensions = " << sm5.dims() << '\n';
+    cv::SparseMat_<double> sm7 = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims_4D, CV_64F, data);
+    std::cout << "\nNo. of Dimensions = " << sm7.dims() << '\n';
     std::cout << "Data type of values = " 
-              << CPP_CV::General::openCVDescriptiveDataType(sm5.type()) << '\n';
-    std::cout << "Size of array= " << sm5.size(0) << " x " << sm5.size(1) 
-              << " x " << sm5.size(2) << " x " << sm5.size(3) << '\n';
+              << CPP_CV::General::openCVDescriptiveDataType(sm7.type()) << '\n';
+    std::cout << "Size of array= " << sm7.size(0) << " x " << sm7.size(1) 
+              << " x " << sm7.size(2) << " x " << sm7.size(3) << '\n'; 
+    std::cout << "No. of non-zero elements = " << sm7.nzcount() << '\n';
 
     std::cout << '\n';
 
@@ -519,11 +565,13 @@ int main()
 
     No. of Dimensions = 4
     Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 2 x 2 x 5 x 5   
+    Size of array = 2 x 2 x 5 x 5
+    No. of non-zero elements = 34
 
     No. of Dimensions = 4
     Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 2 x 2 x 5 x 5
+    Size of array = 2 x 2 x 5 x 5
+    No. of non-zero elements = 34
 
 
 ### Accessing cv::SparseMat array elements using Accessor Functions {#custom-id4}
