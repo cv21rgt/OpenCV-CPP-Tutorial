@@ -53,6 +53,15 @@ namespace CPP_CV {
                 // value from C++ container    
                 sparseArray.ref<T>(i0) += element; 
 
+                // If the element is '0' we erase it from our sparse array
+                // because we only want to keep non-zero elements
+                if(sparseArray.ref<T>(i0) == static_cast<T>(0))
+                {
+                    const int element_index[] {i0};
+
+                    sparseArray.erase(element_index);
+                }
+
                 ++i0; // increment index counter
             }
 
@@ -94,6 +103,13 @@ namespace CPP_CV {
                     // Get reference to 2-D Sparse array value at index (i0, i1), 
                     // then override it with value from std::vector    
                     sparseArray.ref<T>(i0, i1) += vec[i];
+
+                    // If the element is '0' we erase it from our sparse array
+                    // because we only want to keep non-zero elements
+                    if(sparseArray.ref<T>(i0, i1) == static_cast<T>(0))
+                    {
+                        sparseArray.erase(i0, i1);
+                    }
                     
                     ++i; // increment std::vector index counter
                 }
@@ -139,6 +155,13 @@ namespace CPP_CV {
                         // Get reference to 3-D Sparse array value at index (i0, i1, i2), 
                         // then override it with value from std::vector    
                         sparseArray.ref<T>(i0, i1, i2) += vec[i];
+
+                        // If the element is '0' we erase it from our sparse array
+                        // because we only want to keep non-zero elements
+                        if(sparseArray.ref<T>(i0, i1, i2) == static_cast<T>(0))
+                        {
+                            sparseArray.erase(i0, i1, i2);
+                        }
 
                         ++i; //increment std::vector index counter
                     }
@@ -202,6 +225,13 @@ namespace CPP_CV {
                             //    are provided in a C- style array 'idx' 
                             // 2. Override empty index value with value from std::vector    
                             sparseArray.ref<T>(idx) += vec[i];
+
+                            // If the element is '0' we erase it from our sparse array
+                            // because we only want to keep non-zero elements
+                            if(sparseArray.ref<T>(idx) == static_cast<T>(0))
+                            {
+                                sparseArray.erase(idx);
+                            }
             
                             ++i; // increment std::vector index counter
                         }
