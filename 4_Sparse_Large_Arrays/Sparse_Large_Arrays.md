@@ -883,18 +883,10 @@ int main()
     //      like ref(),  DO NOT make your array 'const'
     cv::SparseMat sm4  = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data); 
     
-    // Print some relevant information about the 2-D array
-    std::cout << "\nNo. of Dimensions = " << sm4.dims() << '\n';
-    std::cout << "Data type of values = " << CPP_CV::General::openCVDescriptiveDataType(sm4.type()) << '\n';
-    std::cout << "Size of array= " << sm4.size(0) << " x " << sm4.size(1) << '\n';
-    
+        
     // Create a template form of the same array
     cv::SparseMat_<double> sm5 = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data);
-    std::cout << "\nNo. of Dimensions = " << sm5.dims() << '\n';
-    std::cout << "Data type of values = " 
-              << CPP_CV::General::openCVDescriptiveDataType(sm5.type()) << '\n';
-    std::cout << "Size of array= " << sm5.size(0) << " x " << sm5.size(1) << '\n';
-    
+       
     
     ///////////// Create a 4-D Sparse array ////////////////
     //            =========================
@@ -907,21 +899,12 @@ int main()
     //      like ref(),  DO NOT make your array 'const'
     cv::SparseMat sm6  = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims_4D, CV_64F, data); 
     
-    // Print some relevant information about the 4-D array
-    std::cout << "\nNo. of Dimensions = " << sm6.dims() << '\n';
-    std::cout << "Data type of values = " << CPP_CV::General::openCVDescriptiveDataType(sm6.type()) << '\n';
-    std::cout << "Size of array= " << sm6.size(0) << " x " << sm6.size(1) 
-              << " x " << sm6.size(2) << " x " << sm6.size(3) << '\n'; 
-
+   
     // Create a template form of the same array
     cv::SparseMat_<double> sm7 = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims_4D, CV_64F, data);
-    std::cout << "\nNo. of Dimensions = " << sm7.dims() << '\n';
-    std::cout << "Data type of values = " 
-              << CPP_CV::General::openCVDescriptiveDataType(sm7.type()) << '\n';
-    std::cout << "Size of array= " << sm7.size(0) << " x " << sm7.size(1) 
-              << " x " << sm7.size(2) << " x " << sm7.size(3) << '\n';
-
+    
     // We will use cv::SparseMat::value<>() to access elements in a sparse array
+    // =========================================================================
 
     std::size_t* hashval = nullptr; // We do not know the hash value of our element, 
                                     // we will let OpenCV do this for us by setting 
@@ -932,6 +915,7 @@ int main()
     // a. Find element at position (6, 0) from a 2-D sparse array
     //    We always use the template version of value() no matter 
     //    how the sparse array (sm4) is instantiated/constructed 
+
     int i0 = 6; // row to find element
     int i1 = 0; // column to find element
     auto element_value = sm4.value<double>(i0, i1, hashval); 
@@ -966,23 +950,7 @@ int main()
 ```
 
 **Output**
-
-    No. of Dimensions = 2
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 10
-
-    No. of Dimensions = 2
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 10
-
-    No. of Dimensions = 4
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 2 x 2 x 5 x 5
-
-    No. of Dimensions = 4
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 2 x 2 x 5 x 5
-
+    
     Value at position (6, 0) returned using cv::SparseMat::value<>() = 7
 
     Value at position (1, 1, 4, 4) returned using cv::SparseMat::value<>() = 8
@@ -1027,18 +995,10 @@ int main()
     //      like ref(),  DO NOT make your array 'const'
     cv::SparseMat sm4  = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data); 
     
-    // Print some relevant information about the 2-D array
-    std::cout << "\nNo. of Dimensions = " << sm4.dims() << '\n';
-    std::cout << "Data type of values = " << CPP_CV::General::openCVDescriptiveDataType(sm4.type()) << '\n';
-    std::cout << "Size of array= " << sm4.size(0) << " x " << sm4.size(1) << '\n';
-    
+        
     // Create a template form of the same array
     cv::SparseMat_<double> sm5 = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data);
-    std::cout << "\nNo. of Dimensions = " << sm5.dims() << '\n';
-    std::cout << "Data type of values = " 
-              << CPP_CV::General::openCVDescriptiveDataType(sm5.type()) << '\n';
-    std::cout << "Size of array= " << sm5.size(0) << " x " << sm5.size(1) << '\n';
-    
+        
     
     ///////////// Create a 4-D Sparse array ////////////////
     //            =========================
@@ -1051,21 +1011,12 @@ int main()
     //      like ref(),  DO NOT make your array 'const'
     cv::SparseMat sm6  = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims_4D, CV_64F, data); 
     
-    // Print some relevant information about the 4-D array
-    std::cout << "\nNo. of Dimensions = " << sm6.dims() << '\n';
-    std::cout << "Data type of values = " << CPP_CV::General::openCVDescriptiveDataType(sm6.type()) << '\n';
-    std::cout << "Size of array= " << sm6.size(0) << " x " << sm6.size(1) 
-              << " x " << sm6.size(2) << " x " << sm6.size(3) << '\n'; 
-
+    
     // Create a template form of the same array
     cv::SparseMat_<double> sm7 = CPP_CV::SparseArrays::fill4DSparseArray(arrayDims_4D, CV_64F, data);
-    std::cout << "\nNo. of Dimensions = " << sm7.dims() << '\n';
-    std::cout << "Data type of values = " 
-              << CPP_CV::General::openCVDescriptiveDataType(sm7.type()) << '\n';
-    std::cout << "Size of array= " << sm7.size(0) << " x " << sm7.size(1) 
-              << " x " << sm7.size(2) << " x " << sm7.size(3) << '\n';
-
+    
     // We will use cv::SparseMat::find<>() to access elements in a sparse array
+    // ========================================================================
 
     std::size_t* hashval = nullptr; // We do not know the hash value of our element, 
                                     // we will let OpenCV do this for us by setting 
@@ -1136,23 +1087,7 @@ int main()
 }
 ```
 
-**Output**
-
-    No. of Dimensions = 2
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 10
-
-    No. of Dimensions = 2
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 10 x 10
-
-    No. of Dimensions = 4
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 2 x 2 x 5 x 5
-
-    No. of Dimensions = 4
-    Data type of values = CV_64F or CV_64FC1 -> Array with 1 channel and primitive data type 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
-    Size of array= 2 x 2 x 5 x 5
+**Output**    
 
     Value at position (6, 0) returned using cv::SparseMat::find<>() = 7
 
