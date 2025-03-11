@@ -1437,3 +1437,145 @@ int main()
 ```
 
 :notebook_with_decorative_cover: Using `auto` for type deduction can save the programmer a lot of typing especially if dealing with long class names. However, it may not be so easy for someone else to read and understand your code. If the data type is not so obvious add a helpful comment. Another way to deal with long class name declarations is to use aliases - where you can use a shorter name as a substitute for a longer name. We will not go into greater detail about aliases here but there is a good tutorial which you can find <a href = "https://www.learncpp.com/cpp-tutorial/typedefs-and-type-aliases/">here</a>.
+
+:notebook_with_decorative_cover: Iterators also have a function called `node()`, which as you would expect has two signatures `cv::SparseMat::Node* node() const` and `const cv::SparseMat::Node* node() const` depending on whether you are using a non-const or `const` iterator. From the signatures, these functions return a pointer to a data object - which is implemented as a **data class** of type <a href = "https://docs.opencv.org/4.8.0/d9/de0/structcv_1_1SparseMat_1_1Node.html">cv::SparseMat::Node</a>. A class containing only data variables is also known as a **struct**. This class/struct contains 3 public member variables and is defined as follows:
+
+```c++
+struct Node
+{
+    cv::size_t hashval;   // hash value of array element stored in this node
+    cv::size_t next;      // index of the next node in the same hash table
+    int idx[cv::MAX_DIM]; // index of the array element
+}
+```
+
+:notebook_with_decorative_cover: Using iterators and the `node()` function, we can access other relevant information we need about sparse array elements. In the following example, we print all the relevant information (i.e., hash value, indices and actual element value) pertaining to sparse array elements.
+
+**Example 12** - In this example we use `const cv::SparseMat::Node* node() const` to access hash values and indices of sparse array elements.
+
+```c++
+#include "opencv2/core.hpp" // for all OpenCV core data types
+#include "UtilityFunctions/utility_functions.h" // Header file with our own functions we have written
+#include <iostream> 
+#include <vector>
+
+int main()
+{
+    // We want to use the following data to create Sparse Arrays    
+    const std::vector<double> data { 1, 0, 0, 2, 0, 4, 1, 0, 0, 0, 
+                    5, 0, 0, 0, 3, 0, 4, 0, 0, 5, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 2, 6, 
+                    0, 0, 2, 0, 7, 0, 0, 4, 0, 0, 
+                    0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 
+                    0, 3, 4, 0, 0, 0, 0, 0, 5, 6, 
+                    7, 0, 0, 0, 0, 0, 0, 0, 8, 0, 
+                    0, 0, 0, 0, 3, 0, 0, 9, 0, 4, 
+                    0, 8, 0, 0, 0, 2, 0, 0, 0, 2, 
+                    0, 0, 0, 0, 5, 7, 3, 5, 0, 8 };
+    
+    ///////////// Create a 2-D Sparse array ////////////////
+    //            =========================
+
+    // // 10x10 2-D array 
+    const int arrayDims[] { 10, 10 }; 
+    
+    // Create Sparse Array by calling our user defined function.    
+    const cv::SparseMat sm4  = CPP_CV::SparseArrays::fill2DSparseArray(arrayDims, CV_64F, data); 
+
+    // Define iterators. Since we have no intention of altering 
+    // the values of our sparse array, we make use of the 'const' iterator. 
+    // We are using the template versions by preference
+    cv::SparseMatConstIterator_<double> it { sm4.begin<double>() };       
+    cv::SparseMatConstIterator_<double> it_end   { sm4.end<double>() };   
+
+    // get dimensions of our sparse array
+    const int dims { sm4.dims() };
+
+    std::cout << '\n'; // start printing the values on a new line
+    
+    // Iterate as long as we have not reached 1 past the last position in array 
+    for(it; it != it_end; ++it) 
+    {   
+        /* 
+         * We are going to use the node() function - which returns a pointer to the internal data node of
+         * the hash table used to store the sparse array elements. From your notes, the returned object 
+         * of type cv::SparseMat::Node is a class/struct  with 3 member variables and is defined as follows:
+         * 
+         *  struct Node
+         *  {
+         *      size_t hashval;       // hash value
+         *      size_t next;          // index of the next node in the same hash table
+         *      int idx[cv::MAX_DIM]; // index of the array element
+         *  }
+         * 
+        */ 
+
+        // Get hold of the pointer to each 'Node'
+        const typename cv::SparseMat_<T>::Node* n { it.node()};        
+        
+        std::cout << "Value @ Index (";
+
+        for(int i { 0 }; i < dims; ++i)
+        {
+            // Let's use the node() to display the index of an element 
+            // For dims >= 2, we use a comma to seperate the indices
+            std::cout << n->idx[i] // index
+                      << ((i < (dims - 1)) ? ", " : ")"); // for dims >= 2
+                      
+        }
+
+        // Access and print element hash value
+        std::cout << " with hash value " << n->hashval;
+
+        // To access the actual non-zero element, use the template function 
+        // 'const T& value<>() const'
+        // See https://stackoverflow.com/questions/60062567/c-why-is-the-template-keyword-required-here
+        // why the name 'template' is required in the following statement
+        std::cout << " = " << it.template value<T>() << '\n';   
+
+    }  
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    Value @ Index (0, 0) with hash value 0 = 1
+    Value @ Index (9, 4) with hash value 13864351297 = 5
+    Value @ Index (8, 9) with hash value 12323867825 = 2
+    Value @ Index (3, 2) with hash value 4621450433 = 2
+    Value @ Index (5, 8) with hash value 7702417393 = 5
+    Value @ Index (9, 5) with hash value 13864351298 = 7
+    Value @ Index (2, 8) with hash value 3080966962 = 2
+    Value @ Index (5, 9) with hash value 7702417394 = 6
+    Value @ Index (9, 6) with hash value 13864351299 = 3
+    Value @ Index (0, 3) with hash value 3 = 2
+    Value @ Index (2, 9) with hash value 3080966963 = 6
+    Value @ Index (3, 4) with hash value 4621450435 = 7
+    Value @ Index (9, 7) with hash value 13864351300 = 5
+    Value @ Index (0, 5) with hash value 5 = 4
+    Value @ Index (1, 0) with hash value 1540483477 = 5
+    Value @ Index (9, 9) with hash value 13864351302 = 15
+    Value @ Index (0, 6) with hash value 6 = 1
+    Value @ Index (3, 7) with hash value 4621450438 = 4
+    Value @ Index (6, 8) with hash value 9242900870 = 15
+    Value @ Index (4, 3) with hash value 6161933911 = 1
+    Value @ Index (7, 4) with hash value 10783384343 = 3
+    Value @ Index (4, 4) with hash value 6161933912 = 1
+    Value @ Index (8, 1) with hash value 12323867817 = 15
+    Value @ Index (1, 4) with hash value 1540483481 = 3
+    Value @ Index (4, 5) with hash value 6161933913 = 2
+    Value @ Index (7, 7) with hash value 10783384346 = 9
+    Value @ Index (2, 0) with hash value 3080966954 = 7
+    Value @ Index (5, 1) with hash value 7702417386 = 3
+    Value @ Index (1, 6) with hash value 1540483483 = 4
+    Value @ Index (5, 2) with hash value 7702417387 = 4
+    Value @ Index (7, 9) with hash value 10783384348 = 4
+    Value @ Index (8, 5) with hash value 12323867821 = 2
+    Value @ Index (1, 9) with hash value 1540483486 = 5
+    Value @ Index (6, 0) with hash value 9242900862 = 7
+
+:notebook_with_decorative_cover: When using Iterators to print the non-zero elements of a sparse array, you will notice that elements are not enumerated in a logical order (lexicographical, and so on). They come in the same order as they are stored in the hash table (semi-randomly). You may collect pointers to the nodes and sort them to get the proper ordering. Note, however, that pointers to the nodes may become invalid when you add more elements to the matrix. This may happen due to possible buffer reallocation.
