@@ -1104,9 +1104,9 @@ We mainly use iterators if we want to access all the elements in a sparse array.
 1. The **begin()** function returns an iterator pointing to the first sparse array element. 
 2. The **end()** function returns an iterator pointing to the element following the last sparse matrix element. *N.B: - You should never try to access the element pointed to by the **end()** iterator, it does not exist in memory and will likely crash your program or lead to undefined behaviour*.
 
-:notebook_with_decorative_cover: If you go through the class definitions of the iterators you will notice they all contain a common template function called `value<>()`. The `const` iterators have this function signature defined as `const T& value() const` - meaning you get a reference to an array element for **reading** only. The non-const iterators define this function as `T& value() const` - meaning you get a reference to an array element for **reading** or **writing**. If you do not want to use this function to access an array element you can always use the *good old, but proven*, dereference operator (`*`).
+:notebook_with_decorative_cover: If you go through the class definitions of the iterators you will notice they all contain a common template function called `value<>()`. The `const` iterators have this function signature defined as `const T& value<>() const` - meaning you get a reference to an array element for **reading** only. The non-const iterators define this function as `T& value<>() const` - meaning you get a reference to an array element for **reading** or **writing**. If you do not want to use this function to access an array element you can always use the *good old, but proven*, dereference operator (`*`).
 
-**Example 10** - Using **const** iterators to traverse through a sparse array. Use `const` iterators if you have **no intention** of altering array element values during iteration - for example, if you just want to print the array elements.
+**Example 10** - Using **const** iterators in combination with the `const T& value<>() const` function to traverse through a sparse array. Use `const` iterators if you have **no intention** of altering array element values during iteration - for example, if you just want to print the array elements.
 
 ```c++
 #include "opencv2/core.hpp" // for all OpenCV core data types 
@@ -1197,7 +1197,7 @@ int main()
 
 **Output**
 
-    0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 8 4 1 8 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 8 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
+    1 5 2 2 5 7 2 6 3 2 6 7 5 4 5 8 1 4 8 1 3 1 8 3 2 9 7 3 4 4 4 2 5 7 
 
     Sum of array elements in sm4 = 146
 
@@ -1205,7 +1205,7 @@ int main()
 
 ```c++
 /**
- * @brief Template function to print all the elements of a sparse array (including the zero's).
+ * @brief Template function to print all the elements of a sparse array.
  *        The elements are not printed in any logical order.
  * 
  * @tparam T Data type of sparse array elements e.g. if using 'CV_32F' then T == 'float'.
@@ -1243,7 +1243,7 @@ void printAllSparseArrayElements(const cv::SparseMat_<T>& sparseArray)
 
 :notebook_with_decorative_cover: We then add the above function to our library we are creating. As previously explained, template functions are added directly to our **utility_functions.h** header file under the **SparseArrays** namespace. We can then access this function as `CPP_CV::SparseArrays::printAllSparseArrayElements()`.
 
-**Example 11** - We will be using **non-const** iterators to traverse through a sparse array. You will notice in the following example that when using an iterator of the class `cv::SparseMatIterator_` we will not use the template function `value()<>` to get a reference of the array elements. Instead we fall back onto using dereference operator (`*`), which can be used to both access and/or modify array elements. This is because the class `cv::SparseMatIterator_` does not implement its own version of the `value()<>` template function - instead, it inherits one directly from `cv::SparseMatConstIterator`, which has the signature `const T& value() const` - meaning the function returns a reference to a `const` value, which cannot be altered.
+**Example 11** - We will be using **non-const** iterators to traverse through a sparse array. You will notice in the following example that when using an iterator of the class `cv::SparseMatIterator_` we will not use the template function `value<>()` to get a reference of the array elements. Instead we fall back onto using dereference operator (`*`), which can be used to both access and/or modify array elements. This is because the class `cv::SparseMatIterator_` does not implement its own version of the `value<>()` template function - instead, it inherits one directly from `cv::SparseMatConstIterator`, which has the signature `const T& value<>() const` - meaning the function returns a reference to a `const` value, which cannot be altered.
 
 ```c++
 #include "opencv2/core.hpp" // for all OpenCV core data types 
@@ -1357,11 +1357,9 @@ int main()
 
 **Output**
 
-    Before = 0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 8 4 1 8 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 8 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
-
-    After = 0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 16 4 1 16 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 16 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
-
-    After another alteration = 0 1 0 0 2 0 0 5 0 0 0 7 3 7 2 0 5 0 0 0 0 0 4 0 15 4 1 15 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 1 0 3 1 0 0 2 3 0 0 0 9 0 4 0 0 0 4 0 0 5 0 0 15 7 3 0 0 4 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 5 2 2 6 6 0 7 0 0 0 0 
+    Before = 1 5 2 2 5 7 2 6 3 2 6 7 5 4 5 8 1 4 8 1 3 1 8 3 2 9 7 3 4 4 4 2 5 7 
+    After = 1 5 2 2 5 7 2 6 3 2 6 7 5 4 5 16 1 4 16 1 3 1 16 3 2 9 7 3 4 4 4 2 5 7 
+    After another alteration = 1 5 2 2 5 7 2 6 3 2 6 7 5 4 5 15 1 4 15 1 3 1 15 3 2 9 7 3 4 4 4 2 5 7 
 
 :notebook_with_decorative_cover: Typing out the full class names for iterator classes can be time consuming especially when you have a lot of iterator variables to declare. One solution is to use type deduction by taking advantage of the `auto` keyword. However, using `auto` can be tricky especially with `const` iterators. Just using the keyword `auto` will not suffice. Although there are a lot of <a href = "https://stackoverflow.com/questions/15233188/how-do-i-get-a-const-iterator-using-auto">solutions</a> out there, I prefer to use the function `std::as_const`, which was introduced in C++17 and can be found in the `<utility>` header file. You use `std::as_const` to wrap around the object whose type you want deducted as `const`. In the following example we will just show the declaration parts of iterators. You can always substitute these in the above examples.
 
