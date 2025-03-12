@@ -264,10 +264,10 @@ int main()
 
 1. Constructors that do not copy or allocate the actual pre-existing data. Instead, they just initialize the cv::Mat object header with a **pointer**  that points to the source data. This makes them very efficient and can be used to process external data using OpenCV functions. The external data is not automatically deallocated, so you should take care of it. One of the most widely used source of such data is a 1-dimensional C-style array - which decays to a pointer when passed to a function. If creating a 2D cv::Mat arrays you need to make sure the number of elements in your pre-existing dataset can be converted to a 2-D array you want to create e.g. 8 elements can be converted to a (4 x 2) array, (2 x 4) array, (1 x 8) array etc. These constructors are as follows: 
 
-   * `cv::Mat(int rows, int cols, int type, void* data, cv::size_t step= cv::AUTO_STEP)` - The function parameters `rows`, `cols` and `type` all mean the same as in previous constructors above. The parameter `data` is a pointer to the source data. The parameter `step` is the number of bytes each matrix row occupies. The value should include the padding bytes at the end of each row, if any. *Remember we have already mentioned that in memory some high dimensional arrays are stored one row after another and sometimes the rows are seperated by a padding.* If the parameter is missing (set to AUTO_STEP), no padding is assumed and the actual step value is calculated as `cols*elemSize()`. In most cases you leave this with the default value.
-   * `cv::Mat(cv::Size size, int type, void* data, cv::size_t = cv::AUTO_STEP)`
-   * `cv::Mat(int ndims, const int* sizes, int type, void* data, const cv::size_t* steps = 0)` 
-   * `cv::Mat(const std::vector<int>& sizes, int type, void* data, const cv::size_t* steps = 0)`
+   * `cv::Mat(int rows, int cols, int type, void* data, std::size_t step= cv::AUTO_STEP)` - The function parameters `rows`, `cols` and `type` all mean the same as in previous constructors above. The parameter `data` is a pointer to the source data. The parameter `step` is the number of bytes each matrix row occupies. The value should include the padding bytes at the end of each row, if any. *Remember we have already mentioned that in memory some high dimensional arrays are stored one row after another and sometimes the rows are seperated by a padding.* If the parameter is missing (set to AUTO_STEP), no padding is assumed and the actual step value is calculated as `cols*elemSize()`. In most cases you leave this with the default value.
+   * `cv::Mat(cv::Size size, int type, void* data, std::size_t = cv::AUTO_STEP)`
+   * `cv::Mat(int ndims, const int* sizes, int type, void* data, const std::size_t* steps = 0)` 
+   * `cv::Mat(const std::vector<int>& sizes, int type, void* data, const std::size_t* steps = 0)`
 
 **N:B** - Be careful when dealing with integers. Most people when declaring an integer value use the reserved word `int` e.g. `int number {34}`. However, you have to take into account the number of bits used to represent that value in memory. `int` uses a minimum of 16-bits up to 64-bits for `long long int`. When it comes to OpenCV, you will later realize that a lot of images use 8-bit unsigned or signed integers and to declare such types in basic C++ use `std::uint8_t` or `std::int8_t`, respectively. These wil match up with the OpenCV types `CV_8U` and `CV_8S`.
 
@@ -302,7 +302,7 @@ int main()
                                         };
 
     // 1. cv::Mat(int rows, int cols, int type, void* data, 
-    //            cv::size_t step= cv::AUTO_STEP)
+    //            std::size_t step= cv::AUTO_STEP)
     const cv::Mat m5 { 2, 8, CV_32F, data_float }; // create a 2 x 8 array
     std::cout << "\ncv::Mat array with 2 rows and 8 columns. "
               << "\nData type is 32-bit float " 
@@ -310,7 +310,7 @@ int main()
               << m5 << '\n';
 
     // 2. cv::Mat(cv::Size size, int type, void* data, 
-    //            cv::size_t = cv::AUTO_STEP) 
+    //            std::size_t = cv::AUTO_STEP) 
     // create a 4 x 4 array
     const cv::Mat m6 { cv::Size(4, 4), CV_64F, data_double }; 
     std::cout << "\ncv::Mat array with 4 rows and 4 columns. "
@@ -319,7 +319,7 @@ int main()
               << m6 << '\n';
 
     // 3. cv::Mat(int ndims, const int* sizes, int type, 
-    //            void* data, const cv::size_t* steps = 0)
+    //            void* data, const std::size_t* steps = 0)
     const int ndims_m7 {2};
     const int sizes_m7[] {8, 2};
     // create a 8 x 2 array
@@ -330,7 +330,7 @@ int main()
               << m7 << '\n';
     
     // 4. cv::Mat(const std::vector<int>& sizes, int type, 
-    //            void* data, const cv::size_t* steps = 0)
+    //            void* data, const std::size_t* steps = 0)
     const std::vector<int> sizes_m8 {1, 16};
     // create a 1 x 16 array
     const cv::Mat m8 {sizes_m8, CV_8S, data_eight_bit_signed};  
@@ -739,7 +739,7 @@ int main()
 2. `int cv::Mat::rows` - this is a public attribute that returns the number of rows in a cv::Mat array
 3. `int cv::Mat::dims` - this is a public attribute that returns the dimensions of a cv::Mat array
 4. `cv::MatSize cv::Mat::size` - this is a public attribute that returns the size of a cv::Mat array as a cv::Size object.
-5. `cv::size_t cv::Mat::total() const` - a member function that returns the total number of array elements.
+5. `std::size_t cv::Mat::total() const` - a member function that returns the total number of array elements.
 6. `int cv::Mat::channels() const` - a member function that returns the number of channels
 7. `int cv::Mat::type() const` - a member function that returns the data type of the array elements. This function returns an integer value which is not very descriptive e.g. the integer `16` is not very descriptive and does not tell you much about the data type of the array elements. You will need something like Figure 1 to decipher what the integer actually means. Or, we could write our own function that returns a more descriptive string. If you read the README file for this repository you will remember I mentioned we will want to create our own library of functions and classes that we can use in our everyday computer vision projects. The header file will be in the `include/UtilityFunctions` directory path, while the source file will be in the `src/UtilityFunctions` directory path. Our first function in this library is `std::string_view openCVDescriptiveDataType(int value)` - it accepts an integer value returned by the function `type()` and returns a more descriptive string. You will find this function in the namespace `CPP_CV::General`
 
