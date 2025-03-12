@@ -93,7 +93,7 @@ int main()
 
 :notebook_with_decorative_cover: `cv::SparseMat::ref<>()` always returns a valid reference. If the element did not exist, it is created and initialized with the value `0`. OpenCV provides 4 variations of `cv::SparseMat::ref<>()`:
 
-1. `T& cv::SparseMat::ref(int i0, cv::size_t* hashval = 0)` - Returns a read-write reference to the specified sparse matrix element at index `i0`. This function is for 1D arrays. The parameter `hashval` is a hash key needed to *access* the element at index `i0`. You only need this parameter when accessing elements - hence we will expand on it in another section. For populating an array use the default value. The following code shows a function you can use to create and fill a 1-Dimensional `cv::SparseMat` from data contained in a std::vector. 
+1. `T& cv::SparseMat::ref(int i0, std::size_t* hashval = 0)` - Returns a read-write reference to the specified sparse matrix element at index `i0`. This function is for 1D arrays. The parameter `hashval` is a hash key needed to *access* the element at index `i0`. You only need this parameter when accessing elements - hence we will expand on it in another section. For populating an array use the default value. The following code shows a function you can use to create and fill a 1-Dimensional `cv::SparseMat` from data contained in a std::vector. 
 
 ```c++
 /**
@@ -143,7 +143,7 @@ cv::SparseMat fill1DSparseArray(const int* size0fDimensions, int dataType, const
 
 :notebook_with_decorative_cover: The function above is a template function and because we may need it in future tutorials or projects we will add it to our own library (**utility_functions_library**) we are currently creating. When dealing with template functions which you want to use in multiple files, add their full definition in the header file (*Example-Code/include/UtilityFunctions/utility_functions.h*) - see notes <a href = "https://www.learncpp.com/cpp-tutorial/using-function-templates-in-multiple-files/">here</a> for the reasoning behind it. Before we add the function, we will create another namespace called **SparseArrays** inside our main namespace **CPP_CV**. We can then access this function as `CPP_CV::SparseArrays::fill1DSparseArray()` as in the following example.
 
-**Example 2** - Fill a 1-D sparse array and also print some relevant information such as number of dimensions (use the function `int cv::SparseMat::dims() const`), data type (use the function `int cv::SparseMat::type() const`), size of array (use `int cv::SparseMat::size(int i) const`), and number of non-zero elements (use the function `cv::size_t cv::SpatMat.nzcount() const`).
+**Example 2** - Fill a 1-D sparse array and also print some relevant information such as number of dimensions (use the function `int cv::SparseMat::dims() const`), data type (use the function `int cv::SparseMat::type() const`), size of array (use `int cv::SparseMat::size(int i) const`), and number of non-zero elements (use the function `std::size_t cv::SpatMat.nzcount() const`).
 
 ```c++
 #include "opencv2/core.hpp" // for all OpenCV core data types 
@@ -196,7 +196,7 @@ int main()
     Size of array = 100
     No. of non-zero elements = 34
 
-2. `T& cv::SparseMat::ref(int i0, int i1, cv::size_t* hashval = 0)` - Used for 2D arrays. Requires two indices (`i0` and `i1`) for the element in question. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 2-Dimensional `cv::SparseMat` from data contained in a std::vector. Take note of the fact we use the function `void cv::SpatMat::erase(int i0, int i1, cv::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
+2. `T& cv::SparseMat::ref(int i0, int i1, std::size_t* hashval = 0)` - Used for 2D arrays. Requires two indices (`i0` and `i1`) for the element in question. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 2-Dimensional `cv::SparseMat` from data contained in a std::vector. Take note of the fact we use the function `void cv::SpatMat::erase(int i0, int i1, std::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
 
 
 ```c++
@@ -313,7 +313,7 @@ int main()
     Size of array = 10 x 10
     No. of non-zero elements = 34
 
-3. `T& cv::SparseMat::ref(int i0, int i1, int i2, cv::size_t* hashval = 0)` - Used for 3D arrays. This requires 3 indices, `i0`, `i1` and `i2`. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 3-Dimensional `cv::SparseMat` from data contained in a std::vector. Take note of the fact we use the function `void cv::SpatMat::erase(int i0, int i1, int i2, cv::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
+3. `T& cv::SparseMat::ref(int i0, int i1, int i2, std::size_t* hashval = 0)` - Used for 3D arrays. This requires 3 indices, `i0`, `i1` and `i2`. The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 3-Dimensional `cv::SparseMat` from data contained in a std::vector. Take note of the fact we use the function `void cv::SpatMat::erase(int i0, int i1, int i2, std::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
 
 ```c++
 /**
@@ -433,7 +433,7 @@ int main()
     Size of array = 10 x 5 x 2
     No. of non-zero elements = 34
 
-4. `T& cv::SparseMat::ref(const int* idx, cv::size_t* hashval = 0)` - Mainly used for n-Dimensional cases where `n > 3`, but can also be used in place of the above functions for `n == 1, 2 or 3`. The parameter `idx` is a pointer to a C-style array of integers, which represent the indices of the element in question. This might be confusing for some people especially if they are not comfortable with C-style arrays, hence the need to take a short detour here using a simple example. If dealing with a 2D sparse array and you are interested in element at position (2, 3), you declare your C-style array of element indices as `const int idx[] {2,3};`. By default C-style arrays decay to pointers with the same data type as the original array, hence when passed to our function the data type of `idx` becomes `const int*`. I hope this helps. You can also read this detailed material <a href = "https://www.learncpp.com/cpp-tutorial/introduction-to-c-style-arrays/">here</a> on C-style arrays.  The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 4-Dimensional `cv::SparseMat` from data contained in a std::vector. Using this function you can adapt it to create your own 5-Dimensional or higher sparse arrays. Take note of the fact we use the function `void cv::SpatMat::erase(const int* idx, cv::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
+4. `T& cv::SparseMat::ref(const int* idx, std::size_t* hashval = 0)` - Mainly used for n-Dimensional cases where `n > 3`, but can also be used in place of the above functions for `n == 1, 2 or 3`. The parameter `idx` is a pointer to a C-style array of integers, which represent the indices of the element in question. This might be confusing for some people especially if they are not comfortable with C-style arrays, hence the need to take a short detour here using a simple example. If dealing with a 2D sparse array and you are interested in element at position (2, 3), you declare your C-style array of element indices as `const int idx[] {2,3};`. By default C-style arrays decay to pointers with the same data type as the original array, hence when passed to our function the data type of `idx` becomes `const int*`. I hope this helps. You can also read this detailed material <a href = "https://www.learncpp.com/cpp-tutorial/introduction-to-c-style-arrays/">here</a> on C-style arrays.  The rest of the parameters have the same meaning as above. The following code shows a template function you can use to create and fill a 4-Dimensional `cv::SparseMat` from data contained in a std::vector. Using this function you can adapt it to create your own 5-Dimensional or higher sparse arrays. Take note of the fact we use the function `void cv::SpatMat::erase(const int* idx, std::size_t* hashval = 0)` to remove any `0`'s from our sparse array. 
 
 ```c++
 /**
@@ -580,13 +580,13 @@ int main()
 
 1. **cv::SparseMat::ptr()** - this function has several variations to cover 1D, 2D, 3D and the generic type for n-Dimensional data objects. All variations return a pointer to the specified element. This pointer is to an unsigned character (i.e., ***uchar**), which will typically need to be recast to the correct type for the array. Because this function returns a pointer, you should always check if it is **NULL** or not before doing anything with it. Dealing with NULL pointers leads to undefined behaviour and may even crush your program.
 
-    1. `uchar* cv::SparseMat::ptr(int i0, bool createMissing, cv::size_t* hashval = 0)` - This version is for accessing a 1D array. The arguments are as follows:
+    1. `uchar* cv::SparseMat::ptr(int i0, bool createMissing, std::size_t* hashval = 0)` - This version is for accessing a 1D array. The arguments are as follows:
        * **i0** - the index of the requested element
        * **createMissing** - indicates whether the element should be created if it is not already present in the array. If `createMissing = true` and the element is not in the array, it is created and initialized with `0`. A non-NULL pointer to the new element is returned by the function. If `createMissing = false` and the element is not available, a NULL pointer is returned.
        * **hashval** - If `hashval = NULL or 0`, a hash key needed to access the element will need to be computed, otherwise supply an already computed hash key. Computing the hash key value is usually done automatically by the function or by you using the function `cv::SparseMat::hash()` (which we will discuss later in this tutorial). For the meantime let the main function compute the hash value for you.
-    2. `uchar* cv::SparseMat::ptr(int i0, int i1, bool createMissing, cv::size_t* hashval = 0)` - for 2D cases. Requires two indices (**i0** and **i1**) for the element in question. The rest of the parameters have the same meaning as above. 
-    3. `uchar* cv::SparseMat::ptr(int i0, int i1, int i2, bool createMissing, cv::size_t* hashval = 0)` - for 3D cases. This requires 3 indices, **i0**, **i1** and **i2**. The rest of the parameters have the same meaning as above. 
-    4. `uchar* cv::SparseMat::ptr(const int* idx, bool createMissing, cv::size_t* hashval = 0)` - for n-D cases. The parameter **idx** is a pointer to a C-style array of integers, which represent the indices of the element in question. This might be confusing for some people especially if they are not comfortable with C-style arrays, hence the need to take a short detour here using a simple example. If dealing with a 2D sparse array and you are interested in element at position (2, 3), you declare your C-style array of element indices as `const int idx[] {2,3};`. By default C-style arrays decay to pointers with the same data type as the original array, hence when passed to our function the data type of **idx** becomes `const int*`. I hope this helps. You can also use this detailed material <a href = "https://www.learncpp.com/cpp-tutorial/introduction-to-c-style-arrays/">here</a> on C-style arrays.  The rest of the parameters have the same meaning as above. 
+    2. `uchar* cv::SparseMat::ptr(int i0, int i1, bool createMissing, std::size_t* hashval = 0)` - for 2D cases. Requires two indices (**i0** and **i1**) for the element in question. The rest of the parameters have the same meaning as above. 
+    3. `uchar* cv::SparseMat::ptr(int i0, int i1, int i2, bool createMissing, std::size_t* hashval = 0)` - for 3D cases. This requires 3 indices, **i0**, **i1** and **i2**. The rest of the parameters have the same meaning as above. 
+    4. `uchar* cv::SparseMat::ptr(const int* idx, bool createMissing, std::size_t* hashval = 0)` - for n-D cases. The parameter **idx** is a pointer to a C-style array of integers, which represent the indices of the element in question. This might be confusing for some people especially if they are not comfortable with C-style arrays, hence the need to take a short detour here using a simple example. If dealing with a 2D sparse array and you are interested in element at position (2, 3), you declare your C-style array of element indices as `const int idx[] {2,3};`. By default C-style arrays decay to pointers with the same data type as the original array, hence when passed to our function the data type of **idx** becomes `const int*`. I hope this helps. You can also use this detailed material <a href = "https://www.learncpp.com/cpp-tutorial/introduction-to-c-style-arrays/">here</a> on C-style arrays.  The rest of the parameters have the same meaning as above. 
 
 **Example 6**
 
@@ -684,7 +684,7 @@ int main()
 
     // b. Find the last element in sparse array 'sm6' (a 2x2x5x5 4-D array).
     //    The last element will have the indices (1, 1, 4, 4)
-    //    Use cv::SparseMat::ptr(const int* idx, bool createMissing, cv::size_t* hashval = 0)
+    //    Use cv::SparseMat::ptr(const int* idx, bool createMissing, std::size_t* hashval = 0)
     //    to find the element of an n-D sparse array
 
     // Place the indices of the element in a C-style array
@@ -813,7 +813,7 @@ int main()
 
     // b. Find the last element in sparse array 'sm7' (a 2x2x5x5 4-D array).
     //    The last element will have the indices (1, 1, 4, 4)
-    //    Use cv::SparseMat::ref(const int* idx, cv::size_t* hashval = 0)
+    //    Use cv::SparseMat::ref(const int* idx, std::size_t* hashval = 0)
     //    to find the element of an n-D sparse array 
 
     //    We will need to use the non-template version of ref() because 
@@ -843,11 +843,11 @@ int main()
 
 3. **cv::SparseMat::value<>()** - this template function is similar to cv::SparseMat::ref<>(), with the exception that is returns the actual value not a reference to the value. Also, the function is a **const**, meaning it does not make any changes to the array. Hence, if the element does not exists, instead of creating a new element, it simply returns the value `0`. Whether you created your sparse array using the template (`cv::SparseMat_`) or non-template versions (`cv::SparseMat`), you still need to include the array elements data type in angle brackets when using this function. There are 6 variations of this functions. The first 4 have the same signature, parameters and explanation as those for `cv::SparseMat::ref<>()`
 
-    1. `T cv::SparseMat::value(int i0, cv::size_t* hashval = 0) const` - for 1-D sparse arrays
-    2. `T cv::SparseMat::value(int i0, int i1, cv::size_t* hashval = 0) const` - for 2-D sparse arrays
-    3. `T cv::SparseMat::value(int i0, int i1, int i2, cv::size_t* hashval = 0) const` - for 3-D sparse arrays
-    4. `T cv::SparseMat::value(const int* idx cv::size_t* hashval = 0) const` - for n-Dimensional sparse arrays
-    5. `T cv::SparseMat::value(cv::Node* n) const` returns the value stored in the sparse matrix **node**. A <a href = "https://docs.opencv.org/4.8.0/d9/de0/structcv_1_1SparseMat_1_1Node.html#details">sparse matrix node</a> is a data structure used by cv::SparseMat to keep track of its values. In OpenCV it is defined as a C++ **struct** data structure with 3 public attributes: hash value of the element (`cv::size_t hashval`), index of the matrix element (`int idx[MAX_DIM]`) and index of the next node in the same hash table (`cv::size_t next`). We will discuss this structure more when we talk about using iterators to access sparse array elements.
+    1. `T cv::SparseMat::value(int i0, std::size_t* hashval = 0) const` - for 1-D sparse arrays
+    2. `T cv::SparseMat::value(int i0, int i1, std::size_t* hashval = 0) const` - for 2-D sparse arrays
+    3. `T cv::SparseMat::value(int i0, int i1, int i2, std::size_t* hashval = 0) const` - for 3-D sparse arrays
+    4. `T cv::SparseMat::value(const int* idx std::size_t* hashval = 0) const` - for n-Dimensional sparse arrays
+    5. `T cv::SparseMat::value(cv::Node* n) const` returns the value stored in the sparse matrix **node**. A <a href = "https://docs.opencv.org/4.8.0/d9/de0/structcv_1_1SparseMat_1_1Node.html#details">sparse matrix node</a> is a data structure used by cv::SparseMat to keep track of its values. In OpenCV it is defined as a C++ **struct** data structure with 3 public attributes: hash value of the element (`std::size_t hashval`), index of the matrix element (`int idx[MAX_DIM]`) and index of the next node in the same hash table (`std::size_t next`). We will discuss this structure more when we talk about using iterators to access sparse array elements.
     6. `const T cv::SparseMat::value(const cv::Node* n) const` -  a `const` version of the above function.
 
 **Example 8**
@@ -927,7 +927,7 @@ int main()
 
     // b. Find the last element in sparse array 'sm7' (a 2x2x5x5 4-D array).
     //    The last element will have the indices (1, 1, 4, 4)
-    //    Use cv::SparseMat::value(const int* idx, cv::size_t* hashval = 0)
+    //    Use cv::SparseMat::value(const int* idx, std::size_t* hashval = 0)
     //    to find the element of an n-D sparse array 
 
     //    We always use the template version of value() no matter 
@@ -957,10 +957,10 @@ int main()
 
 4. **cv::SparseMat::find<>()** - this template function works similarly to `cv::SparseMat::ref<>()` and `cv::SparseMat::value<>()`, but returns a pointer to the requested object. Unlike `cv::SparseMat::ptr()`, the pointer is of the type specified by the user and so does not need to be recast. **Prefer this template function over `cv::SparseMat::ptr()` when possible**. `cv::SparseMat::find<>()` is a **const** function. If the element does not exists, it is not created, the function simply returns a `NULL` pointer. Remember to check if the pointer is `NULL` or not before trying to dereference it. Accessing a `NULL` pointer can either crush your program or lead to undefined behaviour. Whether you created your sparse array using the template (`cv::SparseMat_`) or non-template versions (`cv::SparseMat`), you still need to include the elements data type in angle brackets when using this function. There are 4 variations of this function. The function signatures and parameter definitions are the same as those of `cv::SparseMat::ref<>()`.
 
-    1. `const T* cv::SparseMat::find(int i0, cv::size_t* hashval = 0) const` - for 1-D sparse arrays
-    2. `const T* cv::SparseMat::find(int i0, int i1, cv::size_t* hashval = 0) const` - for 2-D sparse arrays
-    3. `const T* cv::SparseMat::find(int i0, int i1, int i2, cv::size_t* hashval = 0) const` - for 3-D sparse arrays
-    4. `const T* cv::SparseMat::find(const int* idx, cv::size_t* hashval = 0) const` - for n-Dimensional sparse arrays
+    1. `const T* cv::SparseMat::find(int i0, std::size_t* hashval = 0) const` - for 1-D sparse arrays
+    2. `const T* cv::SparseMat::find(int i0, int i1, std::size_t* hashval = 0) const` - for 2-D sparse arrays
+    3. `const T* cv::SparseMat::find(int i0, int i1, int i2, std::size_t* hashval = 0) const` - for 3-D sparse arrays
+    4. `const T* cv::SparseMat::find(const int* idx, std::size_t* hashval = 0) const` - for n-Dimensional sparse arrays
 
 **Example 9**
 
@@ -1053,7 +1053,7 @@ int main()
 
     // b. Find the last element in sparse array 'sm6' (a 2x2x5x5 4-D array).
     //    The last element will have the indices (1, 1, 4, 4)
-    //    Use cv::SparseMat::find(const int* idx, cv::size_t* hashval = 0)
+    //    Use cv::SparseMat::find(const int* idx, std::size_t* hashval = 0)
     //    to find the element of an n-D sparse array
 
     // Place the indices of the element in a C-style array
@@ -1443,8 +1443,8 @@ int main()
 ```c++
 struct Node
 {
-    cv::size_t hashval;   // hash value of array element stored in this node
-    cv::size_t next;      // index of the next node in the same hash table
+    std::size_t hashval;   // hash value of array element stored in this node
+    std::size_t next;      // index of the next node in the same hash table
     int idx[cv::MAX_DIM]; // index of the array element
 }
 ```
