@@ -1612,3 +1612,12 @@ int main()
 6. `void copyTo(cv::SparseMat& m) const` - Copies all the data to the destination array `m`. Any previous contents of `m` are erased and replaced by the copied contents. There is also a second version of this function `void copyTo(cv::Mat& m) const` - which converts a sparse array to a dense array `m`.
 7. `void clear()` - sets all the sparse array elements to `0`, which means clearing the hash table. If you try to print a cleared sparse matrix nothing shows on screen.
 
+
+## References
+
+1. Kaehler, A. & Bradski, G. (2017) Learning OpenCV3: Computer Vision in C++ with the OpenCV Library.
+2. https://www.geeksforgeeks.org/implementation-of-hash-table-in-c-using-separate-chaining/
+3. https://docs.opencv.org/4.8.0/dd/da9/classcv_1_1SparseMat.html
+4. https://www.learncpp.com/
+    
+
