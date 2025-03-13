@@ -1579,3 +1579,36 @@ int main()
     Value @ Index (6, 0) with hash value 9242900862 = 7
 
 :notebook_with_decorative_cover: When using Iterators to print the non-zero elements of a sparse array, you will notice that elements are not enumerated in a logical order (lexicographical, and so on). They come in the same order as they are stored in the hash table (semi-randomly). You may collect pointers to the nodes and sort them to get the proper ordering. Note, however, that pointers to the nodes may become invalid when you add more elements to the matrix. This may happen due to possible buffer reallocation.
+
+
+### Computing a hash key
+
+:notebook_with_decorative_cover: Earlier on we mentioned that the non-zero elements of a sparse array are stored in a hash table. In order to access the elements we make use of a special value known as a **hash key**. This hash key is computed by providing the indices of the element in question to one of the 4 overloaded hash() member functions of cv::SparseMat:
+
+1. `std::size_t cv::SparseMat::hash(int i0) const` - computes hash value for an element at index `i0`. This is for 1D sparse arrays.
+2. `std::size_t cv::SparseMat::hash(int i0, int i1) const` - computes hash value for an element at index position `(i0, i1)` for a 2D sparse array.
+3. `std::size_t cv::SparseMat::hash(int i0, int i1, int i2) const` - computes hash value for an element at index position `(i0, i1, i2)` for a 3D sparse array.
+4. `std::size_t cv::SparseMat::hash(const int* idx) const` - computes hash value for an element whose index position values are in a C-style array. Applies for n-Dimensional sparse arrays.
+
+:notebook_with_decorative_cover: N.B: All the above functions return the hash value as data type **std::size_t** - a large unsigned **size_type** value. 
+
+:notebook_with_decorative_cover: After computing the hash key, OpenCV will search a list associated with that key in order to find the element in question. Normally, that list will be short (ideally only one element). Consequently, when functions look up any element in a hash table, the primary computational cost is mainly associated with the actual computation of the hash key.
+
+:notebook_with_decorative_cover: For cv::SparseMat functions that require a hash key value as one of their arguments, we have two options:
+
+1. If the hash key has already been computed using one of the **cv::SparseMat::hash()** functions, then we can save time by not recomputing it and just provide it as the **hashval** argument.
+2. If we leave the argument **hashval** with its default argument of NULL or 0, then the hash key will have to be computed during execution of that particular function. 
+
+
+### Other functions relevant to sparse arrays
+
+:notebook_with_decorative_cover: In this section we look at other relevant member functions that apply to `cv::SparseMat` arrays. We cannot cover them all, for more functions see the documentation <a href = "https://docs.opencv.org/4.8.0/dd/da9/classcv_1_1SparseMat.html#a9b5f1214a43144122b158c354a93e338">here</a>. Also remember that some member functions of cv::Mat can be applied to cv::SparseMat arrays.
+
+1. `void assignTo(cv::SparseMat& m, int type = -1) const` - use this function to convert elements of a sparse array from one data type to another data type (`type`). `m` is the output array. If it does not have a proper size or type before the operation, it is reallocated. `m` can also be the same as the input array - in which case we will be over-writing the input array as long as the input array is non-const.
+2. `int channels() const` - returns the number of channels
+3. `cv::SparseMat clone() const` - creates a full copy of the original array
+4. `void convertTo(cv::SparseMat& m, int rtype, double alpha = 1)` - multiplies all the array elements by the specified scale factor `alpha` and converts the results to the specified data type `rtype`. If `rtype` is negative, the output array `m` will have the same type as the input array. Output Array `m` can also be the same as the input array - in which case we are overwriting the input array. This is only possible if the input array is non-const. 
+5. `void convertTo(cv::Mat& m, int rtype, double alpha = 1, double beta = 0) const` - converts a sparse array to a dense `cv::Mat` array. There is also optional data type conversion (`rtype`), scaling (`alpha`) and addition (`beta`) for the values. If `rtype` is negative, the output dense array will have the same type as the input sparse array. 
+6. `void copyTo(cv::SparseMat& m) const` - Copies all the data to the destination array `m`. Any previous contents of `m` are erased and replaced by the copied contents. There is also a second version of this function `void copyTo(cv::Mat& m) const` - which converts a sparse array to a dense array `m`.
+7. `void clear()` - sets all the sparse array elements to `0`, which means clearing the hash table. If you try to print a cleared sparse matrix nothing shows on screen.
+
