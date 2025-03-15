@@ -168,3 +168,148 @@ int main()
     [21, 22, 23, 24, 25, 26, 27, 28, 29, 30;
     31, 32, 33, 34, 35, 36, 37, 38, 39, 40;
     42, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+
+
+## The cv::Ptr smart pointer
+
+:notebook_with_decorative_cover: OpenCV provides a smart pointer `cv::Ptr`. Actually, `cv::Ptr` is simply an alias or another name for the templated shared smart pointer (<a href = "https://www.learncpp.com/cpp-tutorial/stdshared_ptr/">std::shared_ptr</a>) in modern C++. This pointer allows us to create a reference to an object and then pass the pointer around instead of the object. We can also create more than one reference to the same object and OpenCV will keep track of how many pointers refer to that object. If a reference goes out of scope (for example when passed to a function and we get to the end of the function), the reference count for `cv::Ptr` is decremented. Once all the references (instances of the pointer) have gone out of scope the memory occupied by the object is de-allocated automatically without the programmer not having to do anything hence the term **smart pointer**.
+
+:notebook_with_decorative_cover: To create a `cv::Ptr` smart pointer we make use of the `cv::Ptr<T>cv::makePtr<T>(const T& a)` template function. `T` is the data type of object we want to reference, and `a` is the object. For example, to create a pointer, `p`,  to a `cv::Matx22f` object called `mtx` we write: `cv::Ptr<cv::Matx22f> p = cv::makePtr<cv::Matx22f>(mtx);`. Once you have the pointer you can access all the members (member functions and attributes) of the object in question by using the operator `->`. 
+
+:notebook_with_decorative_cover: If you look at the parameter for `cv::makePtr` it is a reference to a `const` object. This means any changes you make through the pointer (e.g. `p`) **WILL NOT** be reflected in the original object (e.g. `mtx`).
+
+**Example 3** - Demonstrate how to use the smart pointer `cv::Ptr`.
+
+```c++
+#include "opencv2/core.hpp"       // for OpenCV core types
+#include <iostream>
+
+int main()
+{
+    // Create a 2x2 matrix object to attach our pointer to
+    cv::Matx22f matx { 1, 2, 3, 4 };
+
+    // 1. We will create a pointer using the cv::makePtr() and attach it to 'matx'
+    //   ========================================================================
+
+    cv::Ptr<cv::Matx22f> p = cv::makePtr<cv::Matx22f>(matx);
+
+    // We can use the pointer to access any functions relevant to 'matx'
+
+    std::cout << "\nPrint matrix 'matx' through pointer 'p' = \n" << (*p) << '\n';
+
+    std::cout << "\nNo. of rows in 'matx' through pointer 'p' = " << p->rows << '\n';
+
+    std::cout << "\nNo. of columns in 'matx' through pointer 'p' = " << p->cols << '\n';
+
+    std::cout << "\nNo. of elements in 'matx' through pointer 'p' = " << p->channels << '\n';
+
+    std::cout << "\nTranspose of matrix 'matx' through pointer 'p'  = \n" << p->t() << '\n';
+
+
+    // 2. Lets create another smart pointer and attach it to 'matx'
+    //    ========================================================
+
+    cv::Ptr<cv::Matx22f> q = p; // simply assign the value of 'p' to 'q'
+
+    // Just like with pointer 'p', we can use pointer 'q' to 
+    // access any functions relevant to 'matx'
+
+    std::cout << "\nPrint matrix 'matx' through pointer 'q' = \n" << (*q) << '\n'; 
+
+    std::cout << "\nNo. of rows in 'matx' through pointer 'q' = " << q->rows << '\n';
+
+    std::cout << "\nNo. of columns in 'matx' through pointer 'q' = " << q->cols << '\n';
+
+    std::cout << "\nNo. of elements in 'matx' through pointer 'q' = " << q->channels << '\n';
+
+    std::cout << "\nTranspose of matrix 'matx' through pointer 'q'  = \n" << q->t() << '\n';
+
+
+    // 3. Alter element values in matrix through pointers
+    //    ===============================================
+
+    // We will create another pointer using the cv::makePtr(), 
+    // this time it will be independent of pointer 'p' 
+    cv::Ptr<cv::Matx22f> r = cv::makePtr<cv::Matx22f>(matx);
+
+    // Alter element value at index (0,0) using pointer 'p' 
+    (*p)(0,0) = 5;
+
+    // Print matrix through pointer 'p'
+    // You should see changes here 
+    std::cout << "\nPrint matrix using pointer 'p' after alterations made through pointer 'p' = \n" 
+              << *p << '\n';
+
+    // Any changes you make through pointers will NOT be 
+    // reflected in the original object.
+    std::cout << "\nPrint original matrix after alterations made through pointer 'p' = \n" 
+              << matx << '\n';
+    
+
+    // Changes will apply to reference through pointer 'q' because it 
+    // created through pointer 'p'
+    std::cout << "\nPrint matrix using pointer 'q' after alterations made through pointer 'p' = \n" 
+              << *q << '\n';
+
+    // No changes should be reflected here
+    std::cout << "\nPrint matrix using pointer 'r' after alterations made through pointer 'p' = \n" 
+              << *r << '\n';
+
+    std::cout << '\n';
+
+    return 0;
+
+} // smart pointers 'p', 'q' and 'r' go out of scope here 
+  // and their memory will be de-allocated automatically 
+```
+
+**Output**
+
+    Print matrix 'matx' through pointer 'p' = 
+    [1, 2;
+    3, 4]
+
+    No. of rows in 'matx' through pointer 'p' = 2
+
+    No. of columns in 'matx' through pointer 'p' = 2
+
+    No. of elements in 'matx' through pointer 'p' = 4
+
+    Transpose of matrix 'matx' through pointer 'p'  = 
+    [1, 3;
+    2, 4]
+
+
+
+    Print matrix 'matx' through pointer 'q' = 
+    [1, 2;
+    3, 4]
+
+    No. of rows in 'matx' through pointer 'q' = 2
+
+    No. of columns in 'matx' through pointer 'q' = 2
+
+    No. of elements in 'matx' through pointer 'q' = 4
+
+    Transpose of matrix 'matx' through pointer 'q'  = 
+    [1, 3;
+    2, 4]
+
+
+
+    Print matrix using pointer 'p' after alterations made through pointer 'p' = 
+    [5, 2;
+    3, 4]
+
+    Print original matrix after alterations made through pointer 'p' = 
+    [1, 2;
+    3, 4]
+
+    Print matrix using pointer 'q' after alterations made through pointer 'p' = 
+    [5, 2;
+    3, 4]
+
+    Print matrix using pointer 'r' after alterations made through pointer 'p' = 
+    [1, 2;
+    3, 4]
