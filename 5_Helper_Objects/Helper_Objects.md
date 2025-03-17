@@ -313,3 +313,209 @@ int main()
     Print matrix using pointer 'r' after alterations made through pointer 'p' = 
     [1, 2;
     3, 4]
+
+## The cv::Exception class and exception handling
+
+:notebook_with_decorative_cover: The standard way of handling errors in OpenCV is through exceptions. The <a href = "https://docs.opencv.org/4.8.0/d1/dee/classcv_1_1Exception.html">cv::Exception</a> class handles exceptions in OpenCV, and is derived from C++ STL exception class <a href = "https://en.cppreference.com/w/cpp/error/exception">std::exception</a>. `cv::Exception` class can be accessed through the header file `<core.hpp>`. The attributes of the `cv::Exception` class are public and have the following meanings:
+
+1. `code` - a numerical error code used to represent common errors in OpenCV. You can find them <a href = "https://docs.opencv.org/4.8.0/d1/d0d/namespacecv_1_1Error.html#a759fa1af92f7aa7377c76ffb142abcca">here</a>.
+2. `err` - a string indicating the nature of the error that generated the exception.
+3. `func` - the name of the function in which the error occurred.
+4. `file` - the name of the file in which the error occurred.
+5. `line` - an integer indicating the line number on which the error occurred in that file.
+6. `msg` - a `std::string` object, which contains a formatted error message.
+
+:notebook_with_decorative_cover: There are also two public member functions you can access:
+
+1. `void formatMessage()` - 
+2. `virtual const char* what() const throw()` - this returns the error description as a text string. This function overides the one inherited from `std::exception` class. If you have ever used exceptions in C++ you should be familiar with this function.
+
+:notebook_with_decorative_cover: To create a `cv::Exception` object you can either use the default constructor `cv::Exception()` or the value constructor `cv::Exception(int code, const std::string& err, const std::string& func, const std::string& file, int line)`. Normally the `cv::Exception` constructors are not called explicitly as you will notice in the following sub-sections.
+
+### Handling errors in a try...catch block
+
+:notebook_with_decorative_cover: From your C++ knowledge, remember that we use the **try...catch** block to catch and handle errors or exceptions raised during running of a block of code. For more notes on the basics of handling exceptions in C++ go <a href = "https://www.learncpp.com/cpp-tutorial/the-need-for-exceptions/">here</a>.
+
+**Example 4** - Use a try...catch block to handle errors. Specifically, we will try to compute the inverse of matrix. Remember you can only compute the inverse of a **square matrix**. So we will try to catch the error generated when we try to compute the inverse of a non-square matrix. We will try to catch the error if its part of the `cv::Exception` class, if not, we will see if its part of `std::exception` from which `cv::Exceptions` inherits from. If all fails, we will use a general error handler.
+
+```c++
+#include "opencv2/core.hpp"       // for OpenCV core types, cv::Exception
+#include <iostream>
+
+int main()
+{
+    /* 
+     *    Using cv::Exceptions in a try...catch block
+     *    ===========================================
+     * 
+     *    We will try to compute the inverse of matrix. Remember you can 
+     *    only compute the inverse of a square matrix. So we will try to 
+     *    catch the error generated when we try to compute the inverse
+     *    of a non-square matrix
+     * 
+     *    We will try to catch the error if its part of the cv::Exception 
+     *    class, if not, we will see if its part of std::exception
+     *    from which cv::Exceptions inherits from. If all fails, we will 
+     *    use a general error handler.
+     * 
+    */ 
+    
+    // Create a 2x3 matrix
+    const cv::Matx23f matx1 { 1, 2, 3, 4, 5, 6 };
+    
+    try // Code that may cause an error or raise an exception goes in this block
+    {
+        // try to compute the inverse of a matrix
+        auto inverse = matx1.inv(); 
+
+        std::cout << "\nInverse of 'matx1' = " << inverse << '\n';
+        
+    }
+    catch(const cv::Exception& e) // catch the exception here if its part of the cv::Exception class
+    {
+        std::cerr << "Error: " << e.what() << '\n'; // print error message
+    }
+    catch (const std::exception& e) // If error is not part of cv::Exception, 
+                                    // lets catch it here if its part of the base class std::exception
+    {
+        std::cerr << "Error: " << e.what() << '\n';
+    }
+    catch(...) // If the above fail, lets use a general error handler
+    {
+        std::cerr << "Error: Unknown exception\n";
+    }
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    Error: OpenCV(4.8.0) /Your/Home/Path/opencv/modules/core/src/lapack.cpp:875: error: (-215:Assertion failed) m == n in function 'invert'
+
+:notebook_with_decorative_cover: From the output error message above we can see that it is not very clear what the problem is. You probably need some experience with errors generated by OpenCV for you to understand what message is being communicated to you. To get around this issue, OpenCV also offers function like <a href = "https://www.learncpp.com/cpp-tutorial/introduction-to-the-preprocessor/">macro</a>'s you can take advantage of to generate more meaningful error messages. In C++, a macro is a rule that defines how input text is converted into replacement output text. Macros are much better to use as they allow you to generate more meaningful error messages. They also automatically take care of the attributes `func`, `file`, and `line`.
+
+
+### `CV_Error` macro
+
+:notebook_with_decorative_cover: This macro is defined as `#define CV_ERROR(code, msg) cv::error(code, msg, CV_Func, __FILE__, __LINE__)`. You supply the error code (`code`) and meaningful message (`msg`). In turn a more detailed error message will be displayed to the user. This message will contain the error code (which you can find <a href = "https://docs.opencv.org/4.8.0/d1/d0d/namespacecv_1_1Error.html#a759fa1af92f7aa7377c76ffb142abcca">here</a>), message, name of function that generated the error, name of file in which the error was generated and line number from which the error originated from. The best way is to illustrate this through an example.
+
+**Example 5** - Use `CV_ERROR` macro
+
+```c++
+#include "opencv2/core.hpp" // for OpenCV core types, CV_Error macro
+#include <iostream>
+
+int main()
+{
+    //    Use CV_Error when computing the inverse of a matrix. 
+    //    Matrix should always be square i.e., no. of rows == no. of columns
+    
+    const cv::Matx23f matx2 { 1, 2, 3, 4, 5, 6 };
+
+    if (matx2.rows != matx2.cols)
+    {
+        std::string msg = "Only square matrices with number of rows equal to number of columns are supported.";
+        CV_Error(cv::Error::StsBadSize, msg); 
+        
+        return -1;
+    }
+    else 
+    {
+        auto inverse = matx2.inv();
+
+        std::cout << "\ninverse = \n" << inverse;
+    }
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    terminate called after throwing an instance of 'cv::Exception'
+
+    what():  OpenCV(4.8.0) /Your/Home/Path/Helper_Objects/Example-Code/Helper-Objects-app/main.cpp:264: error: (-201:Incorrect size of input array) Only square matrices with number of rows equal to number of columns are supported. in function 'main'
+
+:notebook_with_decorative_cover: The output message above says an error was generated in file `/home/gy08rgt/Documents/OpenCV/Image_Processing/Basic_Core_Types/Helper_Objects/Helper-Objects-app/main.cpp` by function `main` on line `264`. The error references incorrect input array size and is expanded to the meaningful message `Only square matrices with number of rows equal to number of columns are supported.`
+
+### `CV_Error_` macro
+
+:notebook_with_decorative_cover: This macro is defined as `#define CV_ERROR_(code, args) cv::error(code, cv::format args, CV_Func, __FILE__, __LINE__)`. This macro can be used to construct an error message to include some dynamic information for example if you want to include information stored in function variables as part of the error message. `args` is a formated error message that includes data stored in variables or obtained from an expression.
+
+**Example 6** - Use `CV_ERROR_` macro. We are simply changing Example 5 to use the `CV_Error_` macro.
+
+```c++
+#include "opencv2/core.hpp"  // for OpenCV core types, CV_Error_ macro
+#include <iostream>
+
+int main()
+{
+    const cv::Matx23f matx2 { 1, 2, 3, 4, 5, 6 };
+
+    // Use CV_Error_ macro
+    if (matx2.rows != matx2.cols)
+    {
+        CV_Error_(cv::Error::StsBadSize, 
+            ("The no. of matrix rows (%d) is not equal to no. of columns (%d)", matx2.rows, matx2.cols));
+        
+            return -1;
+    }
+    else 
+    {
+        auto inverse = matx2.inv();
+
+        std::cout << "\ninverse = \n" << inverse;
+    }
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    terminate called after throwing an instance of 'cv::Exception'
+
+    what():  OpenCV(4.8.0) /Your/Home/Path/Helper_Objects/Example-Code/Helper-Objects-app/main.cpp:278: error: (-201:Incorrect size of input array) The no. of matrix rows (2) is not equal to no. of columns (3) in function 'main'
+
+
+### `CV_Assert` macro
+
+:notebook_with_decorative_cover: This is defined as `#define CV_Assert(expr) do { if(!!(expr)) ; else cv::error(cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__ );} while(0)`. It is implemented as a C++ <a href = "https://www.learncpp.com/cpp-tutorial/do-while-statements/">do..while</a> loop. This macro checks a condition in the form of an expression (`expr`) at runtime and raises an error (see <a href = "https://docs.opencv.org/4.8.0/db/de0/group__core__utils.html#gacbd081fdb20423a63cf731569ba70b2b">cv::error</a>) if it fails. 
+
+:notebook_with_decorative_cover: This macro checks the condition in both **Debug** and **Release** configurations of your program.
+
+**Example 7** - Use `CV_Assert` macro. 
+
+```c++
+#include "opencv2/core.hpp" // for OpenCV core types, CV_Assert
+#include <iostream>
+
+int main()
+{
+    const cv::Matx23f matx1 { 1, 2, 3, 4, 5, 6 };
+
+    // Use CV_Assert macro to test if our matrix is square
+    // That is, no. of rows should be equal to no. of columns
+    CV_Assert(matx1.rows == matx1.cols); 
+
+    // Only compute inverse if the above condition is true
+    auto i = matx1.inv(); 
+
+    std::cout << "\ninverse = \n" << i;
+
+    return 0;
+}
+```
+
+**Output**
+
+    terminate called after throwing an instance of 'cv::Exception'
+
+    what():  OpenCV(4.8.0) /Your/Home/Path/Helper_Objects/Example-Code/Helper-Objects-app/main.cpp:299: error: (-215:Assertion failed) matx2.rows == matx2.cols in function 'main'
