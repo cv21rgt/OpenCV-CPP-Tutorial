@@ -519,3 +519,111 @@ int main()
     terminate called after throwing an instance of 'cv::Exception'
 
     what():  OpenCV(4.8.0) /Your/Home/Path/Helper_Objects/Example-Code/Helper-Objects-app/main.cpp:299: error: (-215:Assertion failed) matx2.rows == matx2.cols in function 'main'
+
+
+## The cv::InputArray and cv::OutputArray classes
+
+:notebook_with_decorative_cover: OpenCV supports a number of array types, `cv::Vec`, `cv::Matx`, `cv::Scalar`, STL's `std::vector`, `cv::Mat`, `cv::Mat_`, `cv::SparseMat`, `cv::SparseMat_` etc. All these types (template and non-template forms) can be passed to functions as arguments or returned as return values. However, writing functions that would take into account all these data types would lead to repetetive code and make the OpenCV interface more complicated. 
+
+:notebook_with_decorative_cover: As a solution, the designers of OpenCV defined two class types, <a href = "https://docs.opencv.org/4.8.0/d4/d32/classcv_1_1__InputArray.html">cv::_InputArray</a> and <a href = "https://docs.opencv.org/4.8.0/d2/d9e/classcv_1_1__OutputArray.html">cv::_OutputArray</a>, which can represent any of the many array forms supported by the library. They both were assigned aliases `cv::InputArray` and `cv::OutputArray`, respectively. Please note the removal of the underscore in the aliase names. 
+
+### `cv::InputArray`
+
+:notebook_with_decorative_cover: `cv::InputArray` is for read-only input arrays into OpenCV functions.
+
+:notebook_with_decorative_cover: `cv::InputArray` can handle a variety of arrays that include `cv::Mat`, `cv::Mat_<T>`, `cv::Matx<T, m, n>`, `std::vector<T>`, `std::vector<std::vector<T> >`, `std::vector<cv::Mat>`, `std::vector<cv::Mat_<T> >`, `cv::UMat`, `std::vector<cv::UMat>`, `double`, `std::array<T, n>`, `std::array<cv::Mat, n>` etc. You can also use a matrix expression (`cv::MatExpr`)
+
+:notebook_with_decorative_cover: The class is designed solely for passing parameters. That is, normally you *should not declare class members*, local and global variables of this type.
+
+#### `cv::InputArrayOfArrays`
+
+:notebook_with_decorative_cover:  It denotes function arguments that are either vectors of vectors or vectors of matrices. In general, type support is limited to `cv::Mat` types. Other types are forbidden. 
+
+### `cv::OutputArray`
+
+:notebook_with_decorative_cover: This class is used for input/output and output function parameters. You can use the same array types as those passed to `cv::InputArray` to handle output array data.
+
+:notebook_with_decorative_cover: Just like with `cv::InputArray`, do not explicitly create `cv::OutputArray` class instances/objects. 
+
+#### `cv::OutputArrayOfArrays`
+
+:notebook_with_decorative_cover: If output from your functions is more than one array, you can use `cv::OutputArrayOfArrays` - this will take your multiple array outputs and place them into a single array. `cv::OutputArrayOfArrays` is an aliase for `cv::OutputArray`.
+
+#### `cv::InputOutputArray`
+
+:notebook_with_decorative_cover: There is also a <a href = "https://docs.opencv.org/4.8.0/d0/d46/classcv_1_1__InputOutputArray.html">cv::_InputOutputArray</a> class type, whose aliase is `cv::InputOutputArray` and is used for specifying an array for in-place computation, i.e., the input array elements will be over-written with the computed output elements.
+
+#### `cv::InputOutputArrayOfArrays`
+
+:notebook_with_decorative_cover: If you have multiple arrays for in-place computations, `cv::InputOutputArrayOfArrays` can help you handle these in one container.
+
+### `cv::noArray()`
+
+:notebook_with_decorative_cover: In addition, there is a special function `cv::noArray()` that returns a `cv::InputArray`. It is like a placeholder. You pass this function to any function in two situations:
+
+1. Pass `cv::noArray()` in place of `cv::InputArray` to indicate that the input to that particular function is not to be used.
+2. Pass `cv::noArray()` to functions that have optional output arrays. You are indicating that you do not need the corresponding output from that function.
+
+
+
+**Example 8** -  We will demonstrate how `cv::InputArray` and `cv::OutputArray` classes are able to handle a variety of OpenCV array types in the following example. We will use the function `void cv::add(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst, cv::InputAray mask = cv::noArray(), int dtype = -1)`. This function calculates the per-element sum of two arrays or an array and a scalar. It can be found in the header `<core.hpp>`. Its function parameters can be defined as follows:
+
+* `src1` - First input array or a scalar
+* `src2` - Second input array or a scalar
+* `dst` - Output array  that has the same size and number of channels as the input array(s); the depth is defined by dtype or src1/src2.
+* `mask` - Optional operation mask - 8-bit single channel array, that specifies elements of the output array to be changed. 
+* `dtype` - Optional data type of the output array. When both input arrays have the same data type, `dtype` can be set to `-1`
+
+
+```c++
+#include "opencv2/core.hpp" // for OpenCV core types, cv::add()
+#include <iostream>
+
+int main()
+{
+    // Possible values for 'InputArray'
+    const cv::Matx22f matx3 { 1, 2, 3, 4 };
+    const cv::Mat mat1 { matx3 };
+    const cv::Scalar s { 2 };     
+
+    // Possible values for 'OutputArray'
+    cv::Mat mat_output {};
+    cv::Matx22f matx_output {};
+
+    // Option 1: InputArrays are cv::Matx and cv::Mat objects, whilst OutputArray is cv::Mat
+    //           We don't want to use a 'mask' hence use of the function cv::noArray()
+    cv::add(matx3, mat1, mat_output, cv::noArray(), -1);
+    std::cout << "\nAdd 'cv::Matx' to 'cv::Mat' and save output in 'cv::Mat' = \n" 
+              << mat_output << '\n';
+
+    // Option 2: InputArrays are both cv::Matx, whilst OutputArray is cv::Mat
+    //           We don't want to use a 'mask' hence use of the function cv::noArray()
+    cv::add(matx3, matx3, mat_output, cv::noArray(), -1);
+    std::cout << "\nAdd 'cv::Matx' to 'cv::Matx' and save output in 'cv::Mat' = \n" 
+              << mat_output << '\n';
+
+    // Option 3: InputArrays are cv::Matx and cv::Scalar, whilst OutputArray is cv::Matx 
+    //           We don't want to use a 'mask' hence use of the function cv::noArray()
+    cv::add(matx3, s, matx_output, cv::noArray(), -1);
+    std::cout << "\nAdd 'cv::Matx' to 'cv::Scalar' and save output in 'cv::Matx' = \n" 
+              << matx_output << '\n';
+    
+    std::cout << '\n';
+
+    return 0;    
+}
+```
+
+**Output**
+
+    Add 'cv::Matx' to 'cv::Mat' and save output in 'cv::Mat' = 
+    [2, 4;
+    6, 8]
+
+    Add 'cv::Matx' to 'cv::Matx' and save output in 'cv::Mat' = 
+    [2, 4;
+    6, 8]
+
+    Add 'cv::Matx' to 'cv::Scalar' and save output in 'cv::Matx' = 
+    [3, 4;
+    5, 6]
