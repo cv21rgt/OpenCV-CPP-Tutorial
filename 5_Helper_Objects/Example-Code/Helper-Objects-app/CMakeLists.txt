@@ -33,7 +33,7 @@ if(OpenCV_FOUND)
     link_directories(${OpenCV_LIB_DIR})
 
     # Create an executable file from our 'main.cpp' source file
-    # The executable will be called 'Sparse_Arrays-app'
+    # The executable will be called 'Helper-Objects-app'
     add_executable(Helper-Objects-app main.cpp)
 
     # We want to use C++17 standard (minimum)
