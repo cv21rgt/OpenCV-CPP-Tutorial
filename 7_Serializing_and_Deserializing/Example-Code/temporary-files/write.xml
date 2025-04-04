@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<File_Properties>
+  <File_Path>/home/.../Example-Code/temporary-files/write.xml</File_Path>
+  <File_Name>write.xml</File_Name></File_Properties>
+<Name_of_Developer>Rodney</Name_of_Developer>
+<No_of_file_types>5</No_of_file_types>
+<File_Types>
+  XML YML YAML JSON GZ</File_Types>
+<Matrix type_id="opencv-matrix">
+  <rows>2</rows>
+  <cols>2</cols>
+  <dt>d</dt>
+  <data>
+    2. 4. 6. 8.</data></Matrix>
+<Point_Coordinates>
+  23 78</Point_Coordinates>
+<Dense_Array type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>2</cols>
+  <dt>f</dt>
+  <data>
+    2.33999991e+00 1.24500000e+00 6.09000015e+00 4.55999994e+00
+    9.06999969e+00 1.23399997e+00</data></Dense_Array>
+<ImageFormats>
+  jpg tiff jpg webp jp2</ImageFormats>
+</opencv_storage>
