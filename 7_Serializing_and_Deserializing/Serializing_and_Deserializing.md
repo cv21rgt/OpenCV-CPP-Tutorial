@@ -1525,3 +1525,12 @@ void printVector(const std::vector<T>& vec, char seperator)
     Finished reading data from file /home/.../Example-Code/temporary-files/write.yaml
 
 :notebook_with_decorative_cover: In the example above, we used two user-defined functions, `void getSequence(cv::FileNode& sequence, std::vector<T>& v)` and `void printVector(const std::vector<T>& vec, char seperator)`. These are functions we can use in future, therefore we shall add them to our own library. Since the function `void getSequence(cv::FileNode& sequence, std::vector<T>& v)` pertains to reading data from a file, we will add it to the namespace `ReadWriteFiles`. The function `void getSequence(cv::FileNode& sequence, std::vector<T>& v)` will be added to a new namespace `PrintContainers` since it pertains to printing the contents of a data container. Remember, since these are template functions, we add the whole function to the header file `utility_functions.h`.
+
+## References
+
+1. https://www.techtarget.com/whatis/definition/XML-Extensible-Markup-Language
+2. https://www.freecodecamp.org/news/what-is-yaml-the-yml-file-format/
+3. https://www.cloudbees.com/blog/yaml-tutorial-everything-you-need-get-started
+4. https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/JSON
+5. https://docs.opencv.org/4.8.0/da/d56/classcv_1_1FileStorage.html
+6. https://docs.opencv.org/4.8.0/de/dd9/classcv_1_1FileNode.html
