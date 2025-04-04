@@ -7,7 +7,6 @@
 1. Run computer vision algorithms
 2. Handle errors gracefully
 3. Write your own functions in such a way they can be used with a variety of OpenCV data types
-4. Handle user input
 
 ## The cv::TermCriteria class
 
