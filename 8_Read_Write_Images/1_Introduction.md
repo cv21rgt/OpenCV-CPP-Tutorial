@@ -59,7 +59,7 @@
 
 ![Grayscale pixels](./images/grayscale_matrix.png)
 
-## Color images
+### Color images
 
 :notebook_with_decorative_cover: Color images consists of **3 or 4** channels. The most popular one is the **RGB** (Red, Green, Blue) combination, mainly because this is how human eyes builds up colors. Sometimes we add a fourth element, known as **alpha (A)** to code the transparency of a color. This means in OpenCV the data types of color images should show `3` or `4` channels e.g. `CV_32FC3` or `CV_32FC4`.
 
