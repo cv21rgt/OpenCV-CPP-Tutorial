@@ -438,3 +438,12 @@ int main(int argc, char* argv[])
 ![multiple windows](./Example-Code/images/multiple-images.png)
 
 
+## Read a multi-page image 
+
+:notebook_with_decorative_cover: OpenCV also provides a function we can use to read a multi-page image file. A **multi-page image file** is usually a `TIFF` file, and is created by saving more than one image using a single filename. The function `cv::imreadmulti()` has two versions, one allows you to read all the images from the file and the other allows you to choose which images to read by providing a start index and the number of images to read. With both functions, images are saved into a `std::vector`.
+
+1. `bool cv::imreadmulti(const cv::String& filename, std::vector<cv::Mat>& mats, int flags = cv::IMREAD_ANYCOLOR)` - This version reads all images into the `std::vector` `mats`. Returns `true` if successful.
+
+2. `bool cv::imreadmulti(const cv::String& filename, std::vector<cv::Mat>& mats, int start, int count, int flags = cv::IMREAD_ANYCOLOR)` - This version allows you to read `count` images from index position `start`. Images are saved into the `std::vector` `mats`. Function also returns `true` if successful.
+
+:notebook_with_decorative_cover: We will provide an example on how to read multi-page image files after we have shown you how to save them first to a single file.
