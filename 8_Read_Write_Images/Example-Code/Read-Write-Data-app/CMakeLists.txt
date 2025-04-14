@@ -30,15 +30,15 @@ if(OpenCV_FOUND)
     # CMake will find these for us
     link_directories(${OpenCV_LIB_DIR})
 
-    # Create an executable file from our 'read_and_display_image.cpp' source file
-    # The executable will be called 'Read-Write-Data-app'
-    add_executable(Read-Display-Image-app read_and_display_image.cpp)
+    # Create an executable file from our 'read_display_multiple_images.cpp' source file
+    # The executable will be called 'Read-Display-Multiple-Images-app'
+    add_executable(Read-Display-Multiple-Images-app read_display_multiple_images.cpp)
 
     # We want to use C++17 standard (minimum)
-    target_compile_features(Read-Display-Image-app PRIVATE cxx_std_17)
+    target_compile_features(Read-Display-Multiple-Images-app PRIVATE cxx_std_17)
 
     # Additional dependencies
     # Our executable is dependend on OpenCV libraries and our 'utility_functions_library'
-    target_link_libraries(Read-Display-Image-app ${OpenCV_LIBS} utility_functions_library)
+    target_link_libraries(Read-Display-Multiple-Images-app ${OpenCV_LIBS} utility_functions_library)
 
 endif(OpenCV_FOUND)
