@@ -272,7 +272,13 @@ cv::ImwriteFlags imageWriteFlag(std::string_view fileExtension)
 
 ## Save multiple images to a single multi-page file
 
-**Example 2:**  Saving multiple images as a <a href = "http://www.libtiff.org/">Tag Image File Format (TIFF)</a> multi-page file. If you are curious about the integer constants corresponding to TIFF compression quality formats see <a href = "http://www.libtiff.org/functions/libtiff.html">libtiff</a>.
+:notebook_with_decorative_cover: OpenCv allows you to take multiple images and save them as a single file. Currently, you can only save the single file in <a href = "http://www.libtiff.org/">TIFF</a> format. In this case, TIFF acts as an image container that supports other image file formats. If you are curious about the integer constants corresponding to TIFF compression quality formats see <a href = "http://www.libtiff.org/functions/libtiff.html">libtiff</a>.
+
+:notebook_with_decorative_cover: If we look closely at this function signature `bool cv::imwrite(const cv::String& filename, cv::InputArray img, const std::vector<int>& params = std::vector<int>())` - the parameter `img` is of the type `cv::InputArray`, meaning we can provide all kinds of data types including a single `cv::Mat` image or a container that can hold multiple images e.g.`std::vector<cv::Mat>`. By taking advantage of this parameter we can save multiple images as a single TIFF image file. The parameter `filename` is the TIFF file we are saving our multiple images to hence should have the `.tiff` file extension.
+
+:notebook_with_decorative_cover: You can also use the function `static bool cv::imwritemulti(const cv::String& filename, cv::InputArrayOfArrays img, const std::vector<int>& params = std::vector<int>())`. The parameter `img` has to be an array containing other arrays e.g `std::vector<cv::Mat>`.
+
+**Example 2:**  Saving multiple images as a single TIFF image file. Just like in previous examples don't forget to make the necessary changes pertaining to the name of your source code and build files in your CMakeLists file.
 
 ```c++
 // Program: Save_To_Multipage_File.cpp
