@@ -342,6 +342,28 @@ namespace CPP_CV {
         }
 
 
+        /**
+         * @brief Read contents of a file (without skipping any leading whitespace) into a std::vector
+         * 
+         * @tparam T   Data type of std::vector elements
+         * @param path Full path to file to be read
+         * @param data std::vector to store file contents
+         */
+        template <typename T>
+        void readFileToVector(const std::string& path, std::vector<T>& data)
+        {
+            std::ifstream file(path);
+
+            // Do not skip any leading whitespace whilst reading file contents
+            file >> std::noskipws; 
+
+            // Use the std::copy algorithm from the STL <algorithm> header to iterate 
+            // through the file and insert all its contents into a std::vector
+            std::copy(std::istream_iterator<T>(file), 
+                    std::istream_iterator<T>(), std::back_inserter(data));
+        }
+
+
     }
 
 
