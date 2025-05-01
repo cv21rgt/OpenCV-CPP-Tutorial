@@ -30,6 +30,324 @@
 5. When writing coordinates you always start with the x-coordinate followed by the y-coordinate.
 
 
+## Draw Lines
+
+:notebook_with_decorative_cover: To draw a line connecting 2 points use the function `void cv::line(cv::InputOutputArray img, cv::Point pt1, cv::Point pt2, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8, int shift = 0)`, where, 
+
+* `img` - Image to draw on
+* `pt1` - Integer coordinates of first point of line
+* `pt2` - Integer coordinates of second point of line
+* `color` - Line color. This is of type `cv::Scalar` which by definition holds 4-values. However, since the drawing functions only use the first 3-channels, you only need to provide 3 values for 3-channel color images, and 1 value for 1-channel images. Remember, OpenCV color format is `BGR` (Blue, Green, Red). 
+* `thickness` - Line thickness. We have already discussed this parameter.
+* `lineType` - Type of the line. We have already discussed this parameter.
+* `shift` - Number of fractional bits in the point coordinates.
+
+:notebook_with_decorative_cover: If the coordinates of `pt1` or `pt2` are outside the image, the line you draw will be clipped by the image boundaries. 
+
+:notebook_with_decorative_cover: To illustrate how to draw our shapes we will create our own image and use that as some sort of canvas. The principals are the same when using an image from another source. Our canvas will be a `600 x 600` pixel image. We will allocate space for 3-channels as we want to use color in our shapes. The background color of our canvas will be gray. Since our canvas is a BGR color image with pixel values in the range `[0, 255]` we will use the data type `8-bit unsigned`. You can still use other types such as 32-bit integers, 32/64-bit floats but they unnecessarily occupy too much memory for what we want to demonstrate. Such a canvas would be created as `cv::Mat image(cv::Size(600, 600), CV_8UC3, cv::Scalar(125, 125, 125))`.
+
+**Example 1** - Draw lines between two points
+
+```c++
+#include "opencv2/core/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include "opencv2/highgui/highgui.hpp"  // for display windows
+#include "opencv2/imgproc/imgproc.hpp"  // for Drawing and Annotation functions
+
+#include <iostream>
+
+int main()
+{ 
+        
+    ///////////////////// Create a Canvas /////////////////////////////////////
+
+    // Create a 600x600 3-channel image with a gray background 
+    cv::Mat image(cv::Size(600, 600), CV_8UC3, cv::Scalar(125, 125, 125));
+
+    // check if you have successfully created the image
+    if(image.empty())
+    {
+        std::cout << "ERROR! Could not create canvas.\n";
+
+        return -1;
+    }
+
+    std::cout << "\nCanvas created...\n\n";
+    
+    ////////////////////// Draw Lines /////////////////////////////////////////
+
+    // Draw a Black line using 4-connected Bresenham algorithm
+    cv::line(image,                    // Canvas
+             cv::Point2i(0,5),         // Starting point
+             cv::Point2i(600, 5),      // End point
+             cv::Scalar(0, 0, 0),      // Color - Black
+             1,                        // Line thickness
+             cv::LINE_4);              // Use 4-CONNECTED Bresenham algorithm 
+
+    // Draw a Red line using 8-connected Bresenham algorithm
+    cv::line(image,                    // Canvas
+            cv::Point2i(0,100),        // Starting point
+            cv::Point2i(600, 100),     // End point
+            cv::Scalar(0, 0, 255),     // Color - Red
+            2,                         // Line thickness
+            cv::LINE_8);               // Use 8-CONNECTED Bresenham algorithm
+            
+    // Draw a Blue line using anti-alias
+    cv::line(image,                    // Canvas
+            cv::Point2i(0,200),        // Starting point
+            cv::Point2i(600, 200),     // End point
+            cv::Scalar(255, 0, 0),     // Color - Blue
+            3,                         // Line thickness
+            cv::LINE_AA);              // Use anti-alias  
+
+    // Draw a diagonal green line 
+    cv::line(image, 
+            cv::Point2i(0,0), 
+            cv::Point2i(600, 600), 
+            cv::Scalar(0, 255, 0), 
+            10, 
+            cv::LINE_AA);
+
+    // Draw a diagonal yellow line 
+    cv::line(image, 
+            cv::Point2i(0,600), 
+            cv::Point2i(600, 0), 
+            cv::Scalar(0, 255, 255), 
+            5, 
+            cv::LINE_AA);
+
+
+    ///////////////// Display Image Canvas //////////////////////////////// 
+
+    cv::String window_name = "Drawing Lines"; 
+    cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+    cv::imshow(window_name, image);
+
+    cv::waitKey(0);
+
+    cv::destroyWindow(window_name);
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output** - You should have an image as follows: 
+
+![Drawing Lines](./images/drawing-lines.png)
+
+## Draw Arrowed Lines
+
+:notebook_with_decorative_cover: We can also draw an arrowed line pointing from one point to another. We use the function `void cv::arrowedLine(cv::InputOutputArray img, cv::Point pt1, cv::Point pt2, const cv::Scalar& color, int thickness = 1, int line_type = 8, int shift = 0), double tipLength = 0.1`, where, 
+
+* `img` - Image to draw on
+* `pt1` - Integer coordinates of the point the arrow starts from
+* `pt2` - Integer coordinates of the point the arrow points to
+* `color` - Line color. This is of type `cv::Scalar` which by definition holds 4-values. However, since the drawing functions only use the first 3-channels, you only need to provide 3 values for 3-channel color images, and 1 value for 1-channel images. Remember, OpenCV color format is `BGR` (Blue, Green, Red). 
+* `thickness` - Line thickness. We have already discussed this parameter.
+* `line_type` - Type of the line. Same as `lineType` parameter we have already discussed.
+* `shift` - Number of fractional bits in the point coordinates.
+* `tipLength` - The length of the arrow tip in relation to the arrow length.
+
+**Example 2** - Draw arrowed lines
+
+```c++
+#include "opencv2/core/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include "opencv2/highgui/highgui.hpp"  // for display windows
+#include "opencv2/imgproc/imgproc.hpp"  // for Drawing and Annotation functions
+
+#include <iostream>
+
+int main()
+{ 
+        
+    ///////////////////// Create a Canvas //////////////////////////
+
+    // Create a 600x600 3-channel image with a gray background 
+    cv::Mat image(cv::Size(600, 600), CV_8UC3, cv::Scalar(125, 125, 125));
+
+    // check if you have successfully created the image
+    if(image.empty())
+    {
+        std::cout << "ERROR! Could not create canvas.\n";
+
+        return -1;
+    }
+
+    std::cout << "\nCanvas created...\n\n";
+    
+    ////////////////////// Draw Arrowed Lines /////////////////////////////////
+
+    // Draw a Black arrow using 4-connected Bresenham algorithm
+    cv::arrowedLine(image,             // Canvas
+             cv::Point2i(10, 50),      // Starting point
+             cv::Point2i(600, 50),     // End point
+             cv::Scalar(0, 0, 0),      // Color - Black
+             1,                        // Line thickness
+             cv::LINE_4,               // Use 4-CONNECTED Bresenham algorithm 
+             0,                        // Fractional bits
+             0.1                       // tip length
+    );
+
+    // Draw a Red arrow using 8-connected Bresenham algorithm
+    cv::arrowedLine(image,             // Canvas
+            cv::Point2i(10,300),       // Starting point
+            cv::Point2i(600, 300),     // End point
+            cv::Scalar(0, 0, 255),     // Color - Red
+            2,                         // Line thickness
+            cv::LINE_8,                // Use 8-CONNECTED Bresenham algorithm
+            0,                         // Fractional bits
+            0.3                        // tip length
+    );
+            
+    // Draw a Blue arrowed line using anti-alias
+    cv::arrowedLine(image,             // Canvas
+            cv::Point2i(300,0),        // Starting point
+            cv::Point2i(300, 600),     // End point
+            cv::Scalar(255, 0, 0),     // Color - Blue
+            3,                         // Line thickness
+            cv::LINE_AA,               // Use anti-alias
+            0,                         // Fractional bits
+            0.5                        // tip length
+    ); 
+
+    ///////////////// Display Image Canvas ////////////////////////////////   
+
+    cv::String window_name = "Drawing Arrowed Lines"; 
+    cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+    cv::imshow(window_name, image);
+
+    cv::waitKey(0);
+
+    cv::destroyWindow(window_name);
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+![Draw Arrowed Lines](./images/drawing-arrowed-lines.png)
+
+## Draw Rectangle
+
+:notebook_with_decorative_cover: OpenCV provides a function to draw a rectangle outline or a filled rectangle. There are two overloaded functions:
+
+1. `void cv::rectangle(cv::InputOutputArray img, cv::Point pt1, cv::Point pt2, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8, int shift = 0)` - This function draws a rectangle by defining its two opposite corners `cv::Point` coordinates.
+
+* `img` - Image to draw on
+* `pt1` - Integer coordinates of vertex/corner of rectangle
+* `pt2` - Integer coordinates of the opposite vertex/corner
+* `color` - Line color. This is of type `cv::Scalar` which by definition holds 4-values. However, since the drawing functions only use the first 3-channels, you only need to provide 3 values for 3-channel color images, and 1 value for 1-channel images. Remember, OpenCV color format is `BGR` (Blue, Green, Red). 
+* `thickness` - Thickness of lines that make up the rectangle. Negative values or `cv::FILLED` , means the function will draw a filled rectangle.
+* `lineType` - Type of the line. 
+* `shift` - Number of fractional bits in the point coordinates.
+
+2. `void cv::rectangle(cv::InputOutputArray img, cv::Rect rec, const cv::Scalar& color, int thickness = 1, int lineType = cv::LINE_8, int shift = 0)` - This function uses the `cv::Rect` data type to define the rectangle. From our earlier tutorials, you should be aware that a `cv::Rect` object is defined by `4` data members: 
+   * `x` & `y` of the `cv::Point` class (representing the **upper-left corner** coordinates of a rectangle)
+   * `width` & `height` of the `cv::Size` class (representing the rectangle's size)
+
+
+**Example 3** - Draw rectangles
+
+```c++
+#include "opencv2/core/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include "opencv2/highgui/highgui.hpp"  // for display windows
+#include "opencv2/imgproc/imgproc.hpp"  // for Drawing and Annotation functions
+
+#include <iostream>
+
+int main()
+{ 
+        
+    ///////////////////// Create a Canvas //////////////////////////
+
+    // Create a 600x600 3-channel image with a gray background 
+    cv::Mat image(cv::Size(600, 600), CV_8UC3, cv::Scalar(125, 125, 125));
+
+    // check if you have successfully created the image
+    if(image.empty())
+    {
+        std::cout << "ERROR! Could not create canvas.\n";
+
+        return -1;
+    }
+
+    std::cout << "\nCanvas created...\n\n";
+    
+    ////////////////////// Draw Rectangles /////////////////////////////////////////
+
+    // 1. Draw a rectangle with a Black outline by defining its 
+    //    opposite corner points
+    cv::rectangle(image,             // Canvas
+             cv::Point2i(10, 50),    // Top-left corner
+             cv::Point2i(400, 100),  // Bottom-right corner
+             cv::Scalar(0, 0, 0),    // Color - Black
+             1,                      // Line thickness
+             cv::LINE_AA,            // Use anti-aliase
+             1                       // Fractional bits
+    );
+
+    // 2. Draw a rectangle by defining its top-left corner point, 
+    //    then its width and height
+    cv::Point2i topLeftCorner {10, 200};
+    int width {100};
+    int height {200};
+    cv::Size rectangleSize {width, height};
+    cv::Rect rec {topLeftCorner, rectangleSize}; // Define rectangle object
+    cv::rectangle(image,        // Canvas
+        rec,                    // Rectangle dimensions
+        cv::Scalar(0, 0, 255),  // Color - Red
+        2,                      // Line thickness
+        cv::LINE_AA,            // Use anti-aliase
+        0                       // Fractional bits
+    );
+
+
+    // 3. Draw a filled rectangle
+    cv::rectangle(image,        // Canvas
+        cv::Point2i(200, 200),    // Top-left corner
+        cv::Point2i(500, 500),  // Bottom-right corner
+        cv::Scalar(255, 0, 0),  // Color - BLUE
+        cv::FILLED,             // Filled rectangle
+        cv::LINE_AA,            // Use anti-aliase
+        0                       // Fractional bits
+    );   
+    
+    ///////////////// Display Image Canvas ////////////////////////////////   
+
+    cv::String window_name = "Drawing Rectangles"; 
+    cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
+    cv::imshow(window_name, image);
+
+    cv::waitKey(0);
+
+    cv::destroyWindow(window_name);
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output** 
+
+![Drawing rectangles](./images/drawing-rectangles.png)
+
+## Other Shapes You Can Draw
+
+:notebook_with_decorative_cover: There are a lot more functions you can use to draw other shapes on images. We can't show you every example, but here is a summary of the functions you can use:
+
+1. `cv::circle()` - Draws a simple or filled circle with a given center and radius. 
+2. `cv::clipLine()` - Draws a line clipped by a rectangle. The rectangle could be the image itself or a `cv::Rect` you have defined yourself.
+3. `cv::drawMarker()` - Draws a marker on a predefined position in an image. See <a href = "https://docs.opencv.org/4.8.0/d6/d6e/group__imgproc__draw.html#ga0ad87faebef1039ec957737ecc633b7b">here</a> for marker types.
+4. `cv::ellipse()` - Draws an ellipse outline, a filled ellipse, an elliptic arc, or a filled ellipse sector.
+5. `cv::fillConvexPoly()` - Draws filled versions of simple polygons
+6. `cv::fillPoly()` - Draws filled versions of arbitrary polygons
+7. `cv::polylines()` - Draws any number of unfilled polygons. The polygons do not necessarily need to be closed.
+
 
 ## References
 
