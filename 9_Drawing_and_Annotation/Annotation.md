@@ -234,7 +234,3 @@ int main()
 
 :notebook_with_decorative_cover: The returned value from this function can be used as the parameter value for `fontScale` in the function `cv::putText()`.
 
-
- **Draw North/south/east/west figure using drawing and annotation as an example**
-
- **Find an image and draw around its features then annotate them.**
