@@ -81,7 +81,7 @@ cv::Scalar pixelValue_C1(const cv::Mat& image, int type, int y, int x)
 {
     
    switch (type)
-	{
+   {
       case CV_8U:
          return image.at<uchar>(y, x);
 
@@ -105,7 +105,7 @@ cv::Scalar pixelValue_C1(const cv::Mat& image, int type, int y, int x)
                 
       default: // Use type 'double' as it can hold any of the above types
          return image.at<double>(y, x);
-	}
+   }
 }
 ```
 
@@ -118,3 +118,99 @@ img.at<uchar>(row, column) = 128;
 ```
 
 :notebook_with_decorative_cover: If you try to alter the pixel value using a value out of range of the data type, OpenCV will use **saturation casting** to convert your input to the appropriate range. We have already extensively covered saturation casting in an earlier tutorial. 
+
+### 2-D images with 2 channels
+
+:notebook_with_decorative_cover: To access pixel values for 2-D images with 2 channels we use the function definition `T& at<T>(int row, int col)` or `const T& at<T>(int row, int col) const`. `T` is a data object that can store two values of the pixel data type, `row` is the row/y-coordinate of pixel, `col` is the column/x-coordinate of pixel. Since we are dealing with 2-channel images, the returned value is a reference to a container that can hold two values.
+
+:notebook_with_decorative_cover: The value of `T` that you place within the angle brackets `<T>` depends on the image data type from which you are trying to retrieve the data. Since we want a container object that can hold more than 1 value, you will find that most OpenCV users prefer the object type `cv::Vec`. For images with 2 channels the following gives a better insight: 
+
+* If image is of type `CV_8UC2` then use `cv::Mat.at<cv::Vec2b>(y,x)`.
+* If image is of type `CV_8SC2` then use `cv::Mat.at<cv::Vec2s>(y,x)`.
+* If image is of type `CV_16UC2` then use `cv::Mat.at<cv::Vec2w>(y,x)`.
+* If image is of type `CV_16SC2` then use `cv::Mat.at<cv::Vec2s>(y,x)`.
+* If image is of type `CV_32SC2` then use `cv::Mat.at<cv::Vec2i>(y,x)`.
+* If image is of type `CV_32FC2` then use `cv::Mat.at<cv::Vec2f>(y,x)`.
+* If image is of type `CV_64FC2` then use `cv::Mat.at<cv::Vec2d>(y,x)`.
+
+:notebook_with_decorative_cover: As a reminder, in OpenCV, the primitive types are as follows:
+
+* **b** - unsigned char -> used to hold any integer in the range: 0 to 255 (inclusive)
+* **s** - short -> holds positive and negative integers, with the range: -32 768 to 32 767 (inclusive) 
+* **w** - unsigned short -> holds only positive integers with the range: 0 to 65 535 (inclusive)
+* **i** - integer -> 32-bit integer in the range: -2 147 483 648 to 2 147 483 647 (inclusive)
+* **f** - float -> 32-bit floating/decimal point number accurate to between 6 and 9 digits
+* **d** - double -> 64-bit floating/decimal point number, which is more accurate than the 32-bit floating number. Can be accurate to between 15 and 18 digits of precision. 
+
+:notebook_with_decorative_cover: The following is an example for a 2-D image with 2 channels whose pixel values have data type unsigned char (type `CV_8UC2`) and pixel location defined by `row` and `column`. The image has been read into a `cv::Mat` object `img`.
+
+```c++
+cv::Vec2b pixelValue = img.at<cv::Vec2b>(row, column);
+uchar channel1Value = pixelValue[0];
+uchar channel2Value = pixelValue[1];
+```
+
+:notebook_with_decorative_cover: As mentioned before, dealing with types such as `uchar` or `schar` can be a pain as C++ converts them to ASCII characters. To avoid having to do the conversions to numerical values each time, we take advantage of `cv::Scalar` and use it as the object for the return type. OpenCV automatically converts `cv::Vec2b` to `cv::Scalar` with the appropriate numerical values. The above code can be written as follows:
+
+```c++
+cv::Scalar pixelValue = img.at<cv::Vec2b>(row, column);
+auto channel1Value = pixelValue[0];
+auto channel2Value = pixelValue[1];
+```
+
+:notebook_with_decorative_cover: By taking advantage of the object `cv::Scalar` we can write a single function that can return the pixel values of a 2-D image with 2 channels whose pixels are of any data type.
+
+```c++
+/**
+ * @brief Return the pixel value from a 2-dimensional image with '2' channels
+ * 
+ * @param image 2-dimensional image with '2' channels
+ * @param type OpenCV data type of pixel values in image e.g. CV_8UC2
+ * @param y Row index to find pixel. We start counting indices from '0'. 
+ *          The first row is found at the top of the image, and increases 
+ *          from top to bottom of image.
+ * @param x Column index to find pixel. We start counting indices from '0'.
+ *          The first column is found on the left of the image, and increases 
+ *          from left to right of image. 
+ * @return cv::Scalar Pixel values, which will be stored at indices '0' & '1' 
+ *                    of the cv::Scalar object
+ */
+cv::Scalar pixelValue_C2(const cv::Mat& image, int type, int y, int x)
+{
+   switch (type)
+   {
+      case CV_8UC2:
+         return image.at<cv::Vec2b>(y, x);
+
+      case CV_8SC2:
+         return image.at<cv::Vec2s>(y, x);
+
+      case CV_16UC2: 
+         return image.at<cv::Vec2w>(y, x);
+
+      case CV_16SC2:
+         return image.at<cv::Vec2s>(y, x);
+
+      case CV_32SC2:
+         return image.at<cv::Vec2i>(y, x);
+
+      case CV_32FC2:
+         return image.at<cv::Vec2f>(y, x);
+
+      case CV_64FC2:
+         return image.at<cv::Vec2d>(y, x);
+                
+      default: // Use type 'cv::Vec2d' as it can hold any of the above types
+         return image.at<cv::Vec2d>(y, x);
+   }
+}
+```
+
+:notebook_with_decorative_cover: Since it is likely that we will re-use the above function we will add it to our library we are building. We will add the function under the namespace `BasicImageProcessing`. Remember to add the function declaration in the header file `Example-Code/include/UtilityFunctions/utility_functions.h` and the full definition in the source file `Example-Code/src/UtilityFunctions/utility_functions.cpp`.
+
+:notebook_with_decorative_cover: As mentioned earlier on, we can also use the `at<>()` function to alter/change the pixel values by simply placing this function on the left-hand side of the equal sign `=` and the new pixel values on the right-hand side. This is how you can alter a non-const reference value. In the following example we alter the pixel values at location `(row, column)` to `68` and `128` in channel 1 and channel 2, respectively. The `cv::Mat` image object `img` must NOT be a const object.
+
+```c++
+cv::Vec2b newPixelValues {68, 128};
+img.at<cv::Vec2b>(row, column) = newPixelValues;
+```
