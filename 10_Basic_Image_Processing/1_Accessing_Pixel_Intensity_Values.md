@@ -241,10 +241,10 @@ uchar channel3Value = pixelValue[2];
 :notebook_with_decorative_cover: As mentioned before, dealing with types such as `uchar` or `schar` can be a pain as C++ converts them to ASCII characters. To avoid having to do the conversions to numerical values each time, we take advantage of `cv::Scalar` and use it as the object for the return type. OpenCV automatically converts `cv::Vec3b` to `cv::Scalar` with the appropriate numerical values. The above code can be written as follows:
 
 ```c++
-cv::Scalar pixelValue = img.at<cv::Vec2b>(row, column);
+cv::Scalar pixelValue = img.at<cv::Vec3b>(row, column);
 int channel1Value = pixelValue[0]; // You can also use 'auto' in place of 'int'
 int channel2Value = pixelValue[1];
-int channel3Value = pixelValue[2]
+int channel3Value = pixelValue[2];
 ```
 
 :notebook_with_decorative_cover: By taking advantage of the object `cv::Scalar` we can write a single function that can return the pixel values of a 2-D image with 3 channels whose pixels are of any data type.
