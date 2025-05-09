@@ -305,3 +305,94 @@ cv::Scalar pixelValue_C3(const cv::Mat& image, int type, int y, int x)
 cv::Vec3b newPixelValues {68, 90, 128};
 img.at<cv::Vec3b>(row, column) = newPixelValues;
 ```
+
+### 2-D images with 4 channels
+
+:notebook_with_decorative_cover: Just like the above image types, we use the function `T& at<T>(int row, int col)` or `const T& at<T>(int row, int col) const` to access pixel values for 2-D 4-channel images. Since we now have 4 channels, we need a container e.g. `cv::Vec` that can handle 4 values of the image data type. Below, is a list that shows how to best combine image data type and the correct container type to store the pixel values:
+
+* If image is of type `CV_8UC4` then use `cv::Mat.at<cv::Vec4b>(y,x)`.
+* If image is of type `CV_8SC4` then use `cv::Mat.at<cv::Vec4s>(y,x)`.
+* If image is of type `CV_16UC4` then use `cv::Mat.at<cv::Vec4w>(y,x)`.
+* If image is of type `CV_16SC4` then use `cv::Mat.at<cv::Vec4s>(y,x)`.
+* If image is of type `CV_32SC4` then use `cv::Mat.at<cv::Vec4i>(y,x)`.
+* If image is of type `CV_32FC4` then use `cv::Mat.at<cv::Vec4f>(y,x)`.
+* If image is of type `CV_64FC4` then use `cv::Mat.at<cv::Vec4d>(y,x)`.
+
+:notebook_with_decorative_cover: The following is an example for a 2-D image with 4 channels whose pixel values have data type signed char (type `CV_8SC4`) and pixel location defined by `row` and `column`. The image has been read into a `cv::Mat` object `img`.
+
+```c++
+cv::Vec4s pixelValue = img.at<cv::Vec4s>(row, column);
+schar channel1Value = pixelValue[0];
+schar channel2Value = pixelValue[1];
+schar channel3Value = pixelValue[2];
+schar channel4Value = pixelValue[3];
+```
+
+:notebook_with_decorative_cover: As mentioned before, dealing with types such as `uchar` or `schar` can be a pain as C++ converts them to ASCII characters. To avoid having to do the conversions to numerical values each time, we take advantage of `cv::Scalar` and use it as the object for the return type. OpenCV automatically converts `cv::Vec4s` to `cv::Scalar` with the appropriate numerical values. The above code can be written as follows:
+
+```c++
+cv::Scalar pixelValue = img.at<cv::Vec4s>(row, column);
+int channel1Value = pixelValue[0]; // You can also use 'auto' in place of 'int'
+int channel2Value = pixelValue[1];
+int channel3Value = pixelValue[2];
+int channel4Value = pixelValue[3];
+```
+
+:notebook_with_decorative_cover: By taking advantage of the object `cv::Scalar` we can write a single function that can return the pixel values of a 2-D image with 4 channels whose pixels are of any data type.
+
+```c++
+/**
+ * @brief Return the pixel values from a 2-dimensional image with '4' channels
+ * 
+ * @param image 2-dimensional image with '4' channels. Color images can be of any format 
+ *              e.g. BGRA, RGBA etc
+ * @param type OpenCV data type of pixel values in image e.g. CV_8UC4
+ * @param y Row index to find pixel. We start counting indices from '0'. 
+ *          The first row is found at the top of the image, and increases 
+ *          from top to bottom of image.
+ * @param x Column index to find pixel. We start counting indices from '0'.
+ *          The first column is found on the left of the image, and increases 
+ *          from left to right of image. 
+ * @return cv::Scalar Pixel values, which will be stored at indices '0', '1', '2'  
+ *                    & '3' of the cv::Scalar object. The values follow the format 
+ *                    of the image provided e.g. BGRA, RGBA etc
+ */
+cv::Scalar pixelValue_C4(const cv::Mat& image, int type, int y, int x)
+{
+   switch (type)
+   {
+      case CV_8UC4:
+         return image.at<cv::Vec4b>(y, x);
+
+      case CV_8SC4:
+         return image.at<cv::Vec4s>(y, x);
+
+      case CV_16UC4: 
+         return image.at<cv::Vec4w>(y, x);
+
+      case CV_16SC4:
+         return image.at<cv::Vec4s>(y, x);
+
+      case CV_32SC4:
+         return image.at<cv::Vec4i>(y, x);
+
+      case CV_32FC4:
+         return image.at<cv::Vec4f>(y, x);
+
+      case CV_64FC4:
+         return image.at<cv::Vec4d>(y, x);
+                
+      default: // Use type 'cv::Vec4d' as it can hold any of the above types
+         return image.at<cv::Vec4d>(y, x);
+   }
+}
+```
+
+:notebook_with_decorative_cover: Since it is likely that we will re-use the above function we will add it to our library we are building. We will add the function under the namespace `BasicImageProcessing`. Remember to add the function declaration in the header file `Example-Code/include/UtilityFunctions/utility_functions.h` and the full definition in the source file `Example-Code/src/UtilityFunctions/utility_functions.cpp`.
+
+:notebook_with_decorative_cover: As mentioned earlier on, we can also use the `at<>()` function to alter/change the pixel values by simply placing this function on the left-hand side of the equal sign `=` and the new pixel values on the right-hand side. This is how you can alter a non-const reference value. In the following example we alter the pixel values at location `(row, column)` to `-68`, `-90`, `110` and `115` in channel 1, channel 2, channel 3, and channel 4 respectively. The `cv::Mat` image object `img` must NOT be a const object.
+
+```c++
+cv::Vec4s newPixelValues {-68, -90, 110, 128};
+img.at<cv::Vec4s>(row, column) = newPixelValues;
+```
