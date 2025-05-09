@@ -214,3 +214,94 @@ cv::Scalar pixelValue_C2(const cv::Mat& image, int type, int y, int x)
 cv::Vec2b newPixelValues {68, 128};
 img.at<cv::Vec2b>(row, column) = newPixelValues;
 ```
+
+### 2-D images with 3 channels
+
+:notebook_with_decorative_cover: In the course of building computer vision applications you will work mostly with 2-dimensional images that have 3 channels - also known as color images. Because the channels can be combined in various ways (BGR, RGB, GRB, etc), you should always be aware of the color order when accessing pixel values.
+
+:notebook_with_decorative_cover: Just like the above image types, we use the function `T& at<T>(int row, int col)` or `const T& at<T>(int row, int col) const` to access pixel values. Since we now have 3 channels, we need a container e.g. `cv::Vec` that can handle 3 values of the image data type. Below, is a list that shows how to best combine image data type and the correct container type to store the pixel values:
+
+* If image is of type `CV_8UC3` then use `cv::Mat.at<cv::Vec3b>(y,x)`.
+* If image is of type `CV_8SC3` then use `cv::Mat.at<cv::Vec3s>(y,x)`.
+* If image is of type `CV_16UC3` then use `cv::Mat.at<cv::Vec3w>(y,x)`.
+* If image is of type `CV_16SC3` then use `cv::Mat.at<cv::Vec3s>(y,x)`.
+* If image is of type `CV_32SC3` then use `cv::Mat.at<cv::Vec3i>(y,x)`.
+* If image is of type `CV_32FC3` then use `cv::Mat.at<cv::Vec3f>(y,x)`.
+* If image is of type `CV_64FC3` then use `cv::Mat.at<cv::Vec3d>(y,x)`.
+
+:notebook_with_decorative_cover: The following is an example for a 2-D image with 3 channels whose pixel values have data type unsigned char (type `CV_8UC3`) and pixel location defined by `row` and `column`. The image has been read into a `cv::Mat` object `img`.
+
+```c++
+cv::Vec3b pixelValue = img.at<cv::Vec3b>(row, column);
+uchar channel1Value = pixelValue[0];
+uchar channel2Value = pixelValue[1];
+uchar channel3Value = pixelValue[2];
+```
+
+:notebook_with_decorative_cover: As mentioned before, dealing with types such as `uchar` or `schar` can be a pain as C++ converts them to ASCII characters. To avoid having to do the conversions to numerical values each time, we take advantage of `cv::Scalar` and use it as the object for the return type. OpenCV automatically converts `cv::Vec3b` to `cv::Scalar` with the appropriate numerical values. The above code can be written as follows:
+
+```c++
+cv::Scalar pixelValue = img.at<cv::Vec2b>(row, column);
+int channel1Value = pixelValue[0]; // You can also use 'auto' in place of 'int'
+int channel2Value = pixelValue[1];
+int channel3Value = pixelValue[2]
+```
+
+:notebook_with_decorative_cover: By taking advantage of the object `cv::Scalar` we can write a single function that can return the pixel values of a 2-D image with 3 channels whose pixels are of any data type.
+
+```c++
+/**
+ * @brief Return the pixel values from a 2-dimensional image with '3' channels
+ * 
+ * @param image 2- dimensional image with '3' channels. Color images can be of any format 
+ *              e.g. BGR, RGB etc
+ * @param type OpenCV data type of pixel values in image e.g. CV_8UC3
+ * @param y Row index to find pixel. We start counting indices from '0'. 
+ *          The first row is found at the top of the image, and increases 
+ *          from top to bottom of image.
+ * @param x Column index to find pixel. We start counting indices from '0'.
+ *          The first column is found on the left of the image, and increases 
+ *          from left to right of image. 
+ * @return cv::Scalar Pixel values, which will be stored at indices '0', '1' & '2' 
+ *                    of the cv::Scalar object. The values follow the format 
+ *                    of the image provided e.g. BGR, RGB etc
+ */
+cv::Scalar pixelValue_C3(const cv::Mat& image, int type, int y, int x)
+{
+   switch (type)
+   {
+      case CV_8UC3:
+         return image.at<cv::Vec3b>(y, x);
+
+      case CV_8SC3:
+         return image.at<cv::Vec3s>(y, x);
+
+      case CV_16UC3: 
+         return image.at<cv::Vec3w>(y, x);
+
+      case CV_16SC3:
+         return image.at<cv::Vec3s>(y, x);
+
+      case CV_32SC3:
+         return image.at<cv::Vec3i>(y, x);
+
+      case CV_32FC3:
+         return image.at<cv::Vec3f>(y, x);
+
+      case CV_64FC3:
+         return image.at<cv::Vec3d>(y, x);
+                
+      default: // Use type 'cv::Vec3d' as it can hold any of the above types
+         return image.at<cv::Vec3d>(y, x);
+   }
+}
+```
+
+:notebook_with_decorative_cover: Since it is likely that we will re-use the above function we will add it to our library we are building. We will add the function under the namespace `BasicImageProcessing`. Remember to add the function declaration in the header file `Example-Code/include/UtilityFunctions/utility_functions.h` and the full definition in the source file `Example-Code/src/UtilityFunctions/utility_functions.cpp`.
+
+:notebook_with_decorative_cover: As mentioned earlier on, we can also use the `at<>()` function to alter/change the pixel values by simply placing this function on the left-hand side of the equal sign `=` and the new pixel values on the right-hand side. This is how you can alter a non-const reference value. In the following example we alter the pixel values at location `(row, column)` to `68`, `90` and `128` in channel 1, channel 2, and channel 3 respectively. The `cv::Mat` image object `img` must NOT be a const object.
+
+```c++
+cv::Vec3b newPixelValues {68, 90, 128};
+img.at<cv::Vec3b>(row, column) = newPixelValues;
+```
