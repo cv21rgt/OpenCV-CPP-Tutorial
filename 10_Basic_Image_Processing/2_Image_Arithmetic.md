@@ -49,11 +49,14 @@
 * Add two image arrays e.g., $A + B$, $B + A$
 * Add a constant to an image array e.g., $A + s$, $s + A$
 
-**Example 1:** Use matrix expressions to add images
+**Example 1:** Use matrix expressions to add grayscale images
 
 ```c++
 #include "opencv2/core.hpp"        // for OpenCV core types e.g. cv::Mat
 #include "opencv2/imgcodecs.hpp"   // for cv::imread
+#include "opencv2/highgui.hpp"     // for displaying images in windows
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
 
 #include <iostream>
 
@@ -63,42 +66,64 @@ int main()
 
     // Read two 1 channel images (or Grayscale images)
     // Images should have same size and number of channels
-    cv::Mat A { cv::imread("grayscale_image_1.jpeg", cv::IMREAD_ANYCOLOR) };
-    cv::Mat B { cv::imread("grayscale_image_2.jpeg", cv::IMREAD_ANYCOLOR) };
+    cv::Mat A { cv::imread("Example-Code/images/grayscale_image_1.jpeg", 
+                cv::IMREAD_ANYCOLOR) };
+    if (A.empty())
+    {
+        std::cout << "\nCould not open image A data\n";
+        return -1;  
+    }
+    else
+    {
+        // Check sizes, no. of channels and data types of image
+        std::cout << "\nSize of image A = " << A.size()
+                  << "\nData type of image A = " << CPP_CV::General::openCVDescriptiveDataType(A.type()) 
+                  << '\n';
 
-    // 1. Add two images
+    }
+
+    cv::Mat B { cv::imread("Example-Code/images/grayscale_image_2.jpeg",
+                cv::IMREAD_ANYCOLOR) };
+    if (B.empty())
+    {
+        std::cout << "\nCould not open image B data\n";
+        return -1;  
+    }
+    else
+    {
+        std::cout << "\nSize of image B = " << B.size() 
+                  << "\nData type of image B = " << CPP_CV::General::openCVDescriptiveDataType(B.type()) 
+                  << '\n';
+    }
+
+     // 1. Add two images
     cv::Mat C { A + B }; // OR cv::Mat C { B + A };
+    std::cout << "\nSize of image C (A+B) = " << C.size() 
+              << "\nData type of image C (A+B) = " << CPP_CV::General::openCVDescriptiveDataType(C.type()) 
+              << '\n';
 
     // 2. Add a scalar value to an image
     
-    // i.)  We want to increase our intensity values by 10, 
+    // i.)  We want to increase our intensity values by 40, 
     //      so we define a scalar value to hold this value
     // ii.) Because we are dealing with grayscale images, which have 1 channel, 
     //      we create a cv::Scalar with 1 value
-    const cv::Scalar s1 {10};
+    const cv::Scalar s1 {40};
 
-    cv::Mat E { A + s1 }; // OR cv::Mat E { s1 + A };
+    cv::Mat D { A + s1 }; // OR cv::Mat E { s1 + A };
+    std::cout << "\nSize of image D (A+cv:Scalar(40)) = " << D.size() 
+              << "\nData type of image D (A+cv:Scalar(40)) = " << CPP_CV::General::openCVDescriptiveDataType(D.type()) 
+              << '\n';
 
+    // Display images in windows
+    cv::imshow("A", A);
+    cv::imshow("B", B);
+    cv::imshow("A+B", C);
+    cv::imshow("A+cv:Scalar(40)", D);
 
-    //------------------ Color images with 3 channels -----------------//
+    cv::waitKey(0);
 
-    // Read two 3-channel images in OpenCV default BGR (Blue, Green, Red) format 
-    // Images should have same size and number of channels
-    cv::Mat F { cv::imread("color_image_1.jpeg", cv::IMREAD_ANYCOLOR) };
-    cv::Mat G { cv::imread("color_image_2.jpeg", cv::IMREAD_ANYCOLOR) };
-
-    // 1. Add two images
-    cv::Mat H { F + G }; // OR cv::Mat H { G + H };
-
-    // 2. Add a scalar value to an image
-    
-    // i.)  We want to increase the pixel values of each channel by 10, 20, 30,  
-    //      respectively, so we define a scalar object to hold these values
-    // ii.) Because we are dealing with color images, which have 3 channels, 
-    //      we create a cv::Scalar with 3 values
-    const cv::Scalar s2 {10, 20, 30};
-
-    cv::Mat I { F + s2 }; // OR cv::Mat I { s2 + F };
+    cv::destroyAllWindows();
 
     std::cout << '\n';
 
@@ -106,6 +131,105 @@ int main()
 }
 ```
 
+**Output**
+
+**Figure 1:** Grayscale image addition
+![Image addition using matrix expressions](./images/image_addition.png)
+
+:notebook_with_decorative_cover: Image addition `A+B` combined data pixels in such a way that parts of each input image are present in the output image. The addition of a constant value `A + cv::Scalar(40)` resulted in a more brighter output image as the pixel values moved towards the maximum value of `255`.
+
+**Example 2:** Use matrix expressions to add color images
+
+```c++
+#include "opencv2/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include "opencv2/imgcodecs.hpp"   // for cv::imread
+#include "opencv2/highgui.hpp"     // for displaying images in windows
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+
+int main()
+{
+    //------------------ Color Images --------------//
+
+    // Read two 3 channel color images 
+    // Images should have same size and number of channels
+    cv::Mat A { cv::imread("Example-Code/images/color_1.jpeg", 
+                cv::IMREAD_ANYCOLOR) };
+    if (A.empty())
+    {
+        std::cout << "\nCould not open image A data\n";
+        return -1;  
+    }
+    else
+    {
+        // Check sizes, no. of channels and data types of image
+        std::cout << "\nSize of image A = " << A.size()
+                  << "\nData type of image A = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(A.type()) 
+                  << '\n';
+
+    }
+
+    cv::Mat B { cv::imread("Example-Code/images/color_2.jpeg",
+                cv::IMREAD_ANYCOLOR) };
+    if (B.empty())
+    {
+        std::cout << "\nCould not open image B data\n";
+        return -1;  
+    }
+    else
+    {
+        std::cout << "\nSize of image B = " << B.size() 
+                  << "\nData type of image B = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(B.type()) 
+                  << '\n';
+    }
+
+
+    // 1. Add two images
+    cv::Mat C { A + B }; // OR cv::Mat C { B + A };
+    std::cout << "\nSize of image C (A+B) = " << C.size() 
+              << "\nData type of image C (A+B) = " << CPP_CV::General::openCVDescriptiveDataType(C.type()) 
+              << '\n';
+
+    // 2. Add a scalar value to an image
+    
+    // i.)  We want to increase the pixel values of each channel by 30, 40, 50
+    //      respectively, so we define a scalar object to hold these values
+    // ii.) Because we are dealing with color images, which have 3 channels, 
+    //      we create a cv::Scalar with 3 values
+    const cv::Scalar s1 {30, 40, 50};
+
+    cv::Mat D { A + s1 }; // OR cv::Mat E { s1 + A };
+    std::cout << "\nSize of image D (A+cv:Scalar(30, 40, 50)) = " << D.size() 
+              << "\nData type of image D (A+cv:Scalar(30, 40, 50)) = " 
+              << CPP_CV::General::openCVDescriptiveDataType(D.type()) 
+              << '\n';
+
+    // Display images in windows
+    cv::imshow("A", A);
+    cv::imshow("B", B);
+    cv::imshow("A+B", C);
+    cv::imshow("A+cv:Scalar(30, 40, 50)", D);
+
+    cv::waitKey(0);
+
+    cv::destroyAllWindows();
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+**Figure 2:** Color image addition
+![Color image addition](./images/color_image_addition.png)
+
+:notebook_with_decorative_cover: Figure 2 shows that the output of straight color image addition `A+B` is not that impressive - actually results in an image that is too bright and difficult for the human eye to differentiate its features. This is probably why other processes are needed to complement image addition.
 
 
 ### Addition through a function
@@ -124,23 +248,54 @@ int main()
 2. The sum of an image, $src1$, and a constant value, $C$. The constant value can be constructed from a `cv::Scalar` object and should have the same number of elements as `src1.channels()`, i.e., $dst = src1 + C$. 
 3. The sum of a constant value, $C$, and an image, $src2$. The constant value can be constructed from a `cv::Scalar` object and should have the same number of elements as `src2.channels()`, i.e., $dst = C + src2$. 
 
-**Example 2:** Use a function to add images
+**Example 3:** Use a function to add grayscale images
 
 ```c++
 #include "opencv2/core.hpp"        // for OpenCV core types e.g. cv::Mat
 #include "opencv2/imgcodecs.hpp"   // for cv::imread
+#include "opencv2/highgui.hpp"     // for displaying images in windows
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
 
 #include <iostream>
 
 int main()
 {
-
-    //------------------ Grayscale or 1-Channel Images --------------//
+    //------------------ Grayscale or 1-Channel Images --------------//    
 
     // Read two 1 channel images (or Grayscale images)
     // Images should have same size and number of channels
-    cv::Mat A { cv::imread("grayscale_image_1.jpeg", cv::IMREAD_ANYCOLOR) };
-    cv::Mat B { cv::imread("grayscale_image_2.jpeg", cv::IMREAD_ANYCOLOR) };
+    cv::Mat A { cv::imread("Example-Code/images/grayscale_image_1.jpeg", 
+                cv::IMREAD_ANYCOLOR) };
+    if (A.empty())
+    {
+        std::cout << "\nCould not open image A data\n";
+        return -1;  
+    }
+    else
+    {
+        // Check sizes, no. of channels and data types of image
+        std::cout << "\nSize of image A = " << A.size()
+                  << "\nData type of image A = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(A.type()) 
+                  << '\n';
+
+    }
+
+    cv::Mat B { cv::imread("Example-Code/images/grayscale_image_2.jpeg",
+                cv::IMREAD_ANYCOLOR) };
+    if (B.empty())
+    {
+        std::cout << "\nCould not open image B data\n";
+        return -1;  
+    }
+    else
+    {
+        std::cout << "\nSize of image B = " << B.size() 
+                  << "\nData type of image B = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(B.type()) 
+                  << '\n';
+    }
 
     // 1. Add two images
 
@@ -152,6 +307,10 @@ int main()
             cv::noArray(),   // Mask - we are currently not using this value
             -1               // Output image data type. This will be the same A                             
            );
+    std::cout << "\nSize of image C1 (A+B) = " << C1.size() 
+              << "\nData type of image C1 (A+B) = " 
+              << CPP_CV::General::openCVDescriptiveDataType(C1.type()) 
+              << '\n';
     
     // b.) B + A
     cv::Mat C2;
@@ -159,18 +318,21 @@ int main()
             A,               // Second input image array
             C2,              // Output image array
             cv::noArray(),   // Mask - we are currently not using this value
-            CV_8UC1          // Specify your own output image data type
+            CV_8U          // Specify your own output image data type
            );
-
+    std::cout << "\nSize of image C2 (B+A) = " << C2.size() 
+              << "\nData type of image C2 (B+A) = " 
+              << CPP_CV::General::openCVDescriptiveDataType(C2.type()) 
+              << '\n';
         
  
     // 2. Add a scalar value to an image
     
-    // i.)  We want to increase our intensity values by 10, 
+    // i.)  We want to increase our intensity values by 30, 
     //      so we define a scalar value to hold this value
     // ii.) Because we are dealing with grayscale images, which have 1 channel, 
     //      we create a cv::Scalar with 1 value
-    const cv::Scalar s1 {10};
+    const cv::Scalar s1 {30};
     
     // a.) A + s1
     cv::Mat D1;
@@ -180,6 +342,10 @@ int main()
             cv::noArray(),   // Mask - we are currently not using this value
             -1               // Output image data type. This will be the same A                             
            );
+    std::cout << "\nSize of image D1 (A+cv:Scalar(30)) = " << D1.size() 
+              << "\nData type of image D1 (A+cv:Scalar(30)) = " 
+              << CPP_CV::General::openCVDescriptiveDataType(D1.type()) 
+              << '\n';
     
     // b.) s1 + A
     cv::Mat D2;
@@ -187,68 +353,31 @@ int main()
             A,               // Image array
             D2,              // Output image array
             cv::noArray(),   // Mask - we are currently not using this value
-            CV_8UC1          // Specify your own output image data type
+            CV_8U            // Specify your own output image data type
            );
+    std::cout << "\nSize of image D2 (cv:Scalar(30)+A) = " << D2.size() 
+              << "\nData type of image D2 (cv:Scalar(30)+A) = " 
+              << CPP_CV::General::openCVDescriptiveDataType(D2.type()) 
+              << '\n';
 
+    // Display images in windows
+    cv::imshow("A", A);
+    cv::imshow("B", B);
+    cv::imshow("A+B", C1);
+    cv::imshow("B+A", C2);
+    cv::imshow("A+cv:Scalar(30)", D1);
+    cv::imshow("cv::Scalar(30)+A", D2);
 
-    //------------------ Color images with 3 channels -----------------//
+    cv::waitKey(0);
 
-    // Read two 3-channel images in OpenCV default BGR (Blue, Green, Red) format 
-    // Images should have same size and number of channels
-    cv::Mat F { cv::imread("color_image_1.jpeg", cv::IMREAD_ANYCOLOR) };
-    cv::Mat G { cv::imread("color_image_2.jpeg", cv::IMREAD_ANYCOLOR) };
-
-    // 1. Add two images
-    
-    // a.) F + G
-    cv::Mat H1;
-    cv::add(F,               // First input image array
-            G,               // Second input image array
-            H1,              // Output image array
-            cv::noArray(),   // Mask - we are currently not using this value
-            -1               // Output image data type. This will be the same F                             
-           );
-    
-    // b.) G + F
-    cv::Mat H2;
-    cv::add(G,               // First input image array
-            F,               // Second input image array
-            H2,              // Output image array
-            cv::noArray(),   // Mask - we are currently not using this value
-            F.depth()        // Output image will have same data type as F
-           );
-
-    // 2. Add a scalar value to an image
-    
-    // i.)  We want to increase the pixel values of each channel by 10, 20, 30,  
-    //      respectively, so we define a scalar object to hold these values
-    // ii.) Because we are dealing with color images, which have 3 channels, 
-    //      we create a cv::Scalar with 3 values
-    const cv::Scalar s2 {10, 20, 30};
-
-    // a.) F + s2
-    cv::Mat I1;
-    cv::add(F,                // Image array
-            s2,               // Constant/Scalar values
-            I1,               // Output image array
-            cv::noArray(),    // Mask - we are currently not using this value
-            -1                // Output image data type. This will be the same F                             
-           );
-    
-    // b.) s2 + F
-    cv::Mat I2;
-    cv::add(s2,              // Constant/Scalar value
-            F,               // Image array
-            I2,              // Output image array
-            cv::noArray(),   // Mask - we are currently not using this value
-            CV_64FC3         // Specify your own output image data type
-           );
+    cv::destroyAllWindows();
 
     std::cout << '\n';
 
     return 0;
 }
 ```
+
 ### Guidelines for using image addition
 
 :notebook_with_decorative_cover: One direct use of addition includes adding a constant value to all pixels in an image so as to brighten that image.
