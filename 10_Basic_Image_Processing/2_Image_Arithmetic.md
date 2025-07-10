@@ -134,6 +134,7 @@ int main()
 **Output**
 
 **Figure 1:** Grayscale image addition
+
 ![Image addition using matrix expressions](./images/image_addition.png)
 
 :notebook_with_decorative_cover: Image addition `A+B` combined data pixels in such a way that parts of each input image are present in the output image. The addition of a constant value `A + cv::Scalar(40)` resulted in a more brighter output image as the pixel values moved towards the maximum value of `255`.
@@ -227,6 +228,7 @@ int main()
 **Output**
 
 **Figure 2:** Color image addition
+
 ![Color image addition](./images/color_image_addition.png)
 
 :notebook_with_decorative_cover: Figure 2 shows that the output of straight color image addition `A+B` is not that impressive - actually results in an image that is too bright and difficult for the human eye to differentiate its features. This is probably why other processes are needed to complement image addition.
