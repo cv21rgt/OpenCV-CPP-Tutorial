@@ -35,6 +35,98 @@ namespace CPP_CV {
         using namespace std::string_literals; 
         const std::array<std::string, 5> fileTypes { "xml"s, "yml"s, "yaml"s, "json"s, "gz"s };
 
+
+        /**
+         * @brief Return the minimum and maximum range for image types.  
+         *        One good use is when scaling image values so you can display your 
+         *        image on a monitor.     
+         * 
+         * @tparam T Data type of values to be returned
+         * @param type OpenCV image data type as an integer value. 
+         *             See https://medium.com/@nullbyte.in/part-2-exploring-
+         *                 the-data-types-in-opencv4-a-comprehensive-guide-49272f4a775
+         * @return std::tuple<T, T> A tuple object with the minimum and maximum values
+         * 
+         */
+        template <typename T>
+        std::tuple<T, T> dataTypeRange(int type)
+        {
+            switch (type)
+            {
+                case CV_8UC1: // 8-bit unsigned
+                case CV_8UC2:
+                case CV_8UC3:
+                case CV_8UC4:
+                    return {0, 255};
+                case CV_8SC1: // 8-bit signed
+                case CV_8SC2:
+                case CV_8SC3:
+                case CV_8SC4:
+                    return {-128, 127};
+                case CV_16UC1: // 16-bit unsigned
+                case CV_16UC2:
+                case CV_16UC3:
+                case CV_16UC4:
+                    return {0, 65535};
+                case CV_16SC1: // 16-bit signed
+                case CV_16SC2:
+                case CV_16SC3:
+                case CV_16SC4:
+                    return {-32768, 32767};
+                case CV_32SC1: // 32-bit signed
+                case CV_32SC2:
+                case CV_32SC3:
+                case CV_32SC4:
+                    return {-2147483648, 2147483647};
+                case CV_32FC1: // 32-bit floating point
+                case CV_32FC2:
+                case CV_32FC3:
+                case CV_32FC4:
+                    return {0, 1};
+                case CV_64FC1: // 64-bit floating point
+                case CV_64FC2:
+                case CV_64FC3:
+                case CV_64FC4:
+                    return {0, 1};
+                default:
+                    return {0, 255};
+            }
+        }
+
+
+        /**
+         * @brief Returns the "positive infinity" value for a particular data type
+         * 
+         * @tparam T Data type whose infinite value we want
+         * @return T Infinite value of data type 'T'
+         */
+        template <typename T>
+        T infiniteValue()
+        {
+            return std::numeric_limits<T>::infinity();
+        }
+
+        /**
+         * @brief Replace 'inf` values in an image array with a user chosen value
+         * 
+         * @tparam T Data type of new value
+         * @param img cv::Mat image array
+         * @param value Value to replace 'inf' values in 'img'
+         */
+        template <typename T>
+        void replaceInfValues(cv::Mat& img, T value)
+        {
+            // Get standard 'inf' value for data type 'T'
+            auto inf = infiniteValue<T>();
+
+            // Create a mask using pixels in 'img' with the 'inf' value
+            cv::Mat inf_mask { img == inf };
+
+            // Use the mask values to identify which pixels have the 'inf' 
+            // value in 'img' and replace them with the user chosen 'value'
+            img.setTo(value, inf_mask); 
+        }
+
     }
 
 
