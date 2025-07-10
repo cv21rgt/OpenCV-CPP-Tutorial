@@ -534,3 +534,59 @@ int main()
 2. Another problem occurs when the output image from an image processing operation contains different colors to the input image or images. This can occur very easily, as for instance when two color images are **added together** pixel-by-pixel. Since the output image contains different colors from the input images, it ideally needs a new colormap, different from those of the input images, and this involves further color quantization which will degrade the image quality. Hence the resulting output is usually only an approximation of the desired output. Repeated image processing operations will continually degrade the image colors. And of course we still have the problem that it is not possible to display the images simultaneously with each other on the same 8-bit display.
 
 :notebook_with_decorative_cover: Because of these problems it is to be expected that as computer storage and processing power become cheaper, there will be a shift away from 8-bit images and towards full 24-bit image processing. 
+
+## Subtraction
+
+:notebook_with_decorative_cover: The subtraction operator can be applied to images in four situations: 
+
+* Straighforward subtraction between two images - This is the default use of the subtraction operator. If $P_1(row, column)$ and $P_2(row, column)$ are pixel values at location $(row, column)$ in two images, the output pixel values from subtracting image $P_2$ from $P_1$ are given by $Q(row, column) = P_1(row, column) - P_2(row, column)$. The input images should have the same **size** and **number of channels**. This will result in an image of the same size and number of channels as the input images. However, the input images and the output image can all have the same or different depths. For example, you can subtract two 8-bit unsigned image arrays and store the difference in a 16-bit signed image array. 
+* Compute the absolute differences between two input images - This has the impact of removing the sign of any negative pixel values that would have resulted from the computation. This means all pixel values in the output image will be positive values. Mathematically, this is defined as $Q(row, column) = |P_1(row, column) - P_2(row, column)|$. As an example $|3 - 5| = 2$.
+* Subtract a constant value $C$ from a single image - The resulting image will have each pixel value as the difference of the input image pixel value and the constant value at each location, i.e., $Q(row, column) = P_1(row, column) - C$. If you want absolute differences here, this can be extended to $Q(row, column) = |P_1(row, column) - C|$. 
+* Subtract an image from a constant value $C$  - The resulting image will have each pixel value as the difference of the constant value and input image pixel value at each location, i.e., $Q(row, column) = C - P_1(row, column)$. If you want absolute differences here, this can be extended to $Q(row, column) = |C - P_1(row, column)|$.
+
+:notebook_with_decorative_cover: We can also use matrix expressions and functions to apply the subtraction operator:
+
+1. Use simple matrix expressions, e.g., if `A` and `B` are image arrays and `s` is a constant value, then we can write `A - B`, `B - A`, `A - s` or `s - A`. For example code, refer to **Example 1** and **Example 2** above - all you have to do is change the arithmetic sign from `+` to `-`. 
+2. To compute the absolute difference between two image arrays or between an array and a constant value we use the function `void cv::absdiff(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst)`. This function is found in the header `<opencv2/core.hpp>`.
+
+   * `src1` - First input image or constant value. The constant value is constructed as a `cv::Scalar` object.
+   * `src2` - Second input image or constant value. The constant value is constructed as a `cv::Scalar` object.
+   * `dst` - Output image that has the same size and number of channels as the input image.
+
+:notebook_with_decorative_cover: The above function calculates: 
+
+   * The absolute difference between two images ($src1$ and $src2$) when both input images have the same size and the same number of channels, i.e., $dst = |src1 - src2|$.   
+   * The absolute difference between an image, $src1$, and a constant value, $C$. The constant value can be constructed from a `cv::Scalar` object and should have the same number of elements as `src1.channels()`, i.e., $dst = |src1 - C|$. 
+   * The difference between a constant value, $C$, and an image, $src2$. The constant value can be constructed from a `cv::Scalar` object and should have the same number of elements as `src2.channels()`, i.e., $dst = |C - src2|$. 
+
+3. We can also compute the absolute difference using the function `cv::abs(const cv::MatExpr& e)`. If `A` and `B` are image arrays and `s` is a constant value, then `e` can be any of `A - B`, `B - A`, `A - s` or `s - A`. 
+
+4. We also have the more flexible function `void cv::subtract(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst, cv::InputArray mask = cv::noArray(), int dtype = -1)`. This function is found in the header `<opencv2/core.hpp>`.
+
+* `src1` - First input image or constant value. The constant value is constructed as a `cv::Scalar` object.
+* `src2` - Second input image or constant value. The constant value is constructed as a `cv::Scalar` object.
+* `dst` - Output image that has the same size and number of channels as the input image.
+* `mask` - Optional operation mask defining region of interest. This must be an 8-bit single channel array. We have not dealt with masks yet, but will do so in one of the chapters in this tutorial - so be patient - as we need to learn about bitwise operations first.
+* `dtype` - Optional depth of the output image. When both input images have the same data type, `dtype` can be set to `-1`, which will be equivalent to `src1.depth()`.
+
+:notebook_with_decorative_cover: The above function calculates: 
+
+  * The difference between two images ($src1$ and $src2$) when both input images have the same size and the same number of channels, i.e., $dst = src1 - src2$.
+  * The difference between an image, $src1$, and a constant value, $C$. The constant value can be constructed from a `cv::Scalar` object and should have the same number of elements as `src1.channels()`, i.e., $dst = src1 - C$. 
+  * The difference between a constant value, $C$, and an image, $src2$. The constant value can be constructed from a `cv::Scalar` object and should have the same number of elements as `src2.channels()`, i.e., $dst = C - src2$. 
+
+### Possible appplications of image subtraction
+
+1. **Medical Imaging** - In medical imaging (MRI, CT scans), image subtraction helps visualize subtle changes within the body, such as tumors, hemorrhages, or the effects of treatment. It can be used to distinguish between different tissue types, identify areas of enhancement, and monitor disease progression. For example, it can help differentiate between a hematoma and a tumor in the liver or other organs. 
+
+2. **Astronomy** - Image subtraction is crucial for identifying variable objects in the sky, such as supernovae or variable stars in other galaxies. By subtracting images taken at different times, astronomers can isolate changes and study these transient phenomena. 
+
+3. **Industrial Inspection** - In manufacturing and quality control, image subtraction can be used to identify defects or deviations from a standard product. It can help detect subtle differences in shape, size, or color that might indicate a flaw. 
+
+4. **Remote Sensing** - In remote sensing applications (satellite imagery), image subtraction can be used to track changes in land cover, deforestation, or urban development over time. It helps monitor environmental changes and natural disasters. 
+
+5. **Background Removal** - Image subtraction is an effective method for removing a static background from an image, especially when dealing with uneven illumination. This is useful in microscopy, where background variations can make it difficult to analyze the sample. 
+
+6. **Enhancing Features** - By subtracting a background image, image subtraction can make subtle features in the foreground more visible and easier to analyze. This is helpful in various scientific and engineering applications. 
+
+7. **Motion Detection** - By subtracting consecutive frames in a video, image subtraction can effectively isolate moving objects, making it a core component in motion detection algorithms. This is used in surveillance systems, security cameras, and video analysis applications. This example may seem confusing as it mentions video data - however when we get to discuss video processing, you will realise that a video is simply made up of images that are shown in a loop at a fast rate. 
