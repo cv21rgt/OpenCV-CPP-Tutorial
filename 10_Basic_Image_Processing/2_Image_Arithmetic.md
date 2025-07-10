@@ -856,3 +856,323 @@ std::tuple<T, T> dataTypeRange(int type)
 	}
 }
 ```
+
+## Division
+
+:notebook_with_decorative_cover: The image division operator can be applied in three scenarios.
+
+1. Image division between two images - here the ouput image pixel values are the pixel values of the first image divided by the corresponding pixel values of the second image, i.e., $Q(row, column) = P_1(row, column) / P_2(row, column)$.
+2. Divide each image pixel by a constant value - this involves a single input image, in which case every pixel value in that image is divided by a specified constant, $C$, i.e., $Q(row, column) = P_1(row, column) / C$.
+3. Constant value divided by each image pixel - this is the opposite of the above scenario, i.e., $Q(row, column) = C / P_1(row, column)$.
+
+:notebook_with_decorative_cover: When discussing division using OpenCV we also need to be aware of the following important issues:
+
+* When dealing with images whose data is `8/16/32-bit` unsigned or signed integers, the output of division is simply rounded to the nearest integer value.
+* When dealing with images whose data is `8/16/32-bit` unsigned or signed integers, the output of dividing by `0` is an infinite value - but here is the catch - that infinite value is `0`. If you are curious about the infinite values for most basic data types see <a href = "https://en.cppreference.com/w/cpp/types/numeric_limits/infinity.html">here</a>.
+* When dealing with 32-bit floating point images, the output will be a 32-bit decimal value.
+* When dealing with 64-bit floating point images, the output will be a 64-bit decimal value. 
+* When dealing with `32/64-bit` floating point images, the output image pixel values as a result of dividing by `0`, are set to `inf` or `nan` since mathematically division by `0` is not permissible and this is one of the ways to gracefully handle these scenarios without throwing an exception/error. `inf` means an **infinite number**, and `nan` means **not a number**. We can handle such situations in two ways. One, leave the values as is. Two, replace all `inf` or `nan` pixel values by a carefully chosen value (e.g., the average pixel value in an image). When handling `nan` values we can use the function `void cv::patchNaNs(cv::InputOutputArray a, double val = 0)` - where `a` is a matrix/image of type `CV_32F` and `val` is the value to convert `nan`'s to. You will find this function in the header `<opencv2/core.hpp>`. For handling `inf` values, we have to be creative as shown in the following example where we make use of a template function and `std::numeric_limits<T>::infinity()` from standard C++.
+
+**Example 6** How to handle `inf` or `nan` values
+
+```c++
+#include "opencv2/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include <iostream>
+
+/**
+ * @brief Returns the "positive infinity" value for a particular data type
+ * 
+ * @tparam T Data type whose infinite value we want
+ * @return T Infinite value of data type 'T'
+ */
+template <typename T>
+T infiniteValue()
+{
+    return std::numeric_limits<T>::infinity();
+}
+
+int main(int argc, char* argv[])
+{
+    std::cout << "\n--------- Handling inf values -------------\n";
+
+    double data[] {1, 2, 3, 4};
+    double data2[] {3, 0, 3, 0};   
+
+    // Use the data above to create two image arrays of size 2x2,
+    // with 1 channel each and data type 64-bit float
+    cv::Mat m1 {cv::Size(2, 2), CV_64FC1, data};
+    cv::Mat m2 {cv::Size(2, 2), CV_64FC1, data2};
+
+    std::cout << "\nm1 = \n" << m1;
+    std::cout << "\nm2 = \n" << m2;   
+
+    cv::Mat m3 = m1 / m2;
+    std::cout << "\nm1 / m2 = \n" << m3;
+
+    // Replace `inf` pixel values with a numeric value
+    auto inf = infiniteValue<double>();
+    cv::Mat inf_mask { m3 == inf };
+    m3.setTo(0.5, inf_mask); // Use the value '0.5' to replace 'inf' in m3
+    std::cout << "\nm3 after replacing 'inf' values = \n" << m3;
+
+    std::cout << "\n\n--------- Handling nan values -------------\n";
+
+    float data3[] {1, 2, 3, 4};
+    float data4[] {3, 0, 3, 0};   
+
+    // Use the data above to create two image arrays of size 2x2,
+    // with 1 channel each and data type 32-bit float
+    cv::Mat m4 {cv::Size(2, 2), CV_32FC1, data3};
+    cv::Mat m5 {cv::Size(2, 2), CV_32FC1, data4};
+
+    std::cout << "\nm4 = \n" << m4;
+    std::cout << "\nm5 = \n" << m5;   
+
+    cv::Mat m6 = m4 / m5;
+    std::cout << "\nm4 / m5 = \n" << m6;
+
+    // Replace 'nan' pixel values with a suitable numeric value
+    cv::patchNaNs(m6, 0.2); // Use the value '0.2' to replace 'nan' in m6
+    std::cout << "\nm6 after replacing 'nan' values = \n" << m6;
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+    --------- Handling inf values -------------
+
+    m1 = 
+    [1, 2;
+    3, 4]
+
+    m2 = 
+    [3, 0;
+    3, 0]
+
+    m1 / m2 = 
+    [0.3333333333333333, inf;
+    1, inf]
+
+    m3 after replacing 'inf' values = 
+    [0.3333333333333333, 0.5;
+    1, 0.5]
+
+    --------- Handling nan values -------------
+
+    m4 = 
+    [1, 2;
+    3, 4]
+
+    m5 = 
+    [3, 0;
+    3, 0]
+
+    m4 / m5 = 
+    [0.33333331, -nan;
+    0.99999994, -nan]
+
+    m6 after replacing 'nan' values = 
+    [0.33333331, 0.2;
+    0.99999994, 0.2]
+
+### Using the division operator in OpenCV
+
+:notebook_with_decorative_cover: Just like with the other arithmetic operators we have discussed so far, we can also use the division operator with matrix expressions and functions.
+
+1. Division using a constant or scalar value - you can use the matrix expression `A / s` or `s / A`, where `A` is an image array and `s` is a constant value.
+2. Per-element division between images - you can use the matrix expression `A / B`, where `A` and `B` are image arrays. 
+3. Per-element division between arrays (with optional scaling) - you can use the function `void cv::divide(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst, double scale = 1, int dtype = -1)`. This function is found in the header `<opencv2/core.hpp>`.
+
+* `src1` - first input array.
+* `src2` - second input array of the same size and type as `src1`.
+* `scale` - scalar factor.
+* `dst` -  output array of the same size and type as `src2`.
+* `dtype` - optional depth of the output array; if `-1`, `dst` will have depth `src2.depth()`, but in case of an array-by-array division, you can only pass `-1` when `src1.depth()==src2.depth()`. 
+
+This function handles three forms of division:
+
+i. Division between two arrays with optional scaling i.e., $dst = (src1*scale) / src2$. If you just want image division without any scaling, then set `scale = 1`.
+ii. Divide a scalar by an array i.e., $dst = scalar / src2$. In this scenario, provide your scalar value as a `cv::Scalar` object. Remember, the number of values in your `cv::Scalar` object must match number of channels in image `src2`. In the function, your `cv::Scalar` object will be the argument `src1`.
+iii. Divide an image array by a scalar value i.e., $dst = src1 / scalar$. In this scenario, provide your scalar value as a `cv::Scalar` object. Remember, the number of values in your `cv::Scalar` object must match number of channels in image `src1`. In the function, your `cv::Scalar` object will be the argument `src2`.
+
+4. There is also an overloaded function `void cv::divide(double scale, cv::InputArray src2, cv::OutputArray dst, int dtype = -1)` that handles scenario (ii) above, i.e., $dst = scalar / src2$. In this function the argument `scale` is used to hold the scalar value. This time you provide the scalar value as is NOT as a `cv::Scalar` object.
+
+**Example 7** The following example shows how you can use division with images and scalar values. We also have added a new template function `void replaceInfValues(cv::Mat& img, T value)` to help us if we need to replace `inf` values in an image. This will be added to our own library under the `General` namespace.
+
+```c++
+#include "opencv2/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include <iostream>
+
+//----------------------- Function Declaration --------------------//
+
+/**
+ * @brief Returns the "positive infinity" value for a particular data type
+ * 
+ * @tparam T Data type whose infinite value we want
+ * @return T Infinite value of data type 'T'
+ */
+template <typename T>
+T infiniteValue();
+
+/**
+ * @brief Replace 'inf` values in an image array with a user chosen value
+ * 
+ * @tparam T Data type of new value
+ * @param img cv::Mat image array
+ * @param value Value to replace 'inf' values in 'img'
+ */
+template <typename T>
+void replaceInfValues(cv::Mat& img, T value);
+
+//---------------------- End of Function Declarations ----------------//
+
+int main(int argc, char* argv[])
+{
+    double data[] {1, 2, 3, 4};
+    double data2[] {3, 0, 3, 1};   
+
+    // Use the data above to create two image arrays of size 2x2,
+    // with 1 channel each and data type 64-bit float
+    cv::Mat m1 {cv::Size(2, 2), CV_64FC1, data};
+    cv::Mat m2 {cv::Size(2, 2), CV_64FC1, data2};
+
+    std::cout << "\nm1 = \n" << m1;
+    std::cout << "\nm2 = \n" << m2;   
+
+    std::cout << "\n\n---------- dst = (src1*scale)/src2 -------------\n";
+
+    // 1. Handle image to image division with 
+    //    optional scaling, i.e., dst = (src1*scale)/src2
+    cv::Mat m3;
+    cv::divide(m1,    // First input array
+               m2,    // Second input array
+               m3,    // Output array
+               1,     // Scale factor
+               -1);   // Output image data type
+    std::cout << "\nm1 / m2 = \n" << m3;
+
+    // Handle any 'inf' values
+    replaceInfValues(m3, 0.5); // Use the value '0.5' to replace 'inf' in m3
+    std::cout << "\nArray after replacing 'inf' values = \n" << m3;
+
+    std::cout << "\n\n---------- dst = src1/scalar -------------\n";
+
+    // 2. Handle image division by a scalar i.e., dst = src1/scalar
+    cv::Mat m4;
+    cv::Scalar s {2.5};
+    cv::divide(m1,    // First input array
+               s,     // Scalar value
+               m4,    // Output array
+               1,     // Scale factor
+               -1);   // Output image data type
+    std::cout << "\nm1 / 2.5 = \n" << m4;
+
+    // Handle any 'inf' values
+    replaceInfValues(m4, 0.5); // Use the value '0.5' to replace 'inf' in m4
+    std::cout << "\nArray after replacing 'inf' values = \n" << m4;
+    
+
+    std::cout << "\n\n---------- dst = scalar/src2 -------------\n";
+
+    // 3. Handle dividing a scalar value by an image array, 
+    //    i.e., dst = scalar / src2. Here we are using the overloaded 
+    //    function void cv::divide(double scale, cv::InputArray src2, 
+    //    cv::OutputArray dst, int dtype = -1)
+    cv::Mat m5;
+    cv::divide(2.5,     // Scalar/Constant value
+               m2,      // Input array
+               m5,      // Output array
+               -1);     // Output image data type same as 'src2'
+
+    std::cout << "\n\n2.5 / m2 = \n" << m5;
+
+    // Handle any 'inf' values
+    replaceInfValues(m5, 0.5); // Use the value '0.5' to replace 'inf' in m5
+    std::cout << "\nArray after replacing 'inf' values = \n" << m5;
+
+    std::cout << '\n';
+
+    return 0;
+}
+
+
+//--------------------- Function Definitions -----------------//
+
+/**
+ * @brief Returns the "positive infinity" value for a particular data type
+ * 
+ * @tparam T Data type whose infinite value we want
+ * @return T Infinite value of data type 'T'
+ */
+template <typename T>
+T infiniteValue()
+{
+    return std::numeric_limits<T>::infinity();
+}
+
+/**
+ * @brief Replace 'inf` values in an image array with a user chosen value
+ * 
+ * @tparam T Data type of new value
+ * @param img cv::Mat image array
+ * @param value Value to replace 'inf' values in 'img'
+ */
+template <typename T>
+void replaceInfValues(cv::Mat& img, T value)
+{
+    // Get standard 'inf' value for data type 'T'
+    auto inf = infiniteValue<T>();
+
+    // Create a mask using pixels in 'img' with the 'inf' value
+    cv::Mat inf_mask { img == inf };
+
+    // Use the mask values to identify which pixels have the 'inf' 
+    // value in 'img' and replace them with the user chosen 'value'
+    img.setTo(value, inf_mask); 
+}
+```
+
+**Output**
+
+    m1 = 
+    [1, 2;
+    3, 4]
+    m2 = 
+    [3, 0;
+    3, 1]
+
+    ---------- dst = (src1*scale)/src2 -------------
+
+    m1 / m2 = 
+    [0.3333333333333333, inf;
+    1, 4]
+    Array after replacing 'inf' values = 
+    [0.3333333333333333, 0.5;
+    1, 4]
+
+    ---------- dst = src1/scalar -------------
+
+    m1 / 2.5 = 
+    [0.4, 0.8;
+    1.2, 1.6]
+    Array after replacing 'inf' values = 
+    [0.4, 0.8;
+    1.2, 1.6]
+
+    ---------- dst = scalar/src2 -------------
+
+
+    2.5 / m2 = 
+    [0.8333333333333334, inf;
+    0.8333333333333334, 2.5]
+    Array after replacing 'inf' values = 
+    [0.8333333333333334, 0.5;
+    0.8333333333333334, 2.5]
+
+
+
+    
