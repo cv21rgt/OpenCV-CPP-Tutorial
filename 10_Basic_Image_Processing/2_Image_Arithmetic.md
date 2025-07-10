@@ -590,3 +590,269 @@ int main()
 6. **Enhancing Features** - By subtracting a background image, image subtraction can make subtle features in the foreground more visible and easier to analyze. This is helpful in various scientific and engineering applications. 
 
 7. **Motion Detection** - By subtracting consecutive frames in a video, image subtraction can effectively isolate moving objects, making it a core component in motion detection algorithms. This is used in surveillance systems, security cameras, and video analysis applications. This example may seem confusing as it mentions video data - however when we get to discuss video processing, you will realise that a video is simply made up of images that are shown in a loop at a fast rate. 
+
+
+## Multiplication
+
+:notebook_with_decorative_cover: The multiplication operator can be applied to images in two ways:
+
+* Multiplication of two input images - this produces an output image in which the pixel values are those of the first image multiplied by the values of the second input image at each corresponding pixel location, i.e., $Q(row, column) = P_1(row, column) * P_2(row, column)$.
+* Scaling - this takes a single input image and multiplies its pixel values by a specified constant value, i.e., $Q(row, column) = P_1(row, column) * C$. The constant $C$ is often a floating point number. It may even be negative if the image data type supports that. Using the multiplication operator in this way is more widely used.
+
+:notebook_with_decorative_cover: OpenCV provides the following ways to use the multiplication operator: 
+
+1. Simple scaling - you can use the matrix expression `A * s` or `s * A`, where `A` is an image array and `s` is a constant value.
+2. Simple per-element multiplication between images - you can use the matrix expression `A * B`, where `A` and `B` are image arrays. You can also use the `cv::Mat` member function `mul()`, i.e., `A.mul(B)`.
+3. Per-element multiplication with optional scaling - you can use the function `void cv::multiply(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst, double scale = 1, int dtype = -1)`. This function is found in the header `<opencv2/core.hpp>`.
+
+* `src1` - First input image 
+* `src2` - Second input image of the same size and same type as `src1`.
+* `dst` - Output image that has the same size and number of channels as `src1`.
+* `scale` - Optional scale factor.
+* `dtype` - Optional depth of the output image. When both input images have the same data type, `dtype` can be set to `-1`, which will be equivalent to `src1.depth()`.
+
+:notebook_with_decorative_cover: The function `cv::multiply()` calculates $dst = scale * src1 * scr2$. 
+
+### Practical uses of image multiplication
+
+:notebook_with_decorative_cover: Image **scaling** is a more widely used application of image multiplication. Given a scaling factor greater than one, scaling will brighten an image. Given a factor less than one, it will darken the image. Scaling generally produces a much more natural brightening/darkening effect than simply *adding an offset to the pixels* (image addition), since it preserves the relative contrast of the image better. Before applying image multiplication through scaling you should be aware of what will happen to your pixel values as it is likely that the output values will fall outside the data type range of the input image. It is also very easy to generate very large numbers with pixel-by-pixel multiplication. If the image processing software supports it, it is often safest to change to an image format with a large range, e.g. floating point, before attempting this sort of calculation. 
+
+:notebook_with_decorative_cover: Pixel-by-pixel multiplication is generally less useful, although sometimes a binary image can be used to multiply another image in order to act as a mask. The idea is to multiply by 1 those pixels that are to be preserved, and multiply by zero those that are not. However for integer format images it is often easier and faster to use the logical operator AND instead. We will look at binary images, masks and bitwise operators in one of the sections.
+
+**Example 5** You can use the following code to perform either image scaling or image to image multiplication. You can also save the output image if you wish. This code includes a template function `dataTypeRange()`, which returns the data range ([min, max]) of an image data type. You need this information to scale image pixel values when displaying them on your monitor. We will also be adding this function to our own library under the `General` namespace for future use. 
+
+*image_multiplication.cpp*
+
+```c++
+#include "opencv2/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include "opencv2/imgcodecs.hpp"   // for cv::imread
+#include "opencv2/highgui.hpp"     // for displaying images in windows
+#include "opencv2/core/utility.hpp"    // for cv::CommandLineParser
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+#include <tuple>
+
+//----------------------- Function Declarations ------------------//
+
+/**
+ * @brief Return the minimum and maximum range for image types.  
+ *        One good use is when scaling image values so you can display your 
+ *        image on a monitor.     
+ * 
+ * @tparam T Data type of values to be returned
+ * @param type OpenCV image data type as an integer value. 
+ *             See https://medium.com/@nullbyte.in/part-2-exploring-
+ *                 the-data-types-in-opencv4-a-comprehensive-guide-49272f4a775
+ * @return std::tuple<T, T> A tuple object with the minimum and maximum values
+ * 
+ */
+template <typename T>
+std::tuple<T, T> dataTypeRange(int type);
+
+//------------------------ main() Function ----------------------------//
+
+int main(int argc, char* argv[])
+{
+
+    //---------------- 1. Extract Command Line Arguments -----------------//
+
+    const cv::String keys = 
+    "{help h usage ? | | Apply image multiplication }"
+    "{image1 | <none> | Full image path }"
+    "{image2 | | Full path to second image (Optional argument)}"
+    "{scale_factor | 1.0 | Scaling value }"
+    "{output_datatype | -1 | Data type assigned to output image. " 
+    "Use value -1 if output data type is same as that of image1 }"
+    "{output_image | | File path to save output image (must include file extension)}";  
+
+    // Define a cv::CommandLineParser object
+    cv::CommandLineParser parser(argc, argv, keys);
+
+    // Display message about application
+    parser.about("\nApplication to perform image arithmetic\n");
+    parser.printMessage();
+
+    // Extract the command line arguments
+    cv::String image1_path = parser.get<cv::String>("image1");
+    cv::String image2_path = parser.get<cv::String>("image2");
+    double scale_factor = parser.get<double>("scale_factor");
+    int output_image_datatype = parser.get<int>("output_datatype");
+    cv::String output_image_path = parser.get<cv::String>("output_image");
+
+    // Check for any errors during command line arguments extraction
+    if (!parser.check())
+    {
+        parser.printErrors(); // Print a list of any errors encountered
+
+        return -1; // Early program exit
+    }
+
+    //---------------- 2. Read Image Data -------------------------//
+
+    cv::Mat first_input_image = cv::imread(image1_path, cv::IMREAD_ANYCOLOR);
+    if (first_input_image.empty())
+    {
+        CV_Error_(cv::Error::StsBadArg, 
+                      ("Could not read image data from (%s)", 
+                        image1_path.c_str())); 
+    }
+    else 
+    {
+        // Provide image sizes, no. of channels and data types of image
+        std::cout << "\nSize of first input image = " << first_input_image.size()
+                  << "\nData type of first input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(first_input_image.type())
+                  << '\n';
+    }
+
+    cv::Mat second_input_image;
+    if (image2_path.empty()) // If we don't provide a second input image
+    {
+        // Create a cv::Mat array filled with '1's
+        // This will not affect the result of any multiplication 
+        // because 'input x 1 = input'
+        second_input_image.create(cv::Size(first_input_image.cols, first_input_image.rows), first_input_image.type());
+        second_input_image.setTo(cv::Scalar::all(1));
+    }
+    else 
+    {
+        second_input_image = cv::imread(image2_path, cv::IMREAD_ANYCOLOR);
+        if (second_input_image.empty())
+        {
+        CV_Error_(cv::Error::StsBadArg, 
+                      ("Could not read image data from (%s)", 
+                        image2_path.c_str())); 
+        }
+        else 
+        {
+            // Provide image sizes, no. of channels and data types of image
+            std::cout << "\nSize of second input image = " << second_input_image.size()
+                  << "\nData type of second input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(second_input_image.type())
+                  << '\n';
+        }
+
+    }
+
+    //---------------- 3. Image Multiplication ------------------------//
+
+    cv::Mat output_image;
+
+    cv::multiply(first_input_image,       // First input image array
+                 second_input_image,      // Second input image array
+                 output_image,            // Output image array
+                 scale_factor,            // Scale factor
+                 output_image_datatype    // Data type of output image
+                ); 
+
+    std::cout << "\nSize of output image = " << output_image.size()
+                  << "\nData type of output image  = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(output_image.type())
+                  << '\n';
+
+    //----------------- 4. Save output image to file ---------------//
+
+    if (!output_image_path.empty())
+    {
+        bool success = cv::imwrite(output_image_path, output_image);
+        if (success)
+        {
+            std::cout << "\nSuccessfully saved output image to: " 
+                      << output_image_path << '\n';
+        } 
+        else 
+        {
+            std::cout << "\nERROR: Could not save output image!\n";
+        }
+    }
+                   
+    //------------------ 5. Display images in windows ---------------------//
+
+    cv::namedWindow("First input image", cv::WINDOW_NORMAL);
+    cv::imshow("First input image", first_input_image);
+
+    if (!image2_path.empty()) // Display image only if path exists
+    {
+        cv::namedWindow("Second input image", cv::WINDOW_NORMAL);
+        cv::imshow("Second input image", second_input_image);
+    }
+
+    // In order to display the computed output image sometimes you 
+    // need to scale its values 
+    auto [minVal, maxVal] = dataTypeRange<double>(output_image.type());
+    double scale = maxVal / 255;
+    output_image = output_image * scale;    
+
+    cv::namedWindow("Output image", cv::WINDOW_NORMAL);
+    cv::imshow("Output image", output_image);
+
+    cv::waitKey(0);
+
+    cv::destroyAllWindows();    
+
+    std::cout << '\n';
+
+    return 0;
+}
+
+//------------------- Function Definitions -------------------//
+
+/**
+ * @brief Return the minimum and maximum range for image types.  
+ *        One good use is when scaling image values so you can display your 
+ *        image on a monitor.     
+ * 
+ * @tparam T Data type of values to be returned
+ * @param type OpenCV image data type as an integer value. 
+ *             See https://medium.com/@nullbyte.in/part-2-exploring-
+ *                 the-data-types-in-opencv4-a-comprehensive-guide-49272f4a775
+ * @return std::tuple<T, T> A tuple object with the minimum and maximum values
+ * 
+ */
+template <typename T>
+std::tuple<T, T> dataTypeRange(int type)
+{
+    switch (type)
+	{
+        case CV_8UC1: // 8-bit unsigned
+        case CV_8UC2:
+        case CV_8UC3:
+        case CV_8UC4:
+            return {0, 255};
+        case CV_8SC1: // 8-bit signed
+        case CV_8SC2:
+        case CV_8SC3:
+        case CV_8SC4:
+            return {-128, 127};
+        case CV_16UC1: // 16-bit unsigned
+        case CV_16UC2:
+        case CV_16UC3:
+        case CV_16UC4:
+            return {0, 65535};
+        case CV_16SC1: // 16-bit signed
+        case CV_16SC2:
+        case CV_16SC3:
+        case CV_16SC4:
+            return {-32768, 32767};
+        case CV_32SC1: // 32-bit signed
+        case CV_32SC2:
+        case CV_32SC3:
+        case CV_32SC4:
+            return {-2147483648, 2147483647};
+        case CV_32FC1: // 32-bit floating point
+        case CV_32FC2:
+        case CV_32FC3:
+        case CV_32FC4:
+            return {0, 1};
+        case CV_64FC1: // 64-bit floating point
+        case CV_64FC2:
+        case CV_64FC3:
+        case CV_64FC4:
+            return {0, 1};
+        default:
+            return {0, 255};
+	}
+}
+```
