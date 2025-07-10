@@ -1175,6 +1175,12 @@ void replaceInfValues(cv::Mat& img, T value)
     [0.8333333333333334, 0.5;
     0.8333333333333334, 2.5]
 
+## References
 
+1. https://homepages.inf.ed.ac.uk/rbf/HIPR2/arthops.htm
+2. https://docs.opencv.org/4.8.0/d2/de8/group__core__array.html
+3. https://homepages.inf.ed.ac.uk/rbf/HIPR2/8bitcol.htm
+4. https://stackoverflow.com/questions/41759247/filter-opencv-mat-for-nan-values
+5. https://forum.opencv.org/t/how-to-remove-inf-values-from-cv-matrix/4898/5
 
     
