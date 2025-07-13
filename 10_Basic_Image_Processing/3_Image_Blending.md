@@ -187,3 +187,19 @@ int main(int argc, char* argv[])
     return 0;
 }
 ```
+
+## Applications of image blending
+
+* **Panoramas**: Stitching together multiple images to create a wide-angle view. 
+
+* **Special effects**: Creating composite images, like adding a person to a different background or creating surreal imagery. This is used in movies. People also often use this in software packages such as Photoshop.
+
+* **Exposure blending**: Combining images with different exposures to capture a wider dynamic range of light and detail. 
+
+* **Image enhancement**: Improving image quality by blending details from multiple images or by using techniques like sharpening or noise reduction
+
+## References
+
+1. https://en.wikipedia.org/wiki/Blend_modes#:~:text=Blend%20modes%20alternatively%20blending%20modes%20or%20mixing,many%20other%20ways%20to%20blend%20two%20layers.
+2. http://dev.cs.ovgu.de/tutorials/Grokking-the-GIMP-v1.0/node55.html#:~:text=Multiply%2C%20Divide%2C%20Screen%2C%20and%20Overlay%20are%20all,product%20of%20the%20foreground%20and%20background%20pixels.
+3. https://homepages.inf.ed.ac.uk/rbf/HIPR2/blend.htm
