@@ -188,6 +188,13 @@ int main(int argc, char* argv[])
 }
 ```
 
+**Output** Using the code above we blended two color images, one containing the Linux logo and the other with the Windows logo. These images are in the folder `Example-Code/images`. You can play around with the output by varying the value of `alpha` - the weight you give to the first image.
+
+**Figure 1** Result of image blending
+
+![Image blending](./Example-Code/images/linuxWindowsBlend.png)
+
+
 ## Applications of image blending
 
 * **Panoramas**: Stitching together multiple images to create a wide-angle view. 
