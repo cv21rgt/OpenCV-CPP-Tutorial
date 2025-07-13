@@ -23,3 +23,167 @@
 * `dtype` - optional depth of the output array; when both input arrays have the same depth, dtype can be set to -1, which will be equivalent to src1.depth().
 
 :notebook_with_decorative_cover: The function `cv::addWeighted()` calculates the weighted sum of two arrays as $dst = ((src1 * \alpha) + (src2 * \beta)) + gamma$.
+
+**Example 1** You can use the following example code to blend 2 images of the same size and number of channels. You have the option to change the data type of the output image. You can also save the output image to disk if you want.
+
+```c++
+// image_blending.cpp 
+// Program for blending two images 
+
+#include "opencv2/core.hpp"        // for OpenCV core types e.g. cv::Mat
+#include "opencv2/imgcodecs.hpp"   // for cv::imread, cv::imwrite
+#include "opencv2/highgui.hpp"     // for displaying images in windows
+#include "opencv2/core/utility.hpp"    // for cv::CommandLineParser
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+
+int main(int argc, char* argv[])
+{
+
+    //---------------- 1. Extract Command Line Arguments -----------------//
+
+    const cv::String keys = 
+    "{help h usage ? | | Blend two images of same size and number of channels }"
+    "{image1 | <none> | Full path to first image }"
+    "{alpha | 1.0 | Weight applied to first image. Value should be in the range 0 to 1 }"
+    "{image2 | <none> | Full path to second image }"
+    "{gamma | 0.0 | Scalar value added/subtracted to the output array }"
+    "{output_datatype | -1 | Data type assigned to output image. " 
+    "Use value -1 if output data type is same as that of image1 }"
+    "{output_image | | File path to save output image (must include file extension)}";  
+
+    // Define a cv::CommandLineParser object
+    cv::CommandLineParser parser(argc, argv, keys);
+
+    // Display message about application
+    parser.about("\nApplication to perform image blending\n");
+    parser.printMessage();
+
+    // Extract command line arguments
+    cv::String image1Path = parser.get<cv::String>("image1");
+    double alpha = parser.get<double>("alpha");
+    cv::String image2Path = parser.get<cv::String>("image2");
+    double gamma = parser.get<double>("gamma");
+    int outputImageDatatype = parser.get<int>("output_datatype");
+    cv::String outputImagePath = parser.get<cv::String>("output_image");
+
+    // Check for any errors during command line extraction
+    if (!parser.check())
+    {
+        parser.printErrors(); // Print a list of any errors encountered
+
+        return -1; // Early program exit
+    }
+
+    //--------------------- 2. Read image data -------------------------//
+
+    cv::Mat first_input_image = cv::imread(image1Path, cv::IMREAD_ANYCOLOR);
+    if (first_input_image.empty())
+    {
+        CV_Error_(cv::Error::StsBadArg, 
+                      ("Could not read image data from (%s)", 
+                        image1Path.c_str())); 
+    }
+    else 
+    {
+        // Provide image sizes, no. of channels and data types of image
+        std::cout << "\nSize of first input image = " << first_input_image.size()
+                  << "\nData type of first input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(first_input_image.type())
+                  << '\n';
+    }
+
+    cv::Mat second_input_image = cv::imread(image2Path, cv::IMREAD_ANYCOLOR);
+    if (second_input_image.empty())
+    {
+        CV_Error_(cv::Error::StsBadArg, 
+                    ("Could not read image data from (%s)", 
+                        image2Path.c_str())); 
+    }
+    else 
+    {
+        // Provide image sizes, no. of channels and data types of image
+        std::cout << "\nSize of second input image = " << second_input_image.size()
+                  << "\nData type of second input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(second_input_image.type())
+                  << '\n';
+    }
+
+    // Check if input images have the same sizes and channels
+    if (first_input_image.size() != second_input_image.size())
+    {
+        std::cout << "\nERROR: Input images do not have same size!\n";
+
+        return -1; 
+    }
+
+    if (first_input_image.channels() != second_input_image.channels())
+    {
+        std::cout << "\nERROR: Input images do not have same number of channels!\n";
+
+        return -1; 
+    }
+
+    //--------------------- 3. Image Blending ---------------------------//
+
+    cv::Mat outputImage;
+
+    cv::addWeighted(first_input_image,    // First input image array
+                    alpha,                // Weight given to first image
+                    second_input_image,   // Second input image array
+                    1 - alpha,            // Weight given to second image
+                    gamma,                // Scalar value added to output image
+                    outputImage,          // Output image array
+                    outputImageDatatype   // Data type of output image
+                );
+    
+    std::cout << "\nSize of output image = " << outputImage.size()
+                  << "\nData type of output image  = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(outputImage.type())
+                  << '\n';
+
+    //----------------- 4. Save output image to file ---------------//
+
+    if (!outputImagePath.empty())
+    {
+        bool success = cv::imwrite(outputImagePath, outputImage);
+        if (success)
+        {
+            std::cout << "\nSuccessfully saved output image to: " 
+                      << outputImagePath << '\n';
+        } 
+        else 
+        {
+            std::cout << "\nERROR: Could not save output image!\n";
+        }
+    }
+
+    //------------------ 5. Display images in windows ---------------------//
+
+    cv::namedWindow("First input image", cv::WINDOW_NORMAL);
+    cv::imshow("First input image", first_input_image);
+
+    cv::namedWindow("Second input image", cv::WINDOW_NORMAL);
+    cv::imshow("Second input image", second_input_image);
+    
+
+    // In order to display the computed output image sometimes you 
+    // need to scale its values especially for types other than 8-bit unsigned 
+    auto [minVal, maxVal] = CPP_CV::General::dataTypeRange<double>(outputImage.type());
+    double scale = maxVal / 255;
+    outputImage = outputImage * scale;    
+
+    cv::namedWindow("Output image", cv::WINDOW_NORMAL);
+    cv::imshow("Output image", outputImage);
+
+    cv::waitKey(0);
+
+    cv::destroyAllWindows(); 
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
