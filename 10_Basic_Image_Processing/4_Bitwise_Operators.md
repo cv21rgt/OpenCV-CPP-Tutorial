@@ -172,3 +172,113 @@ int main()
 **Figure 3** Output of bitwise operators
 
 ![Output of bitwise operators](./Example-Code/images/bitwise-operators-output.png)
+
+
+### Handling bitwise operations through functions
+
+:notebook_with_decorative_cover: OpenCV provides appropriately named functions that execute bitwise operations. You will find these functions in the `<opencv2/core.hpp>` header file.
+
+1. `void cv::bitwise_and(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst, cv::InputArray mask = cv::noArray())`
+2. `void cv::bitwise_or(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst, cv::InputArray mask = cv::noArray())`
+3. `void cv::bitwise_xor(cv::InputArray src1, cv::InputArray src2, cv::OutputArray dst, cv::InputArray mask = cv::noArray())`
+4. `void cv::bitwise_not(cv::InputArray src1, cv::OutputArray dst, cv::InputArray mask = cv::noArray())`
+
+:notebook_with_decorative_cover: The parameters from the above functions can be defined as follows:
+
+* `src1` - First input array or a scalar (which should be a cv::Scalar object)
+* `src2` - Second input array or a scalar (which should be a cv::Scalar object)
+* `dst` - Output array that has the same size and type as the input arrays
+* `mask` - Optional operational mask, 8-bit single channel array, that specifies region of interest.
+
+**Example 3** Using OpenCV functions to work with bitwise operators
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types
+#include <opencv2/imgproc.hpp>  // for drawing functions
+#include <opencv2/highgui.hpp>  // for functions that display images in a window
+
+#include <iostream>
+
+int main()
+{   
+
+    // 1. Create a binary grayscale image with a rectangle in the middle
+    //    We will use the pixel value '0' for the image background.
+    //    We will use the pixel value '255' for the rectangle 
+    cv::Mat A {cv::Mat::zeros(cv::Size(400, 400), CV_8UC1)}; // Image array   
+    cv::rectangle(A,                      // Image array
+                  cv::Point2i(50, 50),    // Top-left corner coordinates
+                  cv::Point2i(300, 300),  // Bottom-right corner coordinates
+                  cv::Scalar(255),        // Pixel values of rectangle will be '255'
+                  -1                      // We want a filled rectangle
+                 );
+    
+
+    // 2. Create a binary grayscale image with a circle 
+    //    We will use the pixel value '0' for the image background.
+    //    We will use the pixel value '255' for the circle 
+    cv::Mat B {cv::Mat::zeros(cv::Size(400, 400), CV_8UC1)}; // Image array
+    cv::circle(B,                    // Image to draw on
+               cv::Point(300, 300),  // Center coordinates of circle
+               70,                   // Radius of circle
+               cv::Scalar(255),      // Pixel values of circle will be '255'
+               -1                    // We want a filled circle
+              );
+
+
+    // Bitwise AND
+    cv::Mat m1;
+    cv::bitwise_and(A,  // First input image
+                    B,  // Second input image
+                    m1  // Output image
+                   );    
+
+    // Bitwise OR
+    cv::Mat m2;
+    cv::bitwise_or(A,   // First input image
+                   B,   // Second input image 
+                   m2   // Output image
+                  ); 
+
+    // Bitwise XOR
+    cv::Mat m3;
+    cv::bitwise_xor(A,  // First input image 
+                    B,  // Second input image 
+                    m3  // Output image
+                   ); 
+
+    // Bitwise NOT
+    cv::Mat m4;
+    cv::bitwise_not(A,  // First input image
+                    m4  // Output image
+                   ); 
+    cv::Mat m5;
+    cv::bitwise_not(B,  // First input image
+                    m5  // Output image
+                   ); 
+
+    // Bitwise AND with a scalar value
+    cv::Scalar s1 {255};
+    cv::Mat m6;
+    cv::bitwise_and(A,   // First input image
+                    s1,  // Scalar
+                    m6   // Output image
+                   );    
+
+    cv::imshow("A", A);
+    cv::imshow("B", B);
+    cv::imshow("Bitwise AND", m1);
+    cv::imshow("Bitwise OR", m2);
+    cv::imshow("Bitwise XOR", m3);
+    cv::imshow("Bitwise NOT A", m4);
+    cv::imshow("Bitwise NOT B", m5);
+    cv::imshow("Bitwise AND between image A and a scalar value of 255", m6);
+
+    cv::waitKey();
+    cv::destroyAllWindows();    
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
