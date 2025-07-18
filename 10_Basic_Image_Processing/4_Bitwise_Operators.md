@@ -24,3 +24,151 @@
 ![Bitwise Operators](./images/bitwise_operators.jpg)
 
 **Figure source**: https://datahacker.rs/005-image-arithmetic-and-logical-operations-in-opencv-with-python/
+
+
+## How OpenCV handles Bitwise operations
+
+:notebook_with_decorative_cover: OpenCV handles the use of bitwise operations through both arithmetic expressions and functions. We will look at arithmetic expressions first.
+
+### Handling bitwise operations through arithmetic expressions
+
+:notebook_with_decorative_cover: In the following expressions, `A` and `B` are `cv::Mat` image arrays, `s` is a scalar/constant value, which in most cases is defined as a `cv::Scalar` object whose number of elements is equal to number of channels in either `A` or `B`. In addition, image arrays `A` and `B` when used as input images together should have the same size and number of channels.
+
+:notebook_with_decorative_cover: The mathematical/logical operators used for bitwise operations are defined as follows:
+
+* Bitwise **AND** uses the character `&` as in the following expressions `A & B`, `B & A`, `A & s` or `s & A`.
+* Bitwise **OR** uses the character `|` as in the following expressions `A | B`, `B | A`, `A | s` or `s | A`.
+* Bitwise **XOR** uses the character `^` as in the following expressions `A ^ B`, `B ^ A`, `A ^ s` or `s ^ A`.
+* Bitwise **NOT** uses the character `~` as in the following expressions `~A` or `~B`.
+
+:notebook_with_decorative_cover: Before we show example code on using arithmetic expressions, we need to briefly discuss visualization issues with binary grayscale images and the possible solution.
+
+:notebook_with_decorative_cover: So far, we have mentioned binary images as grayscale images with intensity values `0` and `1`. The only issue with a grayscale image whose pixel values are either `0` or `1` is that of visualization. Remember that most grayscale images are 8-bit unsigned and have the data range `[0, 255]`. This range defines various shades of gray from darkest to lightest. Because the values `0` and `1` are too close to each other within the data range, it is visually impossible for the naked eye to differentiate pixels with these two values. Both pixels will appear black to the naked eye. As such, you will find in some example code, some people use the values `0` and `255` to create a binary grayscale image. Pixels with intensity value `0` are very dark (black) and those with intensity value `255` are very light (white) - making it easier for the human eye to differentiate between the two pixels - leading to better image visualization. We will demonstrate this in the following example:
+
+**Example 1** Create binary images using either the pixel values `0` and `1` OR the pixel values `0` and `255`. Both images are supposed to show a circle close to the bottom right hand corner of an image.
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types
+#include <opencv2/imgproc.hpp>  // for drawing functions
+#include <opencv2/highgui.hpp>  // for functions that display images in a window
+
+#include <iostream>
+
+int main()
+{   
+
+    // 1. Create a binary grayscale image with a circle
+    //    We will use the pixel value '0' for the image background.
+    //    We will use the pixel value '1' for the circle 
+    cv::Mat A {cv::Mat::zeros(cv::Size(400, 400), CV_8UC1)}; // Image array   
+    cv::circle(A,                    // Image to draw on
+               cv::Point(300, 300),  // Center coordinates of circle
+               70,                   // Radius of circle
+               cv::Scalar(1),        // Pixel values of circle will be '1'
+               -1                    // We want a filled circle
+              );
+
+    // 2. Create a binary grayscale image with a circle
+    //    We will use the pixel value '0' for the image background.
+    //    We will use the pixel value '255' for the circle 
+    cv::Mat B {cv::Mat::zeros(cv::Size(400, 400), CV_8UC1)}; // Image array
+    cv::circle(B,                    // Image to draw on
+               cv::Point(300, 300),  // Center coordinates of circle
+               70,                   // Radius of circle
+               cv::Scalar(255),      // Pixel values of circle will be '255'
+               -1                    // We want a filled circle
+              );
+
+    cv::imshow("Binary image with 0 and 1 as pixel values", A);
+    cv::imshow("Binary image with 0 and 255 as pixel values", B);
+
+    cv::waitKey();
+    cv::destroyAllWindows();
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output**
+
+**Figure 2** Binary images using different pixel values.
+
+![Binary images](./images/binary-images.png)
+
+:notebook_with_decorative_cover: As you can see from **Figure 2**, you cannot even see the circle in the image on the left. In terms of visualization, using the pixel values `0` and `255` is much better (image on the right).
+
+:notebook_with_decorative_cover: Now we know how to create much better binary images for practical purposes, we can now write example code on using arithmetic expressions with bitwise operators.
+
+**Example 2** Using bitwise operators in arithmetic expressions
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types
+#include <opencv2/imgproc.hpp>  // for drawing functions
+#include <opencv2/highgui.hpp>  // for functions that display images in a window
+
+#include <iostream>
+
+int main()
+{   
+
+    // 1. Create a binary grayscale image with a rectangle in the middle
+    //    We will use the pixel value '0' for the image background.
+    //    We will use the pixel value '255' for the rectangle 
+    cv::Mat A {cv::Mat::zeros(cv::Size(400, 400), CV_8UC1)}; // Image array   
+    cv::rectangle(A,                      // Image array
+                  cv::Point2i(50, 50),    // Top-left corner coordinates
+                  cv::Point2i(300, 300),  // Bottom-right corner coordinates
+                  cv::Scalar(255),        // Pixel values of rectangle will be '255'
+                  -1                      // We want a filled rectangle
+                 );
+    
+
+    // 2. Create a binary grayscale image with a circle 
+    //    We will use the pixel value '0' for the image background.
+    //    We will use the pixel value '255' for the circle 
+    cv::Mat B {cv::Mat::zeros(cv::Size(400, 400), CV_8UC1)}; // Image array
+    cv::circle(B,                    // Image to draw on
+               cv::Point(300, 300),  // Center coordinates of circle
+               70,                   // Radius of circle
+               cv::Scalar(255),      // Pixel values of circle will be '255'
+               -1                    // We want a filled circle
+              );
+
+
+    // Bitwise AND
+    cv::Mat m1 {A & B};
+
+    // Bitwise OR
+    cv::Mat m2 {A | B};
+
+    // Bitwise XOR
+    cv::Mat m3 {A ^ B};
+    
+    // Bitwise NOT
+    cv::Mat m4 {~A};
+    cv::Mat m5 {~B};
+
+    cv::imshow("A", A);
+    cv::imshow("B", B);
+    cv::imshow("Bitwise AND", m1);
+    cv::imshow("Bitwise OR", m2);
+    cv::imshow("Bitwise XOR", m3);
+    cv::imshow("Bitwise NOT A", m4);
+    cv::imshow("Bitwise NOT B", m5);
+
+    cv::waitKey();
+    cv::destroyAllWindows();    
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output** The above code will produce a number of images - which have been combined to form Figure 3.
+
+**Figure 3** Output of bitwise operators
+
+![Output of bitwise operators](./Example-Code/images/bitwise-operators-output.png)
