@@ -1,0 +1,127 @@
+# Introduction
+
+:notebook_with_decorative_cover: A **color space** defines a specific, measurable, reproducable and fixed range of possible colors and luminance/brightness values.
+
+:notebook_with_decorative_cover: Color spaces are fundamental to how digital images are represented and processed in computer vision. 
+
+:notebook_with_decorative_cover: Color spaces are essential for applications such as object detection, segmentation, color correction, and compression.
+
+:notebook_with_decorative_cover: The most commonly known color space is **RGB** (Red, Green, Blue). However, OpenCV also supports other color spaces such as **HSV** (Hue, Saturation, Value), **Lab** (Lightness, a-channel, b-channel) and **YCrCB** (Luminance, Chroma Red, Chroma Blue). There are too many color spaces to mention. In this tutorial we will look at the most commonly used color spaces in computer vision.
+
+## RGB (Red, Green, Blue) color space
+
+:notebook_with_decorative_cover: The **RGB** color space (Figure 1) represents images as a numeric array whose elements specify the intensity values of the **red**, **green**, and **blue** color channels. 
+
+:notebook_with_decorative_cover: The RGB color space is not the most friendly for developing computer vision based applications, its main primary use is to display colors on a monitor.
+
+**Figure 1** RGB color space
+
+![RGB color space](./images/RGB-color-space.jpg)
+
+**Image source:** https://opencv.org/blog/color-spaces-in-opencv/
+
+:notebook_with_decorative_cover: To define a color in the RGB color model, we specify the intensity value of the Red, Green, and Blue contained in a single pixel. For the majority of RGB color images, the intensity values are represented as `8-bit unsigned` integer values, meaning they can have values in the range `0` to `255` (both inclusive). However, other data types can be used for the intensity values - although they are less common:
+
+* For floating point values, intensity values have the range `[0, 1]`.
+* For `16-bit unsigned` values, intensity values have the range `[0, 65535]`.
+
+:notebook_with_decorative_cover: The RGB color space is an example of an **additive color space**: the more of each color is added, the brighter the pixel becomes. Adding the maximum intensity values (i.e. `255`) of all three red, green, and blue together will create a pure white color.
+
+:notebook_with_decorative_cover: RGB colors are highly sensitive to lighting variations; the same object may appear different under different light conditions.
+
+:notebook_with_decorative_cover: Even though the RGB color space is the most common color space around, the OpenCV library uses the `BGR` (Blue, Green, Red) color combination as the default when reading and displaying images. You can choose to convert to RGB  - which we will look at later in this tutorial.
+
+:notebook_with_decorative_cover: Figure 2 and 3 shows the same image in the RGB and BGR color formats.
+
+**Figure 2** Original image in the RGB color space, followed by each of the individual Red, Green, and Blue channels.
+
+![Color image in RGB format](./images/image-RGB-color-space.png)
+
+
+**Figure 3** Original image in the BGR color space, followed by each of the individual Blue, Green, and Red channels.
+
+![Color image in BGR format](./images/image-BGR-color-space.png)
+
+## HSV (Hue, Saturation, Value) color space
+
+:notebook_with_decorative_cover: The **HSV** color space corresponds better to how people **experience** color than the RGB color space does. For example, this color space is often used by people who are selecting colors, such as paint or ink color, from a color wheel or palette. Suitable for art and design applications.
+
+:notebook_with_decorative_cover: HSV color space makes it easier to detect and filter colors, even if lighting changes.
+
+:notebook_with_decorative_cover: The HSV color model is cylindrical in shape as in Figure 4.
+
+**Figure 4** HSV color space with Hue values in the range `0-179` degrees as in OpenCV
+
+![HSV color space model](./images/HSV-color-model.png)
+
+**Image source:** https://opencv.org/blog/color-spaces-in-opencv/
+
+:notebook_with_decorative_cover: Using Figure 4 we can explain the various components of the HSV color space model. This model seperates color into the following three distinct components:
+
+* **H (Hue)** - This is the **type** of the basic color. This means, for example, all shadows and tones of the color “red” will have the same Hue value. Because Hue follows a circle in the model, its value is typically represented as an angle. In other software packages this angle has the range `0 - 360` degrees. However, in OpenCV, this range is `0 - 179`, a total of `180` possible values. This is due to the fact that in OpenCV we predominantly represent color images using `8-bit unsigned` integer arrays, and the range `0-360` is not possible in an `8-bit unsigned` array. As Hue increases, colors transition from red to orange, yellow, green, cyan, blue, magenta, etc., and finally back to red. Both `0` and `179` indicate the base color red (see right side of Figure 4). 
+* **S (Saturation)** - This defines the **purity** of the color. Saturation values originate from the center of the cylinder going outwards. As saturation increases, colors vary from having shades of white (unsaturated) to having no white components (full saturation). Fully saturated colors are said to be **pure**, making them more vivid and vibrant. Saturation values take the data range `0 to 255` (inclusive), which can be covered by `8-bit unsigned` integers.
+* **V (Value)** - This measures the brightness of a color. At full brightness, the color is fully visible, while lower values make the color appear darker. Brightness values take the data range `0 to 255` (inclusive), which can be covered by `8-bit unsigned` integers.
+
+:notebook_with_decorative_cover: Figure 5 shows same image in Figure 2, but in HSV color space.
+
+**Figure 5** Original image in the HSV color space, followed by each of the individual Hue, Saturation, and Value channels.
+
+![Image in HSV color space](./images/image-HSV-color-space.png)
+
+### Applications of HSV color space
+
+* HSV model is used in **histogram equalization**. Histogram equalization is a technique used to adjust an image's contrast in order to improve visual quality. It works well on a grayscale image. It can also be used on color images. One option is applying the method separately to the red, green and blue components of the RGB color values of the image, which likely produces dramatic changes in the image's color balance since the relative distributions of the color channels change as a result of applying the algorithm. However, if the image is first converted to another color space, Lab, or HSV in particular, then the algorithm can be applied to the luminance or value channel without resulting in changes to color properties of the image (Naik & Murthy, 2003).
+* Visualization of images is easy as by plotting the H and S components we can vary the V component or vice-versa and see the different visualizations.
+* Great for color-based segmentation and detection tasks (like tracking a green object regardless of light changes). Hue is independent of lighting, making color recognition more reliable.
+
+## Lab (Lightness, a-Channel, b-Channel) color space
+
+:notebook_with_decorative_cover: The RGB and HSV color spaces lack the ability to mimic the methodology in which humans **see** and **interpret** color. This is were the **Lab** color space comes in. The Lab color space models colors according to the typical sensitivity of the three types of cone cells in the human eye.
+
+:notebook_with_decorative_cover: The Lab color space is a 3-axis system as shown in Figure 6.
+
+**Figure 6** Lab color space
+
+![Lab color model](./images/LAB-color-model.png)
+
+**Image source:** https://pyimagesearch.com/2021/04/28/opencv-color-spaces-cv2-cvtcolor/
+
+:notebook_with_decorative_cover: Each axis/channel is defined as follows:
+
+* **L-Channel** - This defines the luminance or brightness of the color. As `L` increases the color moves from black to white. OpenCV maps the data range of `L` to `0-255` for `8-bit` images. 16-bit images are not currently suported. For 32-bit images, `L` has the data range $0 \le L \le 100 $.
+* **a-channel** - This axis/channel has its origin at the center of the sphere. This channel defines the amount of red or green tones in the image. A large positive `a` value corresponds to red/magenta. A large negative `a` value corresponds to green. For 8-bit images `a` has the data range `0-255`. 16-bit images are currently not supported. For 32-bit images, `a` has the data range $-127 \le a \le 127$.
+* **b-channel** - Originates at the center of the sphere. This channel defines the amount of yellow or blue tones in the image. A large positive `b` value corresponds to yellow. A large negative `b` value corresponds to blue. For 8-bit images `b` has the data range `0-255`. 16-bit images are currently not supported. For 32-bit images, `b` has the data range $-127 \le b \le 127$.
+
+:notebook_with_decorative_cover: Figure 7 shows same image in Figure 2, but in Lab color space.
+
+**Figure 7** Original image in the Lab color space, followed by each of the individual L, a, and b channels.
+
+![Color image in Lab color space](./images/image-Lab-color-space.png)
+
+:notebook_with_decorative_cover: Even though the Lab color space is not easy to understand and is less intuitive than the RGB and HSV color spaces, it still has a lot of uses in Computer Vision. This is due to the Euclidean distance between two arbitrary colors having an actual perceptual meaning. This allows us to overcome various lighting condition problems. Because Lab can separate lighting information (`L`) from color information (`a`, `b`), it can be used in illumination-invariant applications.
+
+## YCrCb (Luminance, Chrominance Red, Chrominance Blue) color space
+
+:notebook_with_decorative_cover: This model defines a color space in terms of one luma/brightness component (**Y**) and two chrominance (color) components (**Cr** and **Cb**). It is one of the two primary color spaces used to represent digital component video (the other is RGB color space).
+
+:notebook_with_decorative_cover: The difference between **YCrCb** and **RGB** is that YCrCb represents color as brightness and two color difference signals, while RGB represents color as red, green and blue.
+
+:notebook_with_decorative_cover: The `Y` component carries brightness information and is computed using a weighted sum of RGB values, i.e., $Y = 0.299R + 0.587G + 0.114B$.
+
+:notebook_with_decorative_cover: The `Cr` component is the chrominance value that indicates the difference between the red color component and luma/luminace component, $Cr = R - Y$.
+
+:notebook_with_decorative_cover: The `Cb` component is the chrominance value that indicates the difference between the blue color component and luma/luminance component, $Cb = B - Y$. 
+
+:notebook_with_decorative_cover: Figure 8 shows same image in Figure 2, but in YCrCb color space.
+
+**Figure 7** Original image in the YCrCb color space, followed by each of the individual Y, Cr, and Cb channels.
+
+![Color image in YCrCb color space](./images/image-YCrCb-color-space.png)
+
+### Applications of YCrCb
+
+* **Video technology**  - In video technology, YCrCb is the cornerstone. It's the standard for most forms of digital video, including those which we encounter in MPEG compression — a format used across a variety of platforms such as DVDs and digital television. Conversion from RGB to YCrCb allows for efficient video storage and broadcasting. For instance, signals in the YCrCb color space, as opposed to RGB, can be compressed significantly, which is pivotal for bandwidth-restricted applications. For example, digital camcorders (MiniDV, DV, Digital Betacam, etc.) output YCrCb over a digital link such as FireWire or SDI. The YCrCb format is also commonly used in video outputs such as YPbPr component video, which splits the signal into three separate channels to transmit higher-quality video without the need for conversion to and from RGB, preserving integrity and sharpness.
+* **Image compression** - The YCrCb color space is instrumental in image compression, particularly in JPEG compression, due to its structure that separates color into luminance (Y) and chrominance (Cb and Cr) components. Our eyes are less sensitive to the fine details in the color components, allowing the chrominance planes to be downsampled without significantly affecting perceived image quality. This downsampling results in a smaller file size, demonstrating YCrCb’s effectiveness in reducing data redundancy in image processing.
+* **Image quality** - Incorporating YCrCb in image processing can lead to quality improvement while compressing images. JPEG uses YCrCb color space as it exploits human visual inefficiencies by compressing the chrominance channels more than the luminance. This selective compression preserves important visual details with high PSNR (Peak Signal-to-Noise Ratio), providing a balance between compression ratio and image integrity.
+* **Image segmentation** - YCrCb color space plays a critical role in image segmentation, which involves dividing an image into segments to simplify or change the representation of an image. By separating chrominance from luminance, YCrCb allows for more precise segmentation since variations in lighting and shadows have a reduced impact on the chrominance components, leading to more accurate detection and isolation of objects within an image.
+* **YCrCb** is useful for skin detection (skin tones cluster well in Cr and Cb channels).
