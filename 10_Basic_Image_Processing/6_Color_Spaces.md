@@ -125,3 +125,124 @@
 * **Image quality** - Incorporating YCrCb in image processing can lead to quality improvement while compressing images. JPEG uses YCrCb color space as it exploits human visual inefficiencies by compressing the chrominance channels more than the luminance. This selective compression preserves important visual details with high PSNR (Peak Signal-to-Noise Ratio), providing a balance between compression ratio and image integrity.
 * **Image segmentation** - YCrCb color space plays a critical role in image segmentation, which involves dividing an image into segments to simplify or change the representation of an image. By separating chrominance from luminance, YCrCb allows for more precise segmentation since variations in lighting and shadows have a reduced impact on the chrominance components, leading to more accurate detection and isolation of objects within an image.
 * **YCrCb** is useful for skin detection (skin tones cluster well in Cr and Cb channels).
+
+
+## Color conversion
+
+:notebook_with_decorative_cover: Now that we have a deeper understanding of the various color models offered by OpenCV, we will look at how we can convert an image from one color model to another to suite our application.
+
+:notebook_with_decorative_cover: Converting from one color model to another requires the use of mathematical equations. The equations can be complicated but if you take your time you will figure out what is actually happening. The equations used by OpenCV can be found <a href = "https://docs.opencv.org/4.8.0/de/d25/imgproc_color_conversions.html">here</a> in great detail. You can also visit this <a href = "https://poynton.ca/notes/colour_and_gamma/ColorFAQ.html">page</a> as some of the equations are a product of this color FAQ article.
+
+:notebook_with_decorative_cover: If you go through these equations and try to implement them yourself, you will find out it is hard work. That is why OpenCV provides the function `cv::cvtColor(cv::InputArray src, cv::OutputArray dst, int code, int dstCn = 0)` for converting an image from one color space to another. You will find this function in the image processing header `<opencv2/imgproc.hpp>`. Let's look at the function parameters:
+
+* `src` - Input image (`8-bit unsigned`, `16-bit unsigned`, or single-precision `32-bit` floating point).
+* `dst` - Output image of the same size and depth/type as `src`
+* `code` - Color space conversion code, which you can find <a href = "https://docs.opencv.org/4.8.0/d8/d01/group__imgproc__color__conversions.html#ga4e0972be5de079fed4e3a10e24ef5ef0">here</a>. This defines current and output color model
+* `dstCn` - Number of channels in the destination image; if the parameter is `0`, the number of the channels is derived automatically from `src` and `code`.
+
+:notebook_with_decorative_cover: If you use `cv::cvtColor()` with `8-bit` images, the conversion will have some information lost. For many applications, this will not be noticeable but it is recommended to use `32-bit` images in applications that need the full range of colors or that convert an image before an operation and then convert back. When using `32-bit` images make sure you scale the image so that it will have the appropriate range `[0, 1]` before using the image in any other function e.g. if `img` is an `8-bit` `cv::Mat` image array, we can convert it to `32-bit` using the expression `img.convertTo(img, CV_32F, 1.0/255)` or `img = img * 1./255` or `img *= 1.0/255`.
+
+:notebook_with_decorative_cover: If color conversion adds the alpha (`A`) channel e.g. BGR->BGRA , its value will be set to the maximum of corresponding channel range: `255` for `CV_8U`, `65535` for `CV_16U`, `1` for `CV_32F`.
+
+:notebook_with_decorative_cover: The color space conversion codes which we use with the `cv::cvtColor()` through the parameter `code` follow a common convention `cv::COLOR_{old color space}2{new color space}`. For example to convert from BGR to RGB you use the code `cv::COLOR_BGR2RGB`. To convert from RGB to Lab you use the code `cv::COLOR_RGB2Lab`. These color codes are part of a C++ **enumerator** named <a href = "https://docs.opencv.org/4.8.0/d8/d01/group__imgproc__color__conversions.html#ga4e0972be5de079fed4e3a10e24ef5ef0">cv::ColorConversionCodes</a>, as such they have equivalent integer values you can use in their place e.g. you can use the integer value `4` or `cv::COLOR_BGR2RGB`. However, using integer code values makes it harder to read your code, hence, you are encouraged to use the enumerator name instead. 
+
+**Example 1** In the following code example, we convert an input image to various color spaces.
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types
+#include <opencv2/imgproc.hpp>  // for cvtColor()
+#include <opencv2/highgui.hpp>  // for displaying images in a window
+#include <opencv2/core/utility.hpp> // for command line or terminal inputs
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+
+int main(int argc, char* argv[])
+{
+    //------------------ 1. Extract Command Line Arguments --------------//
+
+    const cv::String keys = 
+    "{help h usage ? | | Convert image to various color spaces }"
+    "{image | <none> | Full image path }";  
+
+    // Define a cv::CommandLineParser object
+    cv::CommandLineParser parser(argc, argv, keys);
+
+    // Display message about application
+    parser.about("\nApplication to convert an image to various color spaces. Images are read in BGR format.");
+    parser.printMessage();
+
+    // Extract the command line arguments
+    cv::String inputImagePath = parser.get<cv::String>("image");
+
+    // Check for any errors during command line arguments extraction
+    if (!parser.check())
+    {
+        parser.printErrors(); // Print a list of any errors encountered
+
+        return -1; // Early program exit
+    }
+
+    //----------------- 2. Read image data ----------------//
+
+    // Read input image in BGR format
+    cv::Mat inputImage {cv::imread(inputImagePath, cv::IMREAD_UNCHANGED | cv::IMREAD_ANYDEPTH)};
+
+    if (inputImage.empty())
+    {
+        std::cout << "\nERROR! Could not read image data from file: " 
+                  << inputImage << '\n';
+
+        return -1; // Early program exit
+    }
+
+    // Provide image sizes, no. of channels and data types of input image
+    std::cout << "\nSize of input image = " << inputImage.size()
+              << "\nData type of input image = " 
+              << CPP_CV::General::openCVDescriptiveDataType(inputImage.type()) 
+              << '\n';
+    
+    // Display input image
+    cv::imshow("Input image in BGR format",  inputImage);
+
+    //-------------- 3. Convert image to another color space -------------//
+
+    // a. Convert to Grayscale color space
+    cv::Mat dstGrayscale;
+    cv::cvtColor(inputImage,  dstGrayscale, cv::COLOR_BGR2GRAY);   
+    cv::imshow("Grayscale color space", dstGrayscale); 
+    
+    // b. Convert to RGB color space
+    cv::Mat dstRGB;
+    cv::cvtColor(inputImage,  dstRGB, cv::COLOR_BGR2RGB);   
+    cv::imshow("RGB color space", dstRGB); 
+    
+    // c. Convert to HSV color space
+    cv::Mat dstHSV;
+    cv::cvtColor(inputImage,  dstHSV, cv::COLOR_BGR2HSV);   
+    cv::imshow("HSV color space", dstHSV); 
+
+    // c. Convert to Lab color space
+    cv::Mat dstLab;
+    cv::cvtColor(inputImage,  dstLab, cv::COLOR_LBGR2Lab);   
+    cv::imshow("Lab color space", dstLab); 
+
+    // d. Convert to YCrCb color space
+    cv::Mat dstYCrCb;
+    cv::cvtColor(inputImage, dstYCrCb, cv::COLOR_BGR2YCrCb);
+    cv::imshow("YCrCb color space", dstYCrCb);
+
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+
+    std::cout << '\n';
+
+    return 0;
+
+}
+```
+
+**Output**
+
+![Convert an image to various color spaces](./Example-Code/images/color-conversions.png)
