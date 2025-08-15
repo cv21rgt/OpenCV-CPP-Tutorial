@@ -250,3 +250,31 @@ int main(int argc, char* argv[])
 
 :notebook_with_decorative_cover: When we discussed the HSV color model, we indicated that OpenCV uses the data range `0 -179` for the Hue values if dealing with `8-bit unsigned` images. This is the default when for example you use the color conversion code `cv::COLOR_BGR2HSV`. This tends to reduce the color information because we are not making use of the full `8-bit unsigned` range. I have since come to learn that there is another conversion code we can use, `cv::COLOR_BGR2HSV_FULL`, which uses the full `0 -255` data range for the Hue values, thereby giving us more color information.
 
+## Look-up Tables and Colormaps
+
+:notebook_with_decorative_cover: A **Look-Up Table** (LUT) is a table that cross-references an index value to an output value. In image processing, LUTs are used to cross-reference a set of index values in an image to colors used in displaying that image. In this context, LUTs are also known as **colormaps**.
+
+:notebook_with_decorative_cover: Each index value in an image is associated with a color, mainly defined as a set of red, green and blue (RGB/BGR) values. Each index value identifies a **distinct** color associated with it, meaning your image will always be displayed the same way each time you open it in a program that can read an image with a colormap.
+
+:notebook_with_decorative_cover: Most LUTs you will encounter contain 256  entries because the majority of color images are `8-bit`. This means images associated with such LUTs can only display 256 different colors, but this is sufficient for many applications and usually the observable image degradation is small. 
+
+:notebook_with_decorative_cover: Color maps are capable of supporting any bit depth, except floating-point data. They can also support positive and negative values, and the color maps can contain missing color mapped values. When displaying an image with a colormap containing missing values, the pixels with that value will not be displayed.
+
+:notebook_with_decorative_cover: Figure 8 shows an image array with its associated colormap.
+
+**Figure 8** 8-bit color image array and its associated colormap
+
+![Image with its color map](./images/image-and-colormap.png)
+
+**Image source:** https://pro.arcgis.com/en/pro-app/latest/help/data/imagery/color-map-concepts.htm
+
+:notebook_with_decorative_cover: The pixels in the image in Figure 8 contain index numbers that point to the RGB value in the color lookup table. The RGB values are the ones used by the display system.
+
+:notebook_with_decorative_cover: By default, an image with a color map will always be displayed using the associated color map. If you want to change the image's appearance, change the colors or the color map file - we will look at how to do this in OpenCV later in this tutorial.
+
+:notebook_with_decorative_cover: According to Fisher et. al, (2003), the use of colormaps in image processing has provided the following advantage:
+
+* LUTs or color maps have taken away the need to store a definite color for each pixel in the image itself. You have to remember that a BGR/RGB color image would require `24-bits` per pixel for each color combination (i.e., `8-bits` for each of red, green and blue channel). This would significantly increase image size and have a negative impact on computational resources. By using an index number that can be stored using fewer bits than the output value, we can save storage space. For instance an `8-bit` index number can be used to look up a `24-bit` RGB/BGR color value in the LUT. Since only the `8-bit` index number needs to be stored for each pixel, such `8-bit` color images take up less space than a full `24-bit` image of the same size. 
+
+:notebook_with_decorative_cover: A downside of using colormaps is the loss of some original color information. When we convert a full `24-bit` color image to an `8-bit` color image that uses a colormap, we go through a process known as <a href = "https://homepages.inf.ed.ac.uk/rbf/HIPR2/quantize.htm">color quantization</a>. During this process decisions have to be made about which original colors will be retained and how to map the discarded colors onto the remaining ones.  
+
