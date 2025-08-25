@@ -278,3 +278,128 @@ int main(int argc, char* argv[])
 
 :notebook_with_decorative_cover: A downside of using colormaps is the loss of some original color information. When we convert a full `24-bit` color image to an `8-bit` color image that uses a colormap, we go through a process known as <a href = "https://homepages.inf.ed.ac.uk/rbf/HIPR2/quantize.htm">color quantization</a>. During this process decisions have to be made about which original colors will be retained and how to map the discarded colors onto the remaining ones.  
 
+### Using colormaps in OpenCV
+
+:notebook_with_decorative_cover: OpenCV provides an enumerator named <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">cv::ColormapTypes</a> through which you can access a number of colormaps. Figure 9 shows the colormaps you can access through `cv::ColormapTypes`. Remember each colormap name is preceeded by the `cv` namespace if using C++ e.g. `cv::COLORMAP_AUTUMN`.
+
+**Figure 9** OpenCV colormaps
+
+![OpenCV colormaps](./images/opencv-colormaps.png)
+
+**Image source:** https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html
+
+:notebook_with_decorative_cover: To apply a colormap to an image, we can use the following overloaded functions:
+
+1. `void cv::applyColorMap(cv::InputArray src, cv::OutputArray dst, int colormap)` - applies a colormap provided by OpenCV.
+2. `void cv::applyColorMap(cv::InputArray src, cv::OutputArray dst, InputArray userColor)` - applies a colormap provided by the user.
+
+:notebook_with_decorative_cover: Parameters to both functions are defined as:
+
+* `src` - The input image - which can be grayscale (`CV_8UC1`) or color (`CV_8UC3`).
+* `dst` - The colormapped image.
+* `colormap` - The colormap to apply of type `cv::ColormapTypes`.
+* `userColor` - The colormap provided by the user. It should be of type `CV_8UC1` or `CV_8UC3` and size 256.
+
+:notebook_with_decorative_cover: You will find these functions in the image processing header `<opencv2/imgproc.hpp>`.
+
+**Example 2** In the following example you get to play around with changing the colormap of an input image. Color maps in OpenCV are part of an enumerator data type `cv::ColormapTypes` and so can also be accessed through an integer value between `0` and `21`. See <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">here</a> for color map names and integer equivalent values.
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types
+#include <opencv2/imgproc.hpp>  // for cv::applyColorMap()
+#include <opencv2/highgui.hpp>  // for displaying images in a window
+#include <opencv2/core/utility.hpp> // for command line or terminal inputs
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+#include <string>
+#include <array>
+
+
+const std::array<std::string, 22> colorMaps {"Autumn", "Bone", "Jet", "Winter", "Rainbow", "Ocean", "Summer", "Spring", 
+                               "Cool", "HSV", "Pink", "Hot", "Parula", "Magma", "Inferno", "Plasma", "Viridis",
+                               "Cividis", "Twilight", "Twilight Shifted", "Turbo", "Deep Green"};
+
+int main(int argc, char* argv[])
+{
+    //---------------- 1. Extract Command Line Arguments -----------------//
+
+    const cv::String keys = 
+    "{help h usage ? | | Change the colormap of an image }"
+    "{image | <none> | Full path to either 8-bit unsigned grayscale or color input image }"
+    "{colorMap | -1 | New colormap (as an integer) to use for displaying input image. Use value -1 to keep original colormap}";  
+
+    // Define a cv::CommandLineParser object
+    cv::CommandLineParser parser(argc, argv, keys);
+
+    // Display message about application
+    parser.about("\nApplication to display input image with a new colormap.\n"
+                 "You can find colormap codes @ https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html");
+    parser.printMessage();
+
+    // Extract command line arguments
+    cv::String imagePath = parser.get<cv::String>("image");
+    int colorMapCode = parser.get<int>("colorMap");
+
+    // Check for any errors during command line extraction
+    if (!parser.check())
+    {
+        parser.printErrors(); // Print a list of any errors encountered
+
+        return -1; // Early program exit
+    }
+
+    //--------------------- 2. Read image data -------------------------//
+
+    cv::Mat inputImage = cv::imread(imagePath, cv::IMREAD_ANYCOLOR);
+    if (inputImage.empty())
+    {
+        CV_Error_(cv::Error::StsBadArg, 
+                      ("Could not read image data from (%s)", 
+                        imagePath.c_str())); 
+    }
+    else 
+    {
+        // Print image sizes, no. of channels and data types of image
+        std::cout << "\nSize of input image = " << inputImage.size()
+                  << "\nData type of input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(inputImage.type())
+                  << '\n';
+    }
+
+    cv::imshow("Input image with original colormap", inputImage);
+
+    //--------------------- 3. Apply new colormap to input image -------------//
+    
+    cv::Mat outputImage; // Output image after applying new colormap
+
+    if ((colorMapCode >= 0) & (colorMapCode < static_cast<int>(colorMaps.size()))) // Apply new colormap from cv::ColormapTypes
+    {        
+        cv::applyColorMap(inputImage,    // Input image
+                          outputImage,   // Output image
+                          colorMapCode   // Colormap code
+                        );
+        
+        cv::imshow("Output image with colormap " + colorMaps[colorMapCode], outputImage);
+    }
+    
+    else // Display image with original colormap
+    {
+        cv::imshow("Output image with original colormap", inputImage);
+    }
+
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+**Output:** Input image shown in Autumn, Winter and Raimbow color maps
+
+![Input image shown in Autumn, Winter and Raimbow color maps](./Example-Code/images/colormaps.png)
+
+
