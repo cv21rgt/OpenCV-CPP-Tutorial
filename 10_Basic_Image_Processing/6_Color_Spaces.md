@@ -403,3 +403,196 @@ int main(int argc, char* argv[])
 ![Input image shown in Autumn, Winter and Raimbow color maps](./Example-Code/images/colormaps.png)
 
 
+### Create your own colormap
+
+:notebook_with_decorative_cover: OpenCV also allows you to create your own colormap. We can do this by first creating a Look Up Table (LUT) that defines the colors we want to use in our colormap. Your LUT is basically an array e.g. `cv::Mat` that is of type `CV_8UC1` or `CV_8UC3` and should have 256 entries.
+
+:notebook_with_decorative_cover: In the example code in this section we create a simple LUT as a 2-D `cv::Mat` array with `rows = 1` and `columns = 256`. The program asks the user if they want the red, green or blue color components in their new colormap. An input of `1` is yes and `0` is no. Each color is created as a single channel `CV_8UC1` `cv::Mat` array. The 3 channels are then merged to form a LUT array of type `CV_8UC3`. This program generates basic colormaps e.g shades of one color as the main component, but it gives you a good starting point about how to create more advanced colormaps. If you are interested in learning how to create more advanced color maps, you can take inspiration from <a href = "https://blog.habrador.com/2023/04/colormaps-overview-code-implementations-rainbow-virids.html">here</a>, were they show how to re-create the currently existing color maps. However, the code is in Java - which is close to C++ - should be good practice for you to convert the code to full functioning C++.
+
+:notebook_with_decorative_cover: Using our user-defined LUT, we then use the overloaded function `void cv::applyColorMap(cv::InputArray src, cv::OutputArray dst, InputArray userColor)` to apply a new color map to an input image.
+
+**Example 3** Create your own color map and apply to input image
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types
+#include <opencv2/imgproc.hpp>  // for cv::applyColorMap()
+#include <opencv2/highgui.hpp>  // for displaying images in a window
+#include <opencv2/core/utility.hpp> // for command line or terminal inputs
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+#include <vector>
+#include <numeric> // for std::iota
+
+/**
+ * @brief Create a 2D 1-channel 8-bit unsigned array with consecutive values between 
+ *        a defined range [low, high]. Array has rows = (high - low + 1), and columns = 1.
+ * 
+ * @param array A cv::Mat array. You don't need to give it a size or type 
+ * @param isColor A boolean that determines if a color (red, green or blue) is required.
+ * @param low Lowest value in array
+ * @param high Maximum value in array
+ */
+void createArray(cv::Mat& array, bool isColor = false, int low = 0, int high = 255);
+
+
+int main(int argc, char* argv[])
+{
+    //---------------- 1. Extract Command Line Arguments -----------------//
+
+    const cv::String keys = 
+    "{help h usage ? | | Change the colormap of an image using a user-defined Look Up Table }"
+    "{image | <none> | Full path to either 8-bit unsigned grayscale or color input image }"
+    "{red| 1 | True (1) or False (0) if color map will contain red}"
+    "{green| 1 | True (1) or False (0) if color map will contain green}"
+    "{blue| 1 | True (1) or False (0) if color map will contain blue}";  
+
+    // Define a cv::CommandLineParser object
+    cv::CommandLineParser parser(argc, argv, keys);
+
+    // Display message about application
+    parser.about("\nApplication to display input image with a new colormap created by the user.\n");
+    parser.printMessage();
+
+    // Extract command line arguments
+    cv::String imagePath = parser.get<cv::String>("image");
+    int redColor = parser.get<int>("red");
+    int greenColor = parser.get<int>("green");
+    int blueColor = parser.get<int>("blue");
+
+    // Check for any errors during command line extraction
+    if (!parser.check())
+    {
+        parser.printErrors(); // Print a list of any errors encountered
+
+        return -1; // Early program exit
+    }
+
+    //--------------------- 2. Read image data -------------------------//
+
+    cv::Mat inputImage = cv::imread(imagePath, cv::IMREAD_ANYCOLOR);
+    if (inputImage.empty())
+    {
+        CV_Error_(cv::Error::StsBadArg, 
+                      ("Could not read image data from (%s)", 
+                        imagePath.c_str())); 
+    }
+    else 
+    {
+        // Print image sizes, no. of channels and data types of image
+        std::cout << "\nSize of input image = " << inputImage.size()
+                  << "\nData type of input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(inputImage.type())
+                  << '\n';
+    }
+
+    cv::imshow("Input image with original colormap", inputImage);
+
+    //--------------------- 3. Create a Look Up Table -------------//
+
+    cv::Mat redChannel;
+    cv::Mat greenChannel;
+    cv::Mat blueChannel;
+
+    if (redColor) // If color map contains red
+    {
+        // Create array and fill it with increasing 
+        // shades of red color (0 to 255)
+        createArray(redChannel, true, 0, 255); 
+    }
+    else // color map does not contain red
+    {
+        // Create array with all values equal to '0'
+        createArray(redChannel, false, 0, 255); 
+    }
+
+    if (greenColor) // If color map contains green
+    {
+        // Create array and fill it with increasing 
+        // shades of green color (0 to 255)
+        createArray(greenChannel, true, 0, 255); 
+    }
+    else // color map does not contain green
+    {
+        // Create array with all values equal to '0'
+        createArray(greenChannel, false, 0, 255);
+    }
+
+    if (blueColor) // If color map contains blue
+    {
+        // Create array and fill it with increasing 
+        // shades of blue color (0 to 255)
+        createArray(blueChannel, true, 0, 255); 
+    }
+    else // color map does not contain blue
+    {
+        // Create array with all values equal to '0'
+        createArray(blueChannel, false, 0, 255);
+    }
+
+    // Merge channels to form Look Up Table
+    std::vector<cv::Mat> channels {blueChannel, greenChannel, redChannel};
+    cv::Mat lookUpTable;
+    cv::merge(channels, lookUpTable);
+
+
+    //--------------------- 4. Apply Look Up Table as colormap to input image -------------//
+    
+    cv::Mat outputImage; // Output image after applying new colormap   
+           
+    cv::applyColorMap(inputImage,    // Input image
+                      outputImage,   // Output image
+                      lookUpTable    // Colormap 
+                    );
+        
+    cv::imshow("Output image with new colormap", outputImage);
+   
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+
+    std::cout << '\n';
+
+    return 0;
+
+}
+
+/**
+ * @brief Create a 2D 1-channel 8-bit unsigned array with consecutive values between 
+ *        a defined range [low, high]. Array has rows = (high - low + 1), and columns = 1.
+ * 
+ * @param array A cv::Mat array. You don't need to give it a size or type 
+ * @param isColor A boolean that determines if a color (red, green or blue) is required.
+ * @param low Lowest value in array
+ * @param high Maximum value in array
+ */
+void createArray(cv::Mat& array, bool isColor, int low, int high)
+{
+    if (isColor) // If shades of color are part of color map
+    {
+        std::vector<int> vectorWithIntegers(high - low + 1); // set size of vector
+
+        // Fill vector with inreasing integers from 'low' to 'high'
+        std::iota(vectorWithIntegers.begin(), vectorWithIntegers.end(), low);
+
+        // Create a cv::Mat 2-D array with 1 channel
+        // Array will have rows = (high - low + 1), and columns = 1 
+        array = cv::Mat(vectorWithIntegers, true); 
+
+        array.convertTo(array, CV_8UC1); // Convert to 8-bit unsigned
+    }
+    else // If shades of color are not part of color map
+    {
+        // Create vector with 0's. It is of size = (high - low + 1)
+        std::vector<int> vectorWithZeros(high - low + 1, 0);
+
+        // Create a cv::Mat 2-D array with 1 channel
+        // Array will have rows = (high - low + 1), and columns = 1
+        array = cv::Mat(vectorWithZeros, true); 
+
+        array.convertTo(array, CV_8UC1); // Convert to 8-bit unsigned
+    }
+}
+```
+
+
