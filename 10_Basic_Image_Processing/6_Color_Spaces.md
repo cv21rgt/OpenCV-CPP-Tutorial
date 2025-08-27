@@ -595,4 +595,43 @@ void createArray(cv::Mat& array, bool isColor, int low, int high)
 }
 ```
 
+## Use colormaps wisely
+
+:notebook_with_decorative_cover: The choice of a color map can have a huge impact on the intepretation of information displayed by your images, especially, scientific images. Recently, there has been a push, especially in the scientific community, to stop the use of color maps that result in misleading information. One such color map is the **rainbow** or **jet** colormap. 
+
+:notebook_with_decorative_cover: You are discouraged from using the rainbow color map because of the following reasons:
+
+1. There is an uneven color gradient as you move from one color to the next. This means on a simple scale e.g., one that increases by a single value (+1), there is no uniformity in the rainbow color map. Some colors such as green, blue and red occupy a larger portion of the scale compared to others. This might mean that that certain colors of the rainbow color map end up dominating an image, distorting the actual data. For example, in Figure 10, see how the blue and red colors completely dominate the color image by simply occupying the larger proportions of the rainbow color map.
+
+**Figure 10** The impact of an uneven rainbow color map on an image
+
+![Rainbow color map applied to an image](./images/uneven-raimbow-colormap.png)
+
+**Image source:** https://theconversation.com/how-rainbow-colour-maps-can-distort-data-and-be-misleading-167159
+
+2. There is a false perceptual ordering of colors. Who decides which colors equate to low or high values? Different images using the rainbow color map will have different colors representing low and high values.
+3. Some images using the rainbow color map will have the same color (e.g. red) on both ends, which is highly confusing.
+4. Cyan and yellow colors are unusually brighter than the other colors - which tends to attract the user to those areas on the image, making them seem more important than others - which is misleading.
+5. According to Heron et al. (2021), another issue with an uneven colour palette like rainbow is that data presented using these colours may be unreadable or inaccurate for people with a **Color-vision deficiency** (CVD) or **colour blindness**. Colour maps that include both red and green colours with similar lightness cannot be read by a large fraction of the population. The general estimate is that 0.5 per cent of women and 8 per cent of men worldwide are subject to a colour-vision deficiency. Figure 11 shows the colors as seen by people affected with either of the three common forms of human colour-vision deficiency (deuteranopia, protanopia and tritanopia). For people with total color-blindness, we also show the gray-scale representation of what they see. Figure 11 shows us that the mostly used color map for images is not universally readable.
+
+**Figure 11** How people with color-vision deficiency view the rainbow or jet color map
+
+![Rainbow color map as viewed by people with color-vision deficiency](./images/color-vision-deficiency.png)
+
+:notebook_with_decorative_cover: There are a few options we can adopt when picking appropriate color maps for our images. Figure 12 below is a summary of these options;
+
+**Figure 12** Alternatives of rainbow color map
+
+![Alternatives to rainbow color map](./images/Alternatives-of-Rainbow-Color-Map.png)
+
+**Image source** https://www.geeksforgeeks.org/machine-learning/why-the-rainbow-color-map-is-problematic/
+
+:notebook_with_decorative_cover: There are a few things to point out in Figure 12:
+
+1. For images covering small areas, single hue color maps such as gray, blues will be ok. Issues will arise if dealing wih larger distances e.g. an image of the world map. In such situations you are encouraged to try multi-hue color maps.
+2. If you have to use color in an image choose perceptually uniform color maps such as Viridis, Inferno or Plasma. These color maps offer colors that transition smoothly from one color to another. They also maintain clarity when converted to grayscale or when printed in black and white.
+3. Use color blind-friendly color maps such as Cividis.
+4. If trying to emphasize data with extremes use diverging color maps.
+5. Consider data type. Select a color map that works with the kind of data to represent (sequential, diverging, or qualitative). For example, examine the range and distribution of data values that need to be studied, then decide which color map to use.
+
 
