@@ -635,3 +635,253 @@ void createArray(cv::Mat& array, bool isColor, int low, int high)
 5. Consider data type. Select a color map that works with the kind of data to represent (sequential, diverging, or qualitative). For example, examine the range and distribution of data values that need to be studied, then decide which color map to use.
 
 
+## Splitting and Merging channels
+
+:notebook_with_decorative_cover: In this tutorial we have discussed various color models. With the exception of the Grayscale model, color models are made up of more than one channel. If we want to process these channels individually we need to be able to split the color model into its individual channels. In OpenCV, we can achieve this through the following overloaded functions:
+
+1. `void cv::split(const cv::Mat& src, cv::Mat* mvbegin)` - `src` is the input multi-channel image array. `mvbegin` is a C-style array whose data type is `cv::Mat` and has size equal to `src.channels`. This array will contain the split channels.
+2. `void cv::split(cv::InputArray m, cv::OutputArrayOfArrays mv)` - `m` is the input multi-channel array. `m` can be a single multi-channel array e.g. `cv::Mat` or multiple `cv::Mat` arrays in a `std::vector`, `std::array` or even an array that is a result of a `cv::MatExpr`.  `mv` is a vector containing the split channels. Most developers use a `std::vector` for `mv`.
+
+:notebook_with_decorative_cover: You can find these functions in the header `<opencv2/core.hpp`.
+
+**Example 4** The following example shows how to split an image into its individual channels. We have used both versions of `void cv::split()` function.
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types, cv::split()
+#include <opencv2/imgproc.hpp>  // for cv::cvtColor()
+#include <opencv2/highgui.hpp>  // for displaying images in a window
+#include <opencv2/core/utility.hpp> // for command line or terminal inputs
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+#include <vector>
+
+int main(int argc, char* argv[])
+{
+    //---------------- 1. Extract Command Line Arguments -----------------//
+
+    const cv::String keys = 
+    "{help h usage ? | | Split a multi-channel image into its single channels  }"
+    "{image | <none> | Full path to a multi-channel input image }";  
+
+    // Define a cv::CommandLineParser object
+    cv::CommandLineParser parser(argc, argv, keys);
+
+    // Display message about application
+    parser.about("\nApplication to split a multi-channel image into its single channels.\n");
+    parser.printMessage();
+
+    // Extract command line arguments
+    cv::String imagePath = parser.get<cv::String>("image");
+
+    // Check for any errors during command line extraction
+    if (!parser.check())
+    {
+        parser.printErrors(); // Print a list of any errors encountered
+
+        return -1; // Early program exit
+    }
+
+    //--------------------- 2. Read image data -------------------------//
+
+    cv::Mat inputImage = cv::imread(imagePath, cv::IMREAD_ANYCOLOR);
+    if (inputImage.empty())
+    {
+        CV_Error_(cv::Error::StsBadArg, 
+                      ("Could not read image data from (%s)", 
+                        imagePath.c_str())); 
+    }
+    else 
+    {
+        // Print image sizes, no. of channels and data types of image
+        std::cout << "\nSize of input image = " << inputImage.size()
+                  << "\nData type of input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(inputImage.type())
+                  << '\n';
+    }
+
+    cv::imshow("Input image", inputImage);
+
+    //--------------------- 3. Split image --------------------------//
+
+    // Use the function 'void cv::split(const cv::Mat& src, cv::Mat* mvbegin)'
+    
+    const int numberOfChannels = inputImage.channels();
+    cv::Mat channels[numberOfChannels]; // Array to hold split channels    
+    cv::split(inputImage, channels); // Split image into channels and 
+                                     // add them to C-style array
+   
+    // Display the individual channels
+    for (int i {0}; i < numberOfChannels; ++i)
+    {
+        cv::imshow("BGR Channel " + std::to_string(i+1), channels[i]);
+    }
+
+    //-------------------- 4. Convert image to HSV and split channels ------//
+
+    // Convert input image to HSV color model
+    cv::Mat hsv;
+    cv::cvtColor(inputImage, hsv, cv::COLOR_BGR2HSV); 
+
+    // Use the function 'void cv::split(cv::InputArray m, cv::OutputArrayOfArrays mv)'
+    std::vector<cv::Mat> hsvChannels; // Vector to hold split channels    
+    cv::split(hsv, hsvChannels); // Split image into channels and 
+                                 // add them to std::vector
+
+    // Display the individual channels
+    for (std::size_t i {0}; i < hsvChannels.size(); ++i)
+    {
+        cv::imshow("HSV Channel " + std::to_string(i+1), hsvChannels[i]);
+    }    
+   
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+:notebook_with_decorative_cover: Now that we have discussed how to split an image into individual channels, we also need to know how to put them back together. In the header `<opencv2/core.hpp>`, OpenCV provides the following overloaded functions:
+
+1. `void cv::merge(const cv::Mat* mv, std::size_t count, cv::OutputArray dst)` - `mv` is a C-style array containing the arrays/channels of type `cv::Mat` to be merged. The channels/arrays must have the same size and data type. `count` defines the number of channels/arrays you want to merge. This has to be greater than `0` and not more than the size of `mv`. `dst` is the output array/image created by merging the channels/arrays in `mv`. Size and data type of `dst` is same as that of the channels/arrays in `mv`. The number of channels of `dst` is equal to the parameter `count`.
+2. `void cv::merge(cv::InputArrayOfArrays mv, cv::OutputArray dst)` - `mv` is an input vector of arrays/channels/matrices to be merged. All the arrays in `mv` must have the same size and data type. `dst` is the output array/image created by merging the channels/arrays in `mv`. Size and data type of `dst` is same as that of the channels/arrays in `mv`. The number of channels of `dst` is equal to the total number of arrays/channels in `mv`.
+
+:notebook_with_decorative_cover: The function `void merge()` not only can it be used to re-build an image after splitting its channels - it can also be used to create new images when we create our own individual channels.
+
+**Example 5** In the following code example we split a BGR image and re-create the same image in RGB format using the `void merge()` function. We also create our own channels and merge them into a new image.
+
+```c++
+#include <opencv2/core.hpp>     // for OpenCV core types, cv::split(), cv::merge(), cv::randu()
+#include <opencv2/highgui.hpp>  // for displaying images in a window
+#include <opencv2/core/utility.hpp> // for command line or terminal inputs
+
+#include "UtilityFunctions/utility_functions.h" // functions from our own library
+
+#include <iostream>
+#include <vector>
+
+int main(int argc, char* argv[])
+{
+    //---------------- 1. Extract Command Line Arguments -----------------//
+
+    const cv::String keys = 
+    "{help h usage ? | | Split a multi-channel image into its single channels  }"
+    "{image | <none> | Full path to a multi-channel input image }";  
+
+    // Define a cv::CommandLineParser object
+    cv::CommandLineParser parser(argc, argv, keys);
+
+    // Display message about application
+    parser.about("\nApplication to split a multi-channel image into its single channels.\n");
+    parser.printMessage();
+
+    // Extract command line arguments
+    cv::String imagePath = parser.get<cv::String>("image");
+
+    // Check for any errors during command line extraction
+    if (!parser.check())
+    {
+        parser.printErrors(); // Print a list of any errors encountered
+
+        return -1; // Early program exit
+    }
+
+    //--------------------- 2. Read image data -------------------------//
+
+    cv::Mat inputImage = cv::imread(imagePath, cv::IMREAD_ANYCOLOR);
+    if (inputImage.empty())
+    {
+        CV_Error_(cv::Error::StsBadArg, 
+                      ("Could not read image data from (%s)", 
+                        imagePath.c_str())); 
+    }
+    else 
+    {
+        // Print image sizes, no. of channels and data types of image
+        std::cout << "\nSize of input image = " << inputImage.size()
+                  << "\nData type of input image = " 
+                  << CPP_CV::General::openCVDescriptiveDataType(inputImage.type())
+                  << '\n';
+    }
+
+    cv::imshow("Input image in BGR format", inputImage);
+
+    //--------------------- 3. Split and Merge an image --------------------------//
+
+    // Use the function 'void cv::split(const cv::Mat& src, cv::Mat* mvbegin)'
+    
+    const int numberOfChannels = inputImage.channels();
+    cv::Mat channels[numberOfChannels]; // Array to hold split channels    
+    cv::split(inputImage, channels); // Split image into channels and 
+                                     // add them to C-style array
+
+    // Merge channels in such a way that we build an RGB image instead of BGR
+    const cv::Mat channelsToMerge[] {channels[2], channels[1], channels[0]};
+    cv::Mat rgbImage;
+    // Use 'void cv::merge(const cv::Mat* mv, std::size_t count, cv::OutputArray dst'
+    cv::merge(channelsToMerge, 3, rgbImage);
+
+    // Print image sizes, no. of channels and data types of RGB image
+    std::cout << "\nSize of RGB image = " << rgbImage.size()
+            << "\nData type of RGB image = " 
+            << CPP_CV::General::openCVDescriptiveDataType(rgbImage.type())
+            << '\n';
+            
+    cv::imshow("Image in RGB format", rgbImage);
+
+    //-------------------- 4. Create our own image ----------------//
+
+    // Create 3 channels of size 200 x 200 and type CV_8UC1 
+    // Fill each channel filled with random values
+    cv::Mat channel_1 {cv::Size(200, 200), CV_8UC1};
+    cv::randu(channel_1, cv::Scalar(0), cv::Scalar(255));
+
+    cv::Mat channel_2 {cv::Size(200, 200), CV_8UC1};
+    cv::randu(channel_2, cv::Scalar(0), cv::Scalar(255));
+
+    cv::Mat channel_3 {cv::Size(200, 200), CV_8UC1};
+    cv::randu(channel_3, cv::Scalar(0), cv::Scalar(255));
+    
+    // Merge the channels into a single image
+    std::vector<cv::Mat> vecChannels {channel_1, channel_2, channel_3};
+    cv::Mat newImage;
+    // Use 'void cv::merge(cv::InputArrayOfArrays mv, cv::OutputArray dst'
+    cv::merge(vecChannels, newImage);
+
+    // Print image sizes, no. of channels and data types of new image
+    std::cout << "\nSize of new image = " << newImage.size()
+            << "\nData type of new image = " 
+            << CPP_CV::General::openCVDescriptiveDataType(newImage.type())
+            << '\n';
+
+    cv::imshow("Image (BGR format) created by user ", newImage);
+
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+## References 
+
+1. https://opencv.org/blog/color-spaces-in-opencv/
+2. https://en.wikipedia.org/wiki/Color_space
+3. https://uk.mathworks.com/help/images/understanding-color-spaces-and-color-space-conversion.html
+4. https://pyimagesearch.com/2021/04/28/opencv-color-spaces-cv2-cvtcolor/
+5. S. Naik and C. Murthy, "Hue-preserving color image enhancement without gamut problem," IEEE Trans. Image Processing, vol. 12, no. 12, pp. 1591–1598, Dec. 2003
+6. https://www.computerlanguage.com/results.php?definition=YCrCb
+7. https://proedu.com/blogs/photography-fundamentals/ycbcr-color-space-understanding-its-role-in-digital-photography?srsltid=AfmBOor-Yv_ZEt5HVuHDOAegHqNmxB7f94J1zgwrQ4W2p7hpnUsaLRCn
+8. https://homepages.inf.ed.ac.uk/rbf/HIPR2/colmap.htm
+9. https://theconversation.com/how-rainbow-colour-maps-can-distort-data-and-be-misleading-167159
+10. https://www.geeksforgeeks.org/machine-learning/why-the-rainbow-color-map-is-problematic/
+11. https://hess.copernicus.org/articles/25/4549/2021/
+12.  https://research.google/blog/turbo-an-improved-rainbow-colormap-for-visualization/
+
+
+
