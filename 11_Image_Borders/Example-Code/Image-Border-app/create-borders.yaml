@@ -1,0 +1,14 @@
+%YAML:1.0
+---
+SourceImagePath: "/home/gy08rgt/Documents/OpenCV/Image_Processing/Image_Borders/images/source_img_make_borders.jpeg"
+ROI: # Region of interest that is part of 'SourceImagePath'
+  top-left-corner-coordinates: [200, 90] # Defined as [row, column]
+  bottom-right-corner-coordinates: [290, 200] # Defined as [row, column]
+BorderSize:
+  top: 25     # No. of pixel rows
+  bottom: 25  # No. of pixel rows
+  left: 25    # No. of pixel columns
+  right: 25   # No. of pixel columns
+BorderType: 4 # Integer value representing border type. Options are: 
+              # Constant (0), Replicate (1), Reflect (2), Wrap (3), Reflect_101 (4)
+ConstantValue: 0 # Pixel value used in the case you pick typeOfBorder as 'Constant'

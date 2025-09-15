@@ -1,0 +1,15 @@
+{
+    "SourceImagePath": "",
+    "ROI": {
+        "top-left-corner-coordinates": [50, 50], 
+        "bottom-right-corner-coordinates": [100, 100]
+    },
+    "BorderSize": {
+        "top": 25, 
+        "bottom": 25, 
+        "left": 25, 
+        "right": 25
+    }, 
+    "BorderType": 0, 
+    "ConstantValue": 0 
+}
