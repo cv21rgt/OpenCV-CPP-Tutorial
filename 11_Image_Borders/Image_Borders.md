@@ -546,3 +546,11 @@ std::string_view imageBorderDescription(int borderType)
 * **Avoiding edge effects**: In applications where the absolute value of pixels at the edge of an ROI is critical, `cv::BORDER_ISOLATED` prevents "bleed-in" from the parent image during operations that require use of neighbourhood pixels.
 
 * **Image forensics**: When analyzing a specific, cropped portion of an image, using this flag guarantees that the pixel data from outside the cropped area will not influence your analysis.
+
+
+## References
+
+1. https://github.com/opencv/opencv/issues/9884
+2. https://stackoverflow.com/questions/62853834/query-about-border-types-when-using-cv2-gaussianblur
+3. https://docs.opencv.org/4.8.0/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5
+4. https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DJGYdI5uVHi4&ved=0CAEQqYcPahcKEwioiceUsNqPAxUAAAAAHQAAAAAQCg&opi=89978449
