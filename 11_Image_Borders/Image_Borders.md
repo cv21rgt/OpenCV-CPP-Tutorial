@@ -7,7 +7,7 @@
 :notebook_with_decorative_cover: This tutorial is going to set you up so that you go into future topics (e.g. Filtering, Geometrical Transformation, Thresholding, etc.) knowing how pixels are handled at image borders by various image processing techniques.
 
 
-**Border Extrapolation**
+## Border Extrapolation
 
 :notebook_with_decorative_cover: In most cases OpenCV functions will create these virtual pixels for you, all you have to do is supply a **flag** specifying how you want the pixels to be created. These flags can be found under the enumerator <a href = "https://docs.opencv.org/4.8.0/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5">cv::BorderTypes</a>. 
 
@@ -36,11 +36,11 @@
 
 * `src` - Source image.
 * `dst` - Destination image of the same type as `src` and the size $cv::Size(src.cols+left+right, src.rows+top+bottom)$.
-* `top` - the number of rows of pixelsto be added at the top of `src` image.
+* `top` - the number of rows of pixels to be added at the top of `src` image.
 * `bottom` - the number of rows of pixels to be added at the bottom of `src` image.
 * `left` - the number of columns of pixels to be added at the left side of `src` image.
 * `right` - the number of columns of pixels to be added at the right side of `src` image.
-* `borderType` - Border type. See <a href = "https://docs.opencv.org/4.8.0/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5">**cv::BorderTypes**</a> for details. Also see **Table 1** above.
+* `borderType` - Border type. See <a href = "https://docs.opencv.org/4.8.0/d2/de8/group__core__array.html#ga209f2f4869e304c82d07739337eae7c5">cv::BorderTypes</a> for details. Also see **Table 1** above.
 * `value` - Border value if `borderType=cv::BORDER_CONSTANT`. This is provided as a `cv::Scalar` value e.g. `cv::Scalar(value)` for a 1-channel image and `cv::Scalar(value, value, value)` for a 3-channel image.
 
 **Example 1** The following code helps you create a border (of the same size) around an image. For better visualization, use a large border size e.g. 50.
