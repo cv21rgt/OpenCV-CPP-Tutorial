@@ -86,11 +86,10 @@
 
 <p style="text-align: center;"><b>Figure 4:</b> Inverse mapping spatial transformation</p>
 
-<img src="./images/inverse_mapping.png"
-        alt="Inverse mapping spatial transformation" 
-        width="403" 
-        height="251" 
-        style="display: block; margin: 0 auto"/>
+<p align ="center">
+        <img width = "403" height = "251" src="./images/inverse_mapping.png">
+</p>
+
 
 
 :notebook_with_decorative_cover: The process of inverse mapping follows a simple, step-by-step procedure: 
