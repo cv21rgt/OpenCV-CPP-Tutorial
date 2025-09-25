@@ -125,15 +125,13 @@ int main()
 
 ### Member Functions
 
-:notebook_with_decorative_cover: There are very few member functions that are associated with **cv::RotatedRect**. We will use the following image as an example to explain the member functions. In Figure 1, the rotated rectangle is in green and the vertices are numbered 0 - 3. Image is taken from https://docs.opencv.org/4.8.0/db/dd6/classcv_1_1RotatedRect.html .
+:notebook_with_decorative_cover: There are very few member functions that are associated with **cv::RotatedRect**. We will use the following image as an example to explain the member functions. In <a href = "https://docs.opencv.org/4.8.0/db/dd6/classcv_1_1RotatedRect.html">Figure 1</a>, the rotated rectangle is in green and the vertices are numbered 0 - 3. 
 
-<p style="text-align: center;"><b>Figure 1:</b> Rotated rectangle</p>
+<p align ="center"><b>Figure 1:</b> Rotated rectangle</p>
 
-<img src="./images/rotatedrect.png"
-        alt="Inverse mapping spatial transformation" 
-        width="202" 
-        height="202" 
-        style="display: block; margin: 0 auto"/>
+<p align ="center">
+        <img width = "202" height = "202" src="./images/rotatedrect.png">
+</p>
 
 
 1. `void cv::RotatedRect::points(cv::Point2f pts[]) const` - returns the coordinates of the 4 vertices of the rotated rectangle. The parameter `pts[]` is a C-style array for storing the vertices. The order of vertices returned is *bottomLeft* (0), *topLeft* (1), *topRight* (2) and *bottomRight* (3). Note that if you rotate the cv::RotatedRect 180 degrees then the *bottomLeft* point will be located at the top right corner of the rectangle.
