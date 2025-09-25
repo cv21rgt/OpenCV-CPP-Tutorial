@@ -43,15 +43,17 @@
 6. **32F** - 32-bit decimal values of type float with range (-3.40282347E+38 to 3.40282347E+38)
 7. **64F** - 64-bit decimal values of type float with range (-1.797693134862315E+308 to 1.797693134862315E+308)
 
-:notebook_with_decorative_cover: cv::Mat data types are actually stored as integer types within OpenCV. You will notice this if you look at the constructors for cv::Mat objects as the data type for **type** is **int**, short for integer. The following figure can help you identify which integer value represents which data type.
+:notebook_with_decorative_cover: cv::Mat data types are actually stored as integer types within OpenCV. You will notice this if you look at the constructors for cv::Mat objects as the data type for **type** is **int**, short for integer. <a href = "https://medium.com/@nullbyte.in/part-2-exploring-the-data-types-in-opencv4-a-comprehensive-guide-49272f4a775">Figure 1</a> can help you identify which integer value represents which data type.
 
-**Figure 1**: OpenCV data types
 
-![Image showing OpenCV data types](./images/opencv_data_types.png)
+<p align ="center"><b>Figure 1:</b> OpenCV data types</p>
 
-Image source: https://medium.com/@nullbyte.in/part-2-exploring-the-data-types-in-opencv4-a-comprehensive-guide-49272f4a775
+<p align ="center">
+        <img width = "364" height = "384" src="./images/opencv_data_types.png" alt="OpenCV data types">
+</p>
 
-:notebook_with_decorative_cover: Using the above figure, **CV_32F** or **CV_32FC1** is represented by the integer value **5**, **CV_8UC3** is represented by the integer value **16**, **CV_8U** or **CV_8UC1** is represented by the integer value **0**. This means if you were to ask OpenCV what data type is held by a cv::Mat object using a function like `type()`, OpenCV will return the integer value and it will be up to you to know the full description of the data type. The problem with these integer values is they are not descriptive and do not give you a full picture of a cv::Mat objects data type hence they are not used that often unless you offer a full explanation. In addition, there are too many integer values to remember. To help, I have created a function with the signature (`std::string_view openCVDescriptiveDataType(int value)`) that I can use to find out the full description of a data type given its integer value equivalent. This function has been added to a header and source files with the names **utility_functions.h** and **utility_functions.cpp**. As we go along our journey, we will add more utility functions or classes to these files. At the end we can build a library that can be used with any other computer vision project. Check the **include** and **src** folders for these files.
+
+:notebook_with_decorative_cover: Using Figure 1, **CV_32F** or **CV_32FC1** is represented by the integer value **5**, **CV_8UC3** is represented by the integer value **16**, **CV_8U** or **CV_8UC1** is represented by the integer value **0**. This means if you were to ask OpenCV what data type is held by a cv::Mat object using a function like `type()`, OpenCV will return the integer value and it will be up to you to know the full description of the data type. The problem with these integer values is they are not descriptive and do not give you a full picture of a cv::Mat objects data type hence they are not used that often unless you offer a full explanation. In addition, there are too many integer values to remember. To help, I have created a function with the signature (`std::string_view openCVDescriptiveDataType(int value)`) that I can use to find out the full description of a data type given its integer value equivalent. This function has been added to a header and source files with the names **utility_functions.h** and **utility_functions.cpp**. As we go along our journey, we will add more utility functions or classes to these files. At the end we can build a library that can be used with any other computer vision project. Check the **include** and **src** folders for these files.
 
 
 ### Creating cv::Mat objects
@@ -637,22 +639,23 @@ int main()
 
 ### Create 2D cv::Mat arrays with channels
 
-:notebook_with_decorative_cover: We will start to talk in detail about arrays with channels when dealing with image data. For example, some color images can be represented as 2D arrays with 3 channels (for the Red, Green and Blue intensity values). Figure 2 below is such an example. 
+:notebook_with_decorative_cover: We will start to talk in detail about arrays with channels when dealing with image data. For example, some color images can be represented as 2D arrays with 3 channels (for the Red, Green and Blue intensity values). <a href = "https://www.bogotobogo.com/OpenCV/opencv_3_tutorial_creating_mat_objects.php">Figure 2</a> below is such an example. 
 
-**Figure 2**: 2D array with 3 channels
+<p align ="center"><b>Figure 2:</b> 2D array with 3 channels</p>
 
-![3 channel array](./images/ThreeChannelArray.png)
+<p align ="center">
+        <img width = "326" height = "220" src="./images/ThreeChannelArray.png" alt="2D array with 3 channels">
+</p>
 
-Image source: https://www.bogotobogo.com/OpenCV/opencv_3_tutorial_creating_mat_objects.php
 
+:notebook_with_decorative_cover: Grayscale or black and white images have 1 channel, as shown in <a href = "https://www.bogotobogo.com/OpenCV/opencv_3_tutorial_creating_mat_objects.php
+">Figure 3</a>.
 
-:notebook_with_decorative_cover: Grayscale or black and white images have 1 channel.
+<p align ="center"><b>Figure 3:</b> 2D array with 1 channel</p>
 
-**Figure 3**: 2D array with 1 channel
-
-![1 channel array](./images/OneChannelArray.png)
-
-Image source: https://www.bogotobogo.com/OpenCV/opencv_3_tutorial_creating_mat_objects.php
+<p align ="center">
+        <img width = "278" height = "181" src="./images/OneChannelArray.png" alt="2D array with 1 channel">
+</p>
 
 
 :notebook_with_decorative_cover: It can be difficult to wrap your head around the concept of channels at this early stage, but we will discuss more about them when we start dealing with image data. Right now we just want to lay out the foundation and for you to know that such kind of large arrays exists.
