@@ -130,7 +130,7 @@ int main()
 <p align ="center"><b>Figure 1:</b> Rotated rectangle</p>
 
 <p align ="center">
-        <img width = "202" height = "202" src="./images/rotatedrect.png">
+        <img width = "202" height = "202" src="./images/rotatedrect.png" alt="Rotated rectangle">
 </p>
 
 
