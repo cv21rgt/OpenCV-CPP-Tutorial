@@ -91,7 +91,8 @@
         width="403" 
         height="251" 
         style="display: block; margin: 0 auto"/>
-`
+
+
 :notebook_with_decorative_cover: The process of inverse mapping follows a simple, step-by-step procedure: 
 
 1. For every pixel at integer coordinates $(x, y)$ in the output space, we apply an inverse transformation function, $T^{-1}$ to find its corresponding location $(u, v)$ in the input space. The inverse mapping function is then defined fully as $(u, v) = T^{-1}(x, y)$.
