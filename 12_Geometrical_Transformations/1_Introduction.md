@@ -27,12 +27,9 @@
 
 <p style="text-align: center;"><b>Figure 1</b> Forward mapping spatial transformation</p>
 
-<img src="./images/forward_mapping.png"
-        alt="Forward mapping" 
-        width="404" 
-        height="212" 
-        style="display: block; margin: 0 auto"/>
-
+<p align ="center">
+        <img width = "404" height = "212" src="./images/forward_mapping.png">
+</p>
 
 
 :notebook_with_decorative_cover: The process of forward mapping follows a simple, step-by-step procedure: 
@@ -58,21 +55,21 @@
 
 <p style="text-align: center;"><b>Figure 2:</b> Image of an object with a jagged edge (A) and a smooth edge (B)</p>
 
-<img src="./images/jagged-edges.png"
-        alt="Image of an object with a jagged edge" 
-        width="381" 
-        height="270" 
-        style="display: block; margin: 0 auto"/>
+<p align ="center">
+        <img width = "381" height = "270" src="./images/jagged-edges.png">
+</p>
+
+
 
 4. **Interpolation complexity**: Handling the issues of gaps and overlaps requires more complex solutions than simply overwriting pixels. One such solution is to map pixel rectangles in input space to output space quadrilaterals as shown in <a href = "https://blogs.mathworks.com/steve/2006/04/28/spatial-transforms-forward-mapping/?s_tid=blogs_rc_1">Figure 3</a>. With this procedure, the input pixel value is allocated to different output pixels depending on the relative fractional coverage of the quadrilateral. Although this procedure can produce good results, it is complicated to implement and computationally expensive. 
 
 <p style="text-align: center;"><b>Figure 3:</b> Solving forward mapping with quadrilaterals</p>
 
-<img src="./images/forward_mapping_with_quads.png"
-        alt="Solving forward mapping with quadrilaterals" 
-        width="409" 
-        height="222" 
-        style="display: block; margin: 0 auto"/>
+<p align ="center">
+        <img width = "409" height = "222" src="./images/forward_mapping_with_quads.png">
+</p>
+
+
 
 :notebook_with_decorative_cover: Because of the inherent problems with gaps and overlaps, forward mapping is rarely used in practice for geometric transformations. The inverse mapping approach is the standard solution, as it avoids these issues by working backward from the destination image to the source. 
 
