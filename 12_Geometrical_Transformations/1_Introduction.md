@@ -25,7 +25,7 @@
 
 :notebook_with_decorative_cover: We will use <a href = "https://blogs.mathworks.com/steve/2006/04/28/spatial-transforms-forward-mapping/?s_tid=blogs_rc_1">Figure 1</a> to show how forward mapping works. 
 
-<p style="text-align: center;"><b>Figure 1</b> Forward mapping spatial transformation</p>
+<p align="center"><b>Figure 1</b> Forward mapping spatial transformation</p>
 
 <p align ="center">
         <img width = "404" height = "212" src="./images/forward_mapping.png">
@@ -53,7 +53,7 @@
 
 3. **Aliasing**: The rounding of coordinates can introduce aliasing artifacts, such as jagged edges, especially for rotations or scaling transformations. A jagged edge is a visual artifact where an object's boundary appears as a "staircase" pattern instead of a smooth line, caused by the discrete nature of pixels when depicting oblique lines. <a href = "https://www.hilarispublisher.com/open-access/a-novel-technique-for-removing-jagged-edges-of-image-due-to-aliasing-2168-9695-1000161.pdf">Figure 2</a> shows an object with a jagged edge (A) and the same object with a smooth edge (B).
 
-<p style="text-align: center;"><b>Figure 2:</b> Image of an object with a jagged edge (A) and a smooth edge (B)</p>
+<p align="center"><b>Figure 2:</b> Image of an object with a jagged edge (A) and a smooth edge (B)</p>
 
 <p align ="center">
         <img width = "381" height = "270" src="./images/jagged-edges.png">
@@ -63,7 +63,7 @@
 
 4. **Interpolation complexity**: Handling the issues of gaps and overlaps requires more complex solutions than simply overwriting pixels. One such solution is to map pixel rectangles in input space to output space quadrilaterals as shown in <a href = "https://blogs.mathworks.com/steve/2006/04/28/spatial-transforms-forward-mapping/?s_tid=blogs_rc_1">Figure 3</a>. With this procedure, the input pixel value is allocated to different output pixels depending on the relative fractional coverage of the quadrilateral. Although this procedure can produce good results, it is complicated to implement and computationally expensive. 
 
-<p style="text-align: center;"><b>Figure 3:</b> Solving forward mapping with quadrilaterals</p>
+<p align="center"><b>Figure 3:</b> Solving forward mapping with quadrilaterals</p>
 
 <p align ="center">
         <img width = "409" height = "222" src="./images/forward_mapping_with_quads.png">
@@ -81,7 +81,7 @@
 
 :notebook_with_decorative_cover: We will use <a href = "https://blogs.mathworks.com/steve/2006/05/05/spatial-transformations-inverse-mapping/?s_tid=blogs_rc_1">Figure 4</a> to demonstrate how inverse mapping works.
 
-<p style="text-align: center;"><b>Figure 4:</b> Inverse mapping spatial transformation</p>
+<p align="center"><b>Figure 4:</b> Inverse mapping spatial transformation</p>
 
 <p align ="center">
         <img width = "403" height = "251" src="./images/inverse_mapping.png">
