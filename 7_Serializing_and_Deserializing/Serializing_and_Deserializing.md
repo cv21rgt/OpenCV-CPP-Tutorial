@@ -751,9 +751,14 @@ fs_1.open(fileName, cv::FileStorage::READ);
 
 :notebook_with_decorative_cover: <a href = "https://docs.opencv.org/4.8.0/de/dd9/classcv_1_1FileNode.html">`cv::FileNode`</a> is a class that handles the actual reading of data when using `cv::FileStorage`.
 
-:notebook_with_decorative_cover: According to OpenCV, `cv::FileNode` in the background is implemented as a <a href = "https://docs.opencv.org/4.8.0/d3/de3/classcv_1_1Node.html">`Node`</a> class. An example of a node structure would look as follows:
+:notebook_with_decorative_cover: According to OpenCV, `cv::FileNode` in the background is implemented as a <a href = "https://docs.opencv.org/4.8.0/d3/de3/classcv_1_1Node.html">`Node`</a> class. An example of a node structure would look like Figure 1:
 
-![Node structure](./images/node_structure.png)
+<p align ="center"><b>Figure 1:</b> Node structure</p>
+
+<p align ="center">
+        <img width = "524" height = "321" src="./images/node_structure.png" alt="Node structure">
+</p>
+
 
 :notebook_with_decorative_cover: A node is used to store each and every element of the file storage opened for reading. When XML/YAML file is read, it is first parsed and stored in the memory as a hierarchical collection of nodes. Each node can be a "leaf", that is, it can contain a single number or a string object. A "leaf" can also act as a "parent" and have a collection of other nodes under it known as "child" nodes. There can be named collections (mappings) where each element has a name and it is accessed by that name, and ordered collections (sequences) where elements do not have names but rather accessed by index. Type of the file node can be determined using function `cv::FileNode::type()`. *Note that file nodes are only used for navigating file storages opened for reading*. When a file storage is opened for writing, no data is stored in memory after it is written hence there is no need for nodes.
 
