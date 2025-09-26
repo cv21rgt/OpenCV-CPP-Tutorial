@@ -12,7 +12,6 @@
 
 5. We will also discuss the importance of the classes `cv::InputArray` and `cv::OutputArray` in helping to write generic functions that accept all kinds of data inputs e.g. `cv::Mat`, `cv::Matx`, `std::vector`, `std::array`, `cv::Point`, `cv::SparseMat` etc. You will need this understanding if you want to create your own algorithms in future.
 
-
 ## How to run the examples
 
 :memo: We will use CMake to build and run our code. Make sure you have the following project structure. You can use any build you are familiar with. We will continue to create our own library with common computer vision functions, classes etc that are of everyday use but are not implemented in OpenCV. The header and source files will be in the **../include/UtilityFunctions/** and **../src/UtilityFunctions/** directories, respectively. 
