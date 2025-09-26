@@ -574,7 +574,7 @@ int main()
     No. of non-zero elements = 34
 
 
-### Accessing cv::SparseMat array elements using Accessor Functions {#custom-id4}
+### Accessing cv::SparseMat array elements using Accessor Functions 
 
 :notebook_with_decorative_cover: The **cv::SparseMat** class provides 2 ways which we can use for accessing elements, **accessor functions** and **iterators**. In this section, we will focus on accessor functions, of which there are 4 provided by the `cv::SparseMat` class.
 
