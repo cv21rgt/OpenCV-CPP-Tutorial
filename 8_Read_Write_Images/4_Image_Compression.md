@@ -314,11 +314,13 @@ void writeVectorBufferToFile(const std::string& filePath, std::vector<uchar>& bu
 
 :notebook_with_decorative_cover: We compressed the following `png` image using 4 different codecs `jpg`, `jp2`, `webp` and `tiff`.
 
-**Figure 1** - Image to compress
+<p align = "center"><b>Figure 1:</b> Image to compress
 
-![Image to compress](./images/color_image.png)
+<p align = "center">
+    <img src = "./images/color_image.png" alt = "Color image of type png">
+</p>
 
-:notebook_with_decorative_cover: On my computer the original image had a file size of 93,587 bytes. After compression we got the following results:
+:notebook_with_decorative_cover: On my computer the original image had a file size of 93,587 bytes. After compression I got the following results:
 
 | Codec/Image file extension | File size (bytes)|
 |--- | --- |
