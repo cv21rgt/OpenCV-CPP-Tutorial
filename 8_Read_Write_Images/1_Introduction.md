@@ -49,29 +49,37 @@
 
 :notebook_with_decorative_cover: The following image is an example of a grayscale image. 
 
-**Figure 1** - Grayscale image
+<p align ="center"><b>Figure 1:</b> Grayscale image</p>
 
-![Grayscale image](./images/grayscale_image.jpeg)
+<p align ="center">
+        <img src="./images/grayscale_image.jpeg" alt="Grayscale image">
+</p>
 
 :notebook_with_decorative_cover: Such an image would be represented by a 2-dimensional single channel matrix like the one in Figure 2. 
 
-**Figure 2** - Possible matrix representation of a grayscale image
+<p align = "center"><b>Figure 2:</b> - Possible matrix representation of a grayscale image</p>
 
-![Grayscale pixels](./images/grayscale_matrix.png)
+<p align ="center">
+        <img src="./images/grayscale_matrix.png" alt="two-dimensional grayscale  image matrix/array">
+</p>
 
 ### Color images
 
-:notebook_with_decorative_cover: Color images consists of **3 or 4** channels. The most popular one is the **RGB** (Red, Green, Blue) combination, mainly because this is how human eyes builds up colors. Sometimes we add a fourth element, known as **alpha (A)** to code the transparency of a color. This means in OpenCV the data types of color images should show `3` or `4` channels e.g. `CV_32FC3` or `CV_32FC4`.
+:notebook_with_decorative_cover: Color images (Figure 3) consists of **3 or 4** channels. The most popular one is the **RGB** (Red, Green, Blue) combination, mainly because this is how human eyes builds up colors. Sometimes we add a fourth element, known as **alpha (A)** to code the transparency of a color. This means in OpenCV the data types of color images should show `3` or `4` channels e.g. `CV_32FC3` or `CV_32FC4`.
 
-**Figure 3** - Color image 
+<p align = "center"><b>Figure 3:</b> Color image </p> 
 
-![Color image](./images/color_image.png)
+<p align ="center">
+        <img src="./images/color_image.png" alt="color image">
+</p>
 
-:notebook_with_decorative_cover: RGB color images would be represented by a 3-dimensional matrix of size: $image \space width \space x \space image \space height \space x \space number \space of \space channels$. 
+:notebook_with_decorative_cover: RGB color images would be represented by a 3-dimensional matrix of size: $image \space width \space \times \space image \space height \space \times \space number \space of \space channels$. 
 
-**Figure 4** - RGB Color image matrix representation
+<p align = "center"><b>Figure 4:</b> RGB Color image matrix representation</p>
 
-![Color image](./images/rgb_matrix.png)
+<p align ="center">
+        <img src="./images/rgb_matrix.png" alt="RGB Color image matrix representation">
+</p>
 
 :notebook_with_decorative_cover: Since we have 3 channels, each pixel will be represented by three values, for example, the top left pixel would have the values `(2, 7, 33)`.
 
