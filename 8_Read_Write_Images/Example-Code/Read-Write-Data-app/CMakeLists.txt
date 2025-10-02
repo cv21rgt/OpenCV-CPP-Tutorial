@@ -31,14 +31,14 @@ if(OpenCV_FOUND)
     link_directories(${OpenCV_LIB_DIR})
 
     # Create an executable file from our 'read_display_multiple_images.cpp' source file
-    # The executable will be called 'Read-Display-Multiple-Images-app'
-    add_executable(Read-Display-Multiple-Images-app read_display_multiple_images.cpp)
+    # The executable will be called 'Read-Write-app'
+    add_executable(Read-Write-app read_display_multiple_images.cpp)
 
     # We want to use C++17 standard (minimum)
-    target_compile_features(Read-Display-Multiple-Images-app PRIVATE cxx_std_17)
+    target_compile_features(Read-Write-app PRIVATE cxx_std_17)
 
     # Additional dependencies
     # Our executable is dependend on OpenCV libraries and our 'utility_functions_library'
-    target_link_libraries(Read-Display-Multiple-Images-app ${OpenCV_LIBS} utility_functions_library)
+    target_link_libraries(Read-Write-app ${OpenCV_LIBS} utility_functions_library)
 
 endif(OpenCV_FOUND)
