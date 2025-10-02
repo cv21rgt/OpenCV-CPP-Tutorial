@@ -2,8 +2,8 @@
 
 :memo: In this chapter we will cover the basics on drawing and annotating images. 
 
-1. <a href = "">Drawing</a> - here we introduce the image coordinate system before we get into how we can draw shapes such as rectangles, circles etc and make them part of the image data itself.
-2. <a href = "">Annotation</a> - is necessary for adding text that adds meaning to an image. In this sub-topic we also get into the intricases of accurately positioning text on your image. We also look at drawing tight bounding boxes around text - a technique we will revisit later when discussing the advanced topic of object identification. 
+1. <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/9_Drawing_and_Annotation/1_Drawing.md">Drawing</a> - here we introduce the image coordinate system before we get into how we can draw shapes such as rectangles, circles etc and make them part of the image data itself.
+2. <a href = "https://github.com/cv21rgt/OpenCV-CPP-Tutorial/blob/main/9_Drawing_and_Annotation/2_Annotation.md">Annotation</a> - is necessary for adding text that adds meaning to an image. In this sub-topic we also get into the intricases of accurately positioning text on your image. We also look at drawing tight bounding boxes around text - a technique we will revisit later when discussing the advanced topic of object identification. 
 
 
 ## How to run the examples
