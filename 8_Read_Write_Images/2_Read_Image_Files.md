@@ -101,11 +101,14 @@
 4. `void destroyWindow(const cv::String& winname)`  - destroys the window nammed `winname`. Any memory used by the window is then returned to the system.
 5. `void destroyAllWindows()` - Use this function to destroy more than one window.
 
-:notebook_with_decorative_cover: If you run the above functions successfully, you should expect to see a default basic window displaying an image as follows:
+:notebook_with_decorative_cover: If you run the above functions successfully, you should expect to see a default basic window displaying an image as in Figure 1.
 
-**Figure 1** - Basic HighGUI Window
+<p align = "center"><b>Figure 1:</b> Basic HighGUI Window </p> 
 
-![A basic window displaying an image](./images/basic_window.png)
+<p align ="center">
+        <img src="./images/basic_window.png" alt="A basic window displaying an image in OpenCV">
+</p>
+
 
 ### Qt backend support
 
@@ -113,9 +116,12 @@
 
 :notebook_with_decorative_cover: To try to provide users an opportunity to create better quality GUI's, OpenCV provides backend support for <a href = "https://www.qt.io/">Qt</a> - a library for creating visually stunning GUI's. However, because it is backend support you won't get all Qt functionality through OpenCV, but it is better than the default graphics. For example, with Qt support, your basic window would look as follows:
 
-**Figure 2** - Basic window with Qt backend support
 
-![Window with Qt backend support](./images/Window_with_Qt_backend_support.png)
+<p align = "center"><b>Figure 2:</b> Basic window with Qt backend support</p>
+
+<p align ="center">
+        <img src="./images/Window_with_Qt_backend_support.png" alt="Window with Qt backend support in OpenCV">
+</p>
 
 
 :notebook_with_decorative_cover: The GUI shown in Figure 2 is already much better than the one in Figure 1 as it already provides other functionality such as panning, zooming etc whilst using the same code for creating the GUI in Figure 1.
@@ -291,7 +297,9 @@ int main(int argc, char* argv[])
     No. of channels: 4
     Data type: CV_8UC4 -> Array with 4 channels and primitive data type 8-bit unsigned integers with range (0 to 255)
 
-![Window with Qt backend support](./images/Window_with_Qt_backend_support.png)
+<p align ="center">
+        <img src="./images/Window_with_Qt_backend_support.png" alt="Window with Qt backend support in OpenCV">
+</p>
 
 **Tip**: If the title of your image contains more than one word, place the text string between double quotes e.g. `yourHomeDirectory:~/Documents/OpenCV/.../Read_Write_Images/build/Read-Write-Data-app$ ./Read-Display-Image-app --image=/home/Documents/OpenCV/.../Read_Write_Images/Example-Code/images/plane.png --title="My plane"`
 
@@ -435,7 +443,9 @@ int main(int argc, char* argv[])
     No. of channels: 3
     Data type: CV_8UC3 -> Array with 3 channels and primitive data type 8-bit unsigned integers with range (0 to 255)
 
-![multiple windows](./Example-Code/images/multiple-images.png)
+<p align = "center">
+    <img src = "./Example-Code/images/multiple-images.png" alt = "multiple windows">
+</p>
 
 
 ## Read a multi-page image 
