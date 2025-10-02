@@ -574,3 +574,8 @@ int main(int argc, char* argv[])
     return 0;
 }
 ```
+
+## References
+
+1. http://www.libtiff.org/
+2. http://www.libtiff.org/functions/libtiff.html
