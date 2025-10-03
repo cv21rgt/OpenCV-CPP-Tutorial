@@ -1,12 +1,13 @@
 # Introduction
 
-:notebook_with_decorative_cover: Before we get into accessing pixel values, we need to remind ourself that OpenCV images are represented by the same structure as matrices as shown in Figure 1. 
+:notebook_with_decorative_cover: Before we get into accessing pixel values, we need to remind ourself that OpenCV images are represented by the same structure as matrices as shown in <a href = "https://mikamustonen.com/2019-06-22-how-to-rotate-an-image-with-opencv.html">Figure 1</a>. 
 
-**Figure 1** - OpenCV matrix or array coordinate system
+<p align = "center"><b>Figure 1:</b> OpenCV matrix or array coordinate system</p>
 
-![Matrix coordinate system](./images/matrix-coordinate-system.png)
+<p align = "center">
+   <img src = "./images/matrix-coordinate-system.png" alt = "Matrix coordinate system">
+</p>
 
-**Image source**: https://mikamustonen.com/2019-06-22-how-to-rotate-an-image-with-opencv.html
 
 :notebook_with_decorative_cover: Figure 1 shows the following: 
 
@@ -111,7 +112,7 @@ cv::Scalar pixelValue_C1(const cv::Mat& image, int type, int y, int x)
 
 :notebook_with_decorative_cover: Since it is likely that we will re-use the above function we will add it to our library we are building. We will add the function under the namespace `BasicImageProcessing`. Remember to add the function declaration in the header file `Example-Code/include/UtilityFunctions/utility_functions.h` and the full definition in the source file `Example-Code/src/UtilityFunctions/utility_functions.cpp`.
 
-:notebook_with_decorative_cover: As mentioned earlier on, we can also use the `at<>()` function to alter/change the pixel value by simply placing this function on the left-hand side of the equal sign `=` and the new pixel value on the right-hand side. This is how you can alter a non-const reference value. In the following example we alter the pixel value at location `(row, column)` to `128`. The `cv::Mat` image object `img` must NOT be a const object.
+:notebook_with_decorative_cover: As mentioned earlier on, we can also use the `at<>()` function to alter/change the pixel value by simply placing this function on the left-hand side of the equal sign `=` and the new pixel value on the right-hand side. This is how you can alter a non-const reference value. In the following example we alter the pixel value at location `(row, column)` to `128`. The `cv::Mat` image object `img` must NOT be a `const` object.
 
 ```c++
 img.at<uchar>(row, column) = 128;
