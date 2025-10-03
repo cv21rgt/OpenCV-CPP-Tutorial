@@ -278,16 +278,16 @@ int main(int argc, char* argv[])
 
 :notebook_with_decorative_cover: Color maps are capable of supporting any bit depth, except floating-point data. They can also support positive and negative values, and the color maps can contain missing color mapped values. When displaying an image with a colormap containing missing values, the pixels with that value will not be displayed.
 
-:notebook_with_decorative_cover: <a href = "https://pro.arcgis.com/en/pro-app/latest/help/data/imagery/color-map-concepts.htm">Figure 8</a> shows an image array with its associated colormap.
+:notebook_with_decorative_cover: <a href = "https://pro.arcgis.com/en/pro-app/latest/help/data/imagery/color-map-concepts.htm">Figure 9</a> shows an image array with its associated colormap.
 
-<p align = "center"><b>Figure 8:</b> 8-bit color image array and its associated colormap</p>
+<p align = "center"><b>Figure 9:</b> 8-bit color image array and its associated colormap</p>
 
 <p align = "center">
     <img src = "./images/image-and-colormap.png" alt = "Image with its color map">
 </p>
 
 
-:notebook_with_decorative_cover: The pixels in the image in Figure 8 contain index numbers that point to the RGB value in the color lookup table. The RGB values are the ones used by the display system.
+:notebook_with_decorative_cover: The pixels in the image in Figure 9 contain index numbers that point to the RGB value in the color lookup table. The RGB values are the ones used by the display system.
 
 :notebook_with_decorative_cover: By default, an image with a color map will always be displayed using the associated color map. If you want to change the image's appearance, change the colors or the color map file - we will look at how to do this in OpenCV later in this tutorial.
 
@@ -299,9 +299,9 @@ int main(int argc, char* argv[])
 
 ### Using colormaps in OpenCV
 
-:notebook_with_decorative_cover: OpenCV provides an enumerator named <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">cv::ColormapTypes</a> through which you can access a number of colormaps. <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">Figure 9</a> shows the colormaps you can access through `cv::ColormapTypes`. Remember each colormap name is preceeded by the `cv` namespace if using C++ e.g. `cv::COLORMAP_AUTUMN`.
+:notebook_with_decorative_cover: OpenCV provides an enumerator named <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">cv::ColormapTypes</a> through which you can access a number of colormaps. <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">Figure 10</a> shows the colormaps you can access through `cv::ColormapTypes`. Remember each colormap name is preceeded by the `cv` namespace if using C++ e.g. `cv::COLORMAP_AUTUMN`.
 
-<p align = "center"><b>Figure 9:</b> OpenCV colormaps</p>
+<p align = "center"><b>Figure 10:</b> OpenCV colormaps</p>
 
 <p align = "center">
     <img src = "./images/opencv-colormaps.png" alt = "OpenCV colormaps">
@@ -621,9 +621,9 @@ void createArray(cv::Mat& array, bool isColor, int low, int high)
 
 :notebook_with_decorative_cover: You are discouraged from using the rainbow color map because of the following reasons:
 
-1. There is an uneven color gradient as you move from one color to the next. This means on a simple scale e.g., one that increases by a single value (+1), there is no uniformity in the rainbow color map. Some colors such as green, blue and red occupy a larger portion of the scale compared to others. This might mean that that certain colors of the rainbow color map end up dominating an image, distorting the actual data. For example, in <a href = "https://theconversation.com/how-rainbow-colour-maps-can-distort-data-and-be-misleading-167159">Figure 10</a>, see how the blue and red colors completely dominate the color image by simply occupying the larger proportions of the rainbow color map.
+1. There is an uneven color gradient as you move from one color to the next. This means on a simple scale e.g., one that increases by a single value (+1), there is no uniformity in the rainbow color map. Some colors such as green, blue and red occupy a larger portion of the scale compared to others. This might mean that that certain colors of the rainbow color map end up dominating an image, distorting the actual data. For example, in <a href = "https://theconversation.com/how-rainbow-colour-maps-can-distort-data-and-be-misleading-167159">Figure 11</a>, see how the blue and red colors completely dominate the color image by simply occupying the larger proportions of the rainbow color map.
 
-<p align = "center"><b>Figure 10:</b> The impact of an uneven rainbow color map on an image</p>
+<p align = "center"><b>Figure 11:</b> The impact of an uneven rainbow color map on an image</p>
 
 <p align = "center">
     <img src = "./images/uneven-raimbow-colormap.png" alt = "Rainbow color map applied to an image">
@@ -632,24 +632,24 @@ void createArray(cv::Mat& array, bool isColor, int low, int high)
 2. There is a false perceptual ordering of colors. Who decides which colors equate to low or high values? Different images using the rainbow color map will have different colors representing low and high values.
 3. Some images using the rainbow color map will have the same color (e.g. red) on both ends, which is highly confusing.
 4. Cyan and yellow colors are unusually brighter than the other colors - which tends to attract the user to those areas on the image, making them seem more important than others - which is misleading.
-5. According to Heron et al. (2021), another issue with an uneven colour palette like rainbow is that data presented using these colours may be unreadable or inaccurate for people with a **Color-vision deficiency** (CVD) or **colour blindness**. Colour maps that include both red and green colours with similar lightness cannot be read by a large fraction of the population. The general estimate is that 0.5 per cent of women and 8 per cent of men worldwide are subject to a colour-vision deficiency. Figure 11 shows the colors as seen by people affected with either of the three common forms of human colour-vision deficiency (deuteranopia, protanopia and tritanopia). For people with total color-blindness, we also show the gray-scale representation of what they see. Figure 11 shows us that the mostly used color map for images is not universally readable.
+5. According to Heron et al. (2021), another issue with an uneven colour palette like rainbow is that data presented using these colours may be unreadable or inaccurate for people with a **Color-vision deficiency** (CVD) or **colour blindness**. Colour maps that include both red and green colours with similar lightness cannot be read by a large fraction of the population. The general estimate is that 0.5 per cent of women and 8 per cent of men worldwide are subject to a colour-vision deficiency. Figure 12 shows the colors as seen by people affected with either of the three common forms of human colour-vision deficiency (deuteranopia, protanopia and tritanopia). For people with total color-blindness, we also show the gray-scale representation of what they see. Figure 12 shows us that the mostly used color map for images is not universally readable.
 
-<p align = "center"><b>Figure 11:</b> How people with color-vision deficiency view the rainbow or jet color map</p>
+<p align = "center"><b>Figure 12:</b> How people with color-vision deficiency view the rainbow or jet color map</p>
 
 <p align = "center">
     <img src = "./images/color-vision-deficiency.png" alt = "Rainbow color map as viewed by people with color-vision deficiency">
 </p>
 
-:notebook_with_decorative_cover: There are a few options we can adopt when picking appropriate color maps for our images. <a href = "https://www.geeksforgeeks.org/machine-learning/why-the-rainbow-color-map-is-problematic/">Figure 12</a> below is a summary of these options;
+:notebook_with_decorative_cover: There are a few options we can adopt when picking appropriate color maps for our images. <a href = "https://www.geeksforgeeks.org/machine-learning/why-the-rainbow-color-map-is-problematic/">Figure 13</a> below is a summary of these options;
 
-<p align = "center"><b>Figure 12:</b> Alternatives of rainbow color map</p>
+<p align = "center"><b>Figure 13:</b> Alternatives of rainbow color map</p>
 
 <p align = "center">
     <img src = "./images/Alternatives-of-Rainbow-Color-Map.png" alt = "Alternatives to rainbow color map">
 </p>
 
 
-:notebook_with_decorative_cover: There are a few things to point out in Figure 12:
+:notebook_with_decorative_cover: There are a few things to point out in Figure 13:
 
 1. For images covering small areas, single hue color maps such as gray, blues will be ok. Issues will arise if dealing wih larger distances e.g. an image of the world map. In such situations you are encouraged to try multi-hue color maps.
 2. If you have to use color in an image choose perceptually uniform color maps such as Viridis, Inferno or Plasma. These color maps offer colors that transition smoothly from one color to another. They also maintain clarity when converted to grayscale or when printed in black and white.
