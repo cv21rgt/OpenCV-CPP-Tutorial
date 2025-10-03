@@ -10,15 +10,16 @@
 
 ## RGB (Red, Green, Blue) color space
 
-:notebook_with_decorative_cover: The **RGB** color space (Figure 1) represents images as a numeric array whose elements specify the intensity values of the **red**, **green**, and **blue** color channels. 
+:notebook_with_decorative_cover: The **RGB** color space (<a href = "https://opencv.org/blog/color-spaces-in-opencv/">Figure 1</a>) represents images as a numeric array whose elements specify the intensity values of the **red**, **green**, and **blue** color channels. 
 
 :notebook_with_decorative_cover: The RGB color space is not the most friendly for developing computer vision based applications, its main primary use is to display colors on a monitor.
 
-**Figure 1** RGB color space
+<p align = "center"><b>Figure 1:</b> RGB color space</p>
 
-![RGB color space](./images/RGB-color-space.jpg)
+<p align = "center">
+    <img src = "./images/RGB-color-space.jpg" alt = "RGB color space">
+</p>
 
-**Image source:** https://opencv.org/blog/color-spaces-in-opencv/
 
 :notebook_with_decorative_cover: To define a color in the RGB color model, we specify the intensity value of the Red, Green, and Blue contained in a single pixel. For the majority of RGB color images, the intensity values are represented as `8-bit unsigned` integer values, meaning they can have values in the range `0` to `255` (both inclusive). However, other data types can be used for the intensity values - although they are less common:
 
@@ -33,14 +34,19 @@
 
 :notebook_with_decorative_cover: Figure 2 and 3 shows the same image in the RGB and BGR color formats.
 
-**Figure 2** Original image in the RGB color space, followed by each of the individual Red, Green, and Blue channels.
+<p align = "center"><b>Figure 2:</b> Original image in the RGB color space, followed by each of the individual Red, Green, and Blue channels.</p>
 
-![Color image in RGB format](./images/image-RGB-color-space.png)
+<p align = "center">
+    <img src = "./images/image-RGB-color-space.png" alt = "Color image in RGB format">
+</p>
 
 
-**Figure 3** Original image in the BGR color space, followed by each of the individual Blue, Green, and Red channels.
+<p align = "center"><b>Figure 3:</b> Original image in the BGR color space, followed by each of the individual Blue, Green, and Red channels.</p>
 
-![Color image in BGR format](./images/image-BGR-color-space.png)
+<p align = "center">
+    <img src = "./images/image-BGR-color-space.png" alt = "Color image in BGR format">
+</p>
+
 
 ## HSV (Hue, Saturation, Value) color space
 
@@ -48,13 +54,14 @@
 
 :notebook_with_decorative_cover: HSV color space makes it easier to detect and filter colors, even if lighting changes.
 
-:notebook_with_decorative_cover: The HSV color model is cylindrical in shape as in Figure 4.
+:notebook_with_decorative_cover: The HSV color model is cylindrical in shape as in <a href = "https://opencv.org/blog/color-spaces-in-opencv/">Figure 4</a>.
 
-**Figure 4** HSV color space with Hue values in the range `0-179` degrees as in OpenCV
+<p align = "center"><b>Figure 4:</b> HSV color space with Hue values in the range <b>0-179</b> degrees as in OpenCV</p>
 
-![HSV color space model](./images/HSV-color-model.png)
+<p align = "center">
+    <img src = "./images/HSV-color-model.png" alt = "HSV color space model">
+</p>
 
-**Image source:** https://opencv.org/blog/color-spaces-in-opencv/
 
 :notebook_with_decorative_cover: Using Figure 4 we can explain the various components of the HSV color space model. This model seperates color into the following three distinct components:
 
@@ -64,9 +71,12 @@
 
 :notebook_with_decorative_cover: Figure 5 shows same image in Figure 2, but in HSV color space.
 
-**Figure 5** Original image in the HSV color space, followed by each of the individual Hue, Saturation, and Value channels.
+<p align = "center"><b>Figure 5:</b> Original image in the HSV color space, followed by each of the individual Hue, Saturation, and Value channels.</p>
 
-![Image in HSV color space](./images/image-HSV-color-space.png)
+<p align = "center">
+    <img src = "./images/image-HSV-color-space.png" alt = "Image in HSV color space">
+</p>
+
 
 ### Applications of HSV color space
 
@@ -78,13 +88,14 @@
 
 :notebook_with_decorative_cover: The RGB and HSV color spaces lack the ability to mimic the methodology in which humans **see** and **interpret** color. This is were the **Lab** color space comes in. The Lab color space models colors according to the typical sensitivity of the three types of cone cells in the human eye.
 
-:notebook_with_decorative_cover: The Lab color space is a 3-axis system as shown in Figure 6.
+:notebook_with_decorative_cover: The Lab color space is a 3-axis system as shown in <a href = "https://pyimagesearch.com/2021/04/28/opencv-color-spaces-cv2-cvtcolor/">Figure 6</a>.
 
-**Figure 6** Lab color space
+<p align = "center"><b>Figure 6:</b> Lab color space</p>
 
-![Lab color model](./images/LAB-color-model.png)
+<p align = "center">
+    <img src = "./images/LAB-color-model.png" alt = "Lab color model">
+</p>
 
-**Image source:** https://pyimagesearch.com/2021/04/28/opencv-color-spaces-cv2-cvtcolor/
 
 :notebook_with_decorative_cover: Each axis/channel is defined as follows:
 
@@ -94,9 +105,11 @@
 
 :notebook_with_decorative_cover: Figure 7 shows same image in Figure 2, but in Lab color space.
 
-**Figure 7** Original image in the Lab color space, followed by each of the individual L, a, and b channels.
+<p align = "center"><b>Figure 7:</b> Original image in the Lab color space, followed by each of the individual L, a, and b channels.</p>
 
-![Color image in Lab color space](./images/image-Lab-color-space.png)
+<p align = "center">
+    <img src = "./images/image-Lab-color-space.png" alt = "Color image in Lab color space">
+</p>
 
 :notebook_with_decorative_cover: Even though the Lab color space is not easy to understand and is less intuitive than the RGB and HSV color spaces, it still has a lot of uses in Computer Vision. This is due to the Euclidean distance between two arbitrary colors having an actual perceptual meaning. This allows us to overcome various lighting condition problems. Because Lab can separate lighting information (`L`) from color information (`a`, `b`), it can be used in illumination-invariant applications.
 
@@ -114,9 +127,12 @@
 
 :notebook_with_decorative_cover: Figure 8 shows same image in Figure 2, but in YCrCb color space.
 
-**Figure 7** Original image in the YCrCb color space, followed by each of the individual Y, Cr, and Cb channels.
+<p align = "center"><b>Figure 8</b> Original image in the <b>YCrCb</b> color space, followed by each of the individual Y, Cr, and Cb channels.</p>
 
-![Color image in YCrCb color space](./images/image-YCrCb-color-space.png)
+<p align = "center">
+    <img src = "./images/image-YCrCb-color-space.png" alt = "Color image in YCrCb color space">
+</p>
+
 
 ### Applications of YCrCb
 
@@ -245,7 +261,9 @@ int main(int argc, char* argv[])
 
 **Output**
 
-![Convert an image to various color spaces](./Example-Code/images/color-conversions.png)
+<p align = "center">
+    <img src = "./Example-Code/images/color-conversions.png" alt = "Convert an image to various color spaces">
+</p>
 
 
 :notebook_with_decorative_cover: When we discussed the HSV color model, we indicated that OpenCV uses the data range `0 -179` for the Hue values if dealing with `8-bit unsigned` images. This is the default when for example you use the color conversion code `cv::COLOR_BGR2HSV`. This tends to reduce the color information because we are not making use of the full `8-bit unsigned` range. I have since come to learn that there is another conversion code we can use, `cv::COLOR_BGR2HSV_FULL`, which uses the full `0 -255` data range for the Hue values, thereby giving us more color information.
@@ -260,13 +278,14 @@ int main(int argc, char* argv[])
 
 :notebook_with_decorative_cover: Color maps are capable of supporting any bit depth, except floating-point data. They can also support positive and negative values, and the color maps can contain missing color mapped values. When displaying an image with a colormap containing missing values, the pixels with that value will not be displayed.
 
-:notebook_with_decorative_cover: Figure 8 shows an image array with its associated colormap.
+:notebook_with_decorative_cover: <a href = "https://pro.arcgis.com/en/pro-app/latest/help/data/imagery/color-map-concepts.htm">Figure 8</a> shows an image array with its associated colormap.
 
-**Figure 8** 8-bit color image array and its associated colormap
+<p align = "center"><b>Figure 8:</b> 8-bit color image array and its associated colormap</p>
 
-![Image with its color map](./images/image-and-colormap.png)
+<p align = "center">
+    <img src = "./images/image-and-colormap.png" alt = "Image with its color map">
+</p>
 
-**Image source:** https://pro.arcgis.com/en/pro-app/latest/help/data/imagery/color-map-concepts.htm
 
 :notebook_with_decorative_cover: The pixels in the image in Figure 8 contain index numbers that point to the RGB value in the color lookup table. The RGB values are the ones used by the display system.
 
@@ -280,13 +299,13 @@ int main(int argc, char* argv[])
 
 ### Using colormaps in OpenCV
 
-:notebook_with_decorative_cover: OpenCV provides an enumerator named <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">cv::ColormapTypes</a> through which you can access a number of colormaps. Figure 9 shows the colormaps you can access through `cv::ColormapTypes`. Remember each colormap name is preceeded by the `cv` namespace if using C++ e.g. `cv::COLORMAP_AUTUMN`.
+:notebook_with_decorative_cover: OpenCV provides an enumerator named <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">cv::ColormapTypes</a> through which you can access a number of colormaps. <a href = "https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html">Figure 9</a> shows the colormaps you can access through `cv::ColormapTypes`. Remember each colormap name is preceeded by the `cv` namespace if using C++ e.g. `cv::COLORMAP_AUTUMN`.
 
-**Figure 9** OpenCV colormaps
+<p align = "center"><b>Figure 9:</b> OpenCV colormaps</p>
 
-![OpenCV colormaps](./images/opencv-colormaps.png)
-
-**Image source:** https://docs.opencv.org/4.8.0/d3/d50/group__imgproc__colormap.html
+<p align = "center">
+    <img src = "./images/opencv-colormaps.png" alt = "OpenCV colormaps">
+</p>
 
 :notebook_with_decorative_cover: To apply a colormap to an image, we can use the following overloaded functions:
 
@@ -400,8 +419,9 @@ int main(int argc, char* argv[])
 
 **Output:** Input image shown in Autumn, Winter and Raimbow color maps
 
-![Input image shown in Autumn, Winter and Raimbow color maps](./Example-Code/images/colormaps.png)
-
+<p align = "center">
+    <img src = "./Example-Code/images/colormaps.png" alt = "Input image shown in Autumn, Winter and Raimbow color maps">
+</p>
 
 ### Create your own colormap
 
@@ -601,30 +621,33 @@ void createArray(cv::Mat& array, bool isColor, int low, int high)
 
 :notebook_with_decorative_cover: You are discouraged from using the rainbow color map because of the following reasons:
 
-1. There is an uneven color gradient as you move from one color to the next. This means on a simple scale e.g., one that increases by a single value (+1), there is no uniformity in the rainbow color map. Some colors such as green, blue and red occupy a larger portion of the scale compared to others. This might mean that that certain colors of the rainbow color map end up dominating an image, distorting the actual data. For example, in Figure 10, see how the blue and red colors completely dominate the color image by simply occupying the larger proportions of the rainbow color map.
+1. There is an uneven color gradient as you move from one color to the next. This means on a simple scale e.g., one that increases by a single value (+1), there is no uniformity in the rainbow color map. Some colors such as green, blue and red occupy a larger portion of the scale compared to others. This might mean that that certain colors of the rainbow color map end up dominating an image, distorting the actual data. For example, in <a href = "https://theconversation.com/how-rainbow-colour-maps-can-distort-data-and-be-misleading-167159">Figure 10</a>, see how the blue and red colors completely dominate the color image by simply occupying the larger proportions of the rainbow color map.
 
-**Figure 10** The impact of an uneven rainbow color map on an image
+<p align = "center"><b>Figure 10:</b> The impact of an uneven rainbow color map on an image</p>
 
-![Rainbow color map applied to an image](./images/uneven-raimbow-colormap.png)
-
-**Image source:** https://theconversation.com/how-rainbow-colour-maps-can-distort-data-and-be-misleading-167159
+<p align = "center">
+    <img src = "./images/uneven-raimbow-colormap.png" alt = "Rainbow color map applied to an image">
+</p>
 
 2. There is a false perceptual ordering of colors. Who decides which colors equate to low or high values? Different images using the rainbow color map will have different colors representing low and high values.
 3. Some images using the rainbow color map will have the same color (e.g. red) on both ends, which is highly confusing.
 4. Cyan and yellow colors are unusually brighter than the other colors - which tends to attract the user to those areas on the image, making them seem more important than others - which is misleading.
 5. According to Heron et al. (2021), another issue with an uneven colour palette like rainbow is that data presented using these colours may be unreadable or inaccurate for people with a **Color-vision deficiency** (CVD) or **colour blindness**. Colour maps that include both red and green colours with similar lightness cannot be read by a large fraction of the population. The general estimate is that 0.5 per cent of women and 8 per cent of men worldwide are subject to a colour-vision deficiency. Figure 11 shows the colors as seen by people affected with either of the three common forms of human colour-vision deficiency (deuteranopia, protanopia and tritanopia). For people with total color-blindness, we also show the gray-scale representation of what they see. Figure 11 shows us that the mostly used color map for images is not universally readable.
 
-**Figure 11** How people with color-vision deficiency view the rainbow or jet color map
+<p align = "center"><b>Figure 11:</b> How people with color-vision deficiency view the rainbow or jet color map</p>
 
-![Rainbow color map as viewed by people with color-vision deficiency](./images/color-vision-deficiency.png)
+<p align = "center">
+    <img src = "./images/color-vision-deficiency.png" alt = "Rainbow color map as viewed by people with color-vision deficiency">
+</p>
 
-:notebook_with_decorative_cover: There are a few options we can adopt when picking appropriate color maps for our images. Figure 12 below is a summary of these options;
+:notebook_with_decorative_cover: There are a few options we can adopt when picking appropriate color maps for our images. <a href = "https://www.geeksforgeeks.org/machine-learning/why-the-rainbow-color-map-is-problematic/">Figure 12</a> below is a summary of these options;
 
-**Figure 12** Alternatives of rainbow color map
+<p align = "center"><b>Figure 12:</b> Alternatives of rainbow color map</p>
 
-![Alternatives to rainbow color map](./images/Alternatives-of-Rainbow-Color-Map.png)
+<p align = "center">
+    <img src = "./images/Alternatives-of-Rainbow-Color-Map.png" alt = "Alternatives to rainbow color map">
+</p>
 
-**Image source** https://www.geeksforgeeks.org/machine-learning/why-the-rainbow-color-map-is-problematic/
 
 :notebook_with_decorative_cover: There are a few things to point out in Figure 12:
 
