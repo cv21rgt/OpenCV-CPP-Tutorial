@@ -19,11 +19,11 @@
 3. **XOR** - A bitwise `XOR` is said to be `true` if and only if **either** of the two input image pixels are greater than zero, **but not both**. `true` is then assigned the value `1`, and `false` is assigned the value `0` in the output image.
 4. **NOT** - A bitwise `NOT` inverts pixels with intensity values of `0` to "on", and those with intensity values greater than `0` to "off". "on" will be assigned the pixel value `1` and "off" the pixel value `0` in the output image.
 
-**Figure 1** Bitwise operators. In the following image, `A` and `B` (in the middle of the image) are binary image arrays. 
+<p align = "center"><a href = "https://datahacker.rs/005-image-arithmetic-and-logical-operations-in-opencv-with-python/">Figure 1</a>: Bitwise operators. In the following image, <b>A</b> and <b>B</b> (in the middle of the image) are binary image arrays.</p> 
 
-![Bitwise Operators](./images/bitwise_operators.jpg)
-
-**Figure source**: https://datahacker.rs/005-image-arithmetic-and-logical-operations-in-opencv-with-python/
+<p align = "center">
+    <img src = "./images/bitwise_operators.jpg" alt = ""Bitwise operators>
+</p>
 
 
 ## How OpenCV handles Bitwise operations
@@ -93,9 +93,12 @@ int main()
 
 **Output**
 
-**Figure 2** Binary images using different pixel values.
+<p align = "center"><b>Figure 2:</b> Binary images using different pixel values.</p>
 
-![Binary images](./images/binary-images.png)
+<p align = "center">
+    <img src = "./images/binary-images.png" alt = "Binary images">
+</p>
+
 
 :notebook_with_decorative_cover: As you can see from **Figure 2**, you cannot even see the circle in the image on the left. In terms of visualization, using the pixel values `0` and `255` is much better (image on the right).
 
@@ -169,9 +172,11 @@ int main()
 
 **Output** The above code will produce a number of images - which have been combined to form Figure 3.
 
-**Figure 3** Output of bitwise operators
+<p align = "center"><b>Figure 3:</b> Output of bitwise operators</p>
 
-![Output of bitwise operators](./Example-Code/images/bitwise-operators-output.png)
+<p align = "center">
+    <img src = "./Example-Code/images/bitwise-operators-output.png" alt = "Output of bitwise operators">
+</p>
 
 
 ### Handling bitwise operations through functions
