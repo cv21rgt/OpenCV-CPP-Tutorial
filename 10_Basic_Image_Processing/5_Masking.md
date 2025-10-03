@@ -196,8 +196,8 @@ int main(int argc, char* argv[])
 
 **Output**
 
-**Figure 1** Expected output images from applying various masks
+<p align = "center"><b>Figure 1:</b> Expected output images from applying various masks</p>
 
-![output images after applying various masks](./Example-Code/images/apply-masks.png)
-
-
+<p align = "center">
+    <img src = "./Example-Code/images/apply-masks.png" alt = "Output images after applying various masks">
+</p>
