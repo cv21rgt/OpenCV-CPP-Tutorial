@@ -13,9 +13,12 @@
 
 :notebook_with_decorative_cover: The following table gives a brief description of the border types you can create. We have also provided images to show how the virtual pixels at the borders are created. We also show examples of how an image would look if you applied the various borders. The following image was used as the original:
 
-**Figure 1** Input image for creating various border types
+<p align = "center"><b>Figure 1:</b> Input image for creating various border types</p>
 
-![Source image for making borders](./images/source_img_make_borders.jpeg)
+<p align = "center">
+    <img src = "./images/source_img_make_borders.jpeg" alt = "Source image for making borders">
+</p>
+
 
 **Table 1** How OpenCV exprapolates pixels when creating image borders. Images in the table use a border size of 20 pixels on all sides.
 
