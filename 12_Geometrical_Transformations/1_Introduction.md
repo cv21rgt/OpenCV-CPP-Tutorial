@@ -25,10 +25,10 @@
 
 :notebook_with_decorative_cover: We will use <a href = "https://blogs.mathworks.com/steve/2006/04/28/spatial-transforms-forward-mapping/?s_tid=blogs_rc_1">Figure 1</a> to show how forward mapping works. 
 
-<p align="center"><b>Figure 1</b> Forward mapping spatial transformation</p>
+<p align="center"><b>Figure 1:</b> Forward mapping spatial transformation</p>
 
 <p align ="center">
-        <img width = "404" height = "212" src="./images/forward_mapping.png">
+        <img src = "./images/forward_mapping.png" alt = "Forward mapping spatial transformation">
 </p>
 
 
@@ -56,7 +56,7 @@
 <p align="center"><b>Figure 2:</b> Image of an object with a jagged edge (A) and a smooth edge (B)</p>
 
 <p align ="center">
-        <img width = "381" height = "270" src="./images/jagged-edges.png">
+        <img src = "./images/jagged-edges.png" alt = "Image of an object with a jagged edge">
 </p>
 
 
@@ -66,10 +66,8 @@
 <p align="center"><b>Figure 3:</b> Solving forward mapping with quadrilaterals</p>
 
 <p align ="center">
-        <img width = "409" height = "222" src="./images/forward_mapping_with_quads.png">
+        <img src = "./images/forward_mapping_with_quads.png" alt = "Solving forward mapping with quadrilaterals">
 </p>
-
-
 
 :notebook_with_decorative_cover: Because of the inherent problems with gaps and overlaps, forward mapping is rarely used in practice for geometric transformations. The inverse mapping approach is the standard solution, as it avoids these issues by working backward from the destination image to the source. 
 
@@ -84,10 +82,8 @@
 <p align="center"><b>Figure 4:</b> Inverse mapping spatial transformation</p>
 
 <p align ="center">
-        <img width = "403" height = "251" src="./images/inverse_mapping.png">
+        <img src = "./images/inverse_mapping.png" alt = "Inverse mapping spatial transformation">
 </p>
-
-
 
 :notebook_with_decorative_cover: The process of inverse mapping follows a simple, step-by-step procedure: 
 
