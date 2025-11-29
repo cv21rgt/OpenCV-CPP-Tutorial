@@ -20,11 +20,10 @@
 
 <p style="text-align: center;"><b>Figure 1:</b> A simplistic view of the nearest neighbour interpolation technique when enlarging an image</p>
 
-<img src="./images/nearest-neighbour.png"
-        alt="Inverse mapping spatial transformation" 
-        width="542" 
-        height="448" 
-        style="display: block; margin: 0 auto"/>
+<p align = "center">
+    <img src="./images/nearest-neighbour.png"
+        alt="Inverse mapping spatial transformation">
+</p>
 
 
 :memo: If you look closely at the final pixel values in Figure 1 you will notice that the nearest neighbour technique tends to replicate the input image pixels into blocks in the enlarged image. The area around each original data point (or pixel) becomes a constant region.
