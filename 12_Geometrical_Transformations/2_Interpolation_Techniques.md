@@ -217,3 +217,120 @@ The above computations would produce Figure 9.
 * **Can cause blurring**: The averaging process tends to blur or soften image details, especially in areas with sharp transitions or high-frequency information, like edges.
     
 * **Less accurate than higher-order methods**: Though an improvement over nearest neighbor, bilinear interpolation is less accurate and can still introduce visual artifacts in certain applications compared to more advanced techniques like bicubic interpolation.  
+
+
+## Bicubic interpolation
+
+:memo: **Bicubic interpolation** uses  a `4x4` grid of surrounding pixels to estimate the value of a new pixel. The prefix **bi** in bicubic means we interpolate along two directions, first along the x-axis, then along the y-axis.
+
+:memo: In image processing, a technique known as **cubic convolution** is usually preferred when implementing bicubic interpolation.
+
+:memo: In practice, when a software program offers "bicubic" resampling, it is often using a cubic convolution kernel that was proposed by <a href = "https://www.ncorr.com/download/publications/keysbicubic.pdf">Keys</a>. The keys algorithm is defined by a piecewise function. For a one-dimensional problem, the weighting kernel is defined by two polynomial equations that are based on the variable `s`, which represents the distance from the pixel to be interpolated. A key feature is a tunable parameter, `a`, that controls the kernel's behavior.
+
+* For $0 \le |s| < 1$, the function is given by $W(s) = (a+2)|s|^3 - (a+3)|s|^2 + 1$
+* For $1 \le |s| < 2$, the function is given by $W(s) = a|s|^3 - 5a|s|^2 + 8a|s| - 4a$
+* Outside the range of $s$, the function is `0`, meaning only 4 neighbouring pixels are considered for 1D interpolation.
+
+:memo: Unlike cubic splines, the Keys algorithm is designed for computational efficiency, making it practical for real-time image processing applications.
+
+:memo: In OpenCV, cubic convolution using the Keys algorithm works as follows:
+
+1. Define the kernel - The algorithm defines a function, or kernel, that determines the weight of each of the 16 surrounding pixels used to calculate the interpolated pixel. The kernel is composed of piecewise cubic polynomials that define the weight for a given pixel based on its distance from the point being interpolated. If you go through the OpenCV implementation you will find that they use the following polynomials to obtain `4` weight values to be assigned to each pixel for each row in the `4x4` grid. The weights are stored in a C-style array called `coeffs`.
+
+```c++
+static inline void weights(float x, float* coeffs)
+{
+    const float A = -0.75f;
+
+    coeffs[0] = ((A*(x + 1) - 5*A)*(x + 1) + 8*A)*(x + 1) - 4*A;
+    coeffs[1] = ((A + 2)*x - (A + 3))*x*x + 1;
+    coeffs[2] = ((A + 2)*(1 - x) - (A + 3))*(1 - x)*(1 - x) + 1;
+    coeffs[3] = 1.f - coeffs[0] - coeffs[1] - coeffs[2];
+}
+``` 
+
+   * The value of `x` used in the code above is obtained using code similar to that we used for bilinear interpolation:
+
+```c++
+float x_Value(int index, float scale)
+{
+    auto x = static_cast<float>((index + 0.5) * scale - 0.5);
+    auto sx = cvFloor(x);
+    x -= sx;
+    return x;
+
+}
+```
+   * When interpolating along the x-axis, `index` is the column index of the unknown pixel (in the output image). `scale` is the ratio `input image width / output image width`. We can extend these parameters when computing interpolation along the y-axis, `index` becomes the row index of the unknown pixel, `scale` would be the ratio `input image height / output image height`.
+
+2. If you look at the code in function `interpolateCubic()` you will notice the use of variable `A`. In cubic convolution, this is a tunable parameter, and its value affects the behaviour of the interpolation. There are two commonly used values for `A`:
+   * `A = -0.5` - This is often known as the **Catmull-Rom** spline. Using this parameter value producs a sharper image but sometimes with ringing artifacts (overshoot) near sharp edges. The image processing library **MATLAB** uses this parameter value.
+   * `A = -0.75` - This value produces a smoother result than the Catmull-Rom spline, which can be useful when you want to avoid ringing artifacts. This parameter value is used by OpenCV.
+
+3. Apply convolution to image : During resampling (e.g., resizing), the kernel is used to perform a convolution operation. For each new pixel, the kernel's weights are applied to the 16 surrounding pixels, and a weighted average is calculated to determine the new pixel's value. 
+
+:memo: As an example, we will estimate the value of pixel `P1` in Figure 4. However, it is clear that the input image does not have enough neighbourhood pixels for us to use bicubic interpolation, hence we add virtual pixels around the image. We simply replicate the border pixels by 2 rows/columns (use `cv::BORDER_REPLICATE`). We end up with a `6 x 6` image as shown in Figure 10. We have also added the locations of all unknown pixels to make it easier to identify the nearest `4 x 4` pixel window to use when estimating pixel values.
+
+<p align  = "center"><b>Figure 10:</b> 2 x 2 input image surrounded by virtual border pixels
+
+<p align = "center">
+    <img src = "./images/input-image-with-border-bicubic-interpolation.png" alt = "2 x 2 input image surrounded by virtual border pixels">
+</p>
+
+* Using the position of `P1` in the output image in Figure 4 we provide parameters to function `float x_Value(int index, float scale)` above, where `index` is row index of `P1` which is `0`. `scale` is the ratio `input image width / output image width`, which is `2 / 4 = 0.5`. This function will return the value `0.75`.
+* We then identify the neighbouring pixels needed for `P1` - this would be the top left `4 x 4` pixels as shown in Figure 11.
+  
+<p align  = "center"><b>Figure 11:</b> 4 X 4 neighbourhood pixels for P1
+
+<p align = "center">
+    <img src = "./images/neighbourhood-pixels-P1.png" alt = "4 X 4 neighbourhood pixels for P1">
+</p>
+
+* Use the function `static inline void weights(float x, float* coeffs)` to compute the weights assigned to pixels. You should get the following values `[-0.0351562, 0.261719, 0.878906, -0.105469]`.
+* We then perform cubic interpolation along the rows of our `4 x 4` neighbourhood pixels. We multiply each pixel value by the weight values as follows:
+
+```text
+-0.0351562*10 + 0.261719*10 + 0.878906*10 + -0.105469*20 = 8.9453125 
+
+-0.0351562*10 + 0.261719*10 + 0.878906*10 + -0.105469*20 = 8.9453125
+
+-0.0351562*10 + 0.261719*10 + 0.878906*10 + -0.105469*20 = 8.9453125
+
+-0.0351562*30 + 0.261719*30 + 0.878906*30 + -0.105469*40 = 28.9453125
+```
+
+* We now need to interpolate for a second time (hence the term **bi**-cubic) - this time along the columns. We use the above computed values. We also need to compute the weights to assign to the above values. Using the position of `P1` in the output image in Figure 4 we provide parameters to function `float x_Value(int index, float scale)` above, where `index` is column index of `P1` which is `0`. `scale` is the ratio `input image height / output image height`, which is `2 / 4 = 0.5`. This function will return the value `0.75`. We then use the function `static inline void weights(float x, float* coeffs)` to compute the weights. You should get the values `[-0.0351562, 0.261719, 0.878906, -0.105469]`. Interpolating along the columns will get you the following:
+
+$$
+-0.0351562\times8.9453125 + 0.261719\times8.9453125 + 0.878906\times8.9453125 + -0.105469\times28.9453125 = 6.83594$$
+
+
+* If you repeat for all pixels you should get an enlarged image with the following pixel values:
+
+<p align  = "center"><b>Figure 12:</b> Output of bicubic interpolation
+
+<p align = "center">
+    <img src = "./images/bicubic-interpolation-output.png" alt = "Output of bicubic interpolation">
+</p>
+
+### Advantages over other methods
+
+:memo: By making use of the Keys cubic convolution algorithm we take adavantage of the following benefits compared to other interpolation techniques: 
+
+* **High accuracy**: It provides a high order of accuracy, outperforming both nearest-neighbor and linear (bilinear) interpolation methods.
+
+* **Computational efficiency**: Unlike cubic splines, the Keys algorithm is designed for computational efficiency, making it practical for real-time image processing applications.
+
+* **Superior image quality**: By considering a larger set of surrounding pixels and using a more complex algorithm, it delivers smoother transitions and preserves finer details, resulting in better image quality, especially when enlarging images. 
+
+### When to use bicubic interpolation
+
+:memo: Bicubic interpolation is an excellent choice for tasks where visual quality is prioritized over processing speed. 
+
+* **Enlarging (Upscaling)**: It produces a higher-quality result with less pixelation and blur, making it ideal for creating larger images for printing or display on high-resolution screens.
+
+* **Shrinking (Downscaling)**: The algorithm helps maintain the sharpness of edges and reduces aliasing artifacts when making an image smaller.
+
+* **Image Transformations**: It is also used for other geometric transformations, such as rotating or skewing an image, to maintain quality.
+
+* **Photo editing**: Many editing applications, like Adobe Photoshop, use bicubic as the standard interpolation method. 
