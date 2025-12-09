@@ -334,3 +334,107 @@ $$
 * **Image Transformations**: It is also used for other geometric transformations, such as rotating or skewing an image, to maintain quality.
 
 * **Photo editing**: Many editing applications, like Adobe Photoshop, use bicubic as the standard interpolation method. 
+
+
+## Lanczos resampling
+
+:memo: In OpenCV, the <a href = "https://journals.ametsoc.org/view/journals/apme/18/8/1520-0450_1979_018_1016_lfioat_2_0_co_2.xml">Lanczos resampling algorithm</a> is available as one of the interpolation methods. It is an advanced image interpolation method used primarily for resizing and rotating digital images. It is considered to offer a good balance between maintaining image sharpness and minimizing artifacts compared to simpler filters like bilinear and bicubic interpolation.
+
+:memo: The algorithm was invented by Claude Duchon, who named it after <a href = "https://en.wikipedia.org/wiki/Cornelius_Lanczos">Cornelius Lanczos</a> due to Duchon's use of the <a href = "https://en.wikipedia.org/wiki/Sigma_approximation">sigma approximation</a> in constructing the filter, a technique created by Lanczos.
+
+:memo: Lanczos resampling works as follows:
+
+1. **Sinc Function**: In theory, the ideal filter for perfect image reconstruction is the sinc function (see Figure 13). However, the sinc function extends infinitely, making it impractical for real-world use.
+
+<p align  = "center"><b>Figure 13:</b> Sinc function
+
+<p align = "center">
+    <img src = "./images/sinc-function.png" alt = "Sinc function">
+</p>
+
+2. **Windowing**: To get around the fact that the sinc function extends infinitely, Duchon used the concept of "windowing" and applied it to the normalised sinc function. Windowing a sinc function simply means cutting it off after a certain number of oscillations (also called lobes). Using this concept, Duchon was able to create a kernel or filter that can be used to estimate/interpolate values using neighbourhood input sample data within a defined small area. This kernel is commonly known as the **Lanczos kernel**, $L(x)$. It can be defined by the following math formula:
+
+$$
+L(x) = 
+\begin{cases}
+1 & \quad \text{if $x=0$}\\
+\frac{asin(\pi x)sin(\pi x/a)}{\pi^2x^2} & \quad \text{if $-a \le x \le a$ and $x \ne 0$}\\
+0 & \quad \text{otherwise}
+\end{cases}
+$$
+
+* The parameter $x$ is the position we want to interpolate at, 
+* $a$ is the number of oscillations or lobes of our windowed sinc function.
+
+3. **Weighted Average**: To determine the value of a new pixel, the algorithm takes a weighted average of a large number of surrounding pixels. OpenCV uses a 4-lobed Lancoz kernel for 2D image data, meaning we use a 8x8 window to interpolate an unknown pixel value. The weights are calculated based on the Lanczos kernel function, ensuring that pixels closer to the target point contribute more to the final value. The implementation of the Lanczos kernel in OpenCV is as follows:
+
+```c++
+static inline void interpolateLanczos4( float x, float* coeffs )
+{
+    static const double s45 = 0.70710678118654752440084436210485;
+    static const double cs[][2]=
+    {{1, 0}, {-s45, -s45}, {0, 1}, {s45, -s45}, {-1, 0}, {s45, s45}, {0, -1}, {-s45, s45}};
+
+    float sum = 0;
+    double y0=-(x+3)*CV_PI*0.25, s0 = std::sin(y0), c0= std::cos(y0);
+    for(int i = 0; i < 8; i++ )
+    {
+        float y0_ = (x+3-i);
+        if (fabs(y0_) >= 1e-6f)
+        {
+            double y = -y0_*CV_PI*0.25;
+            coeffs[i] = (float)((cs[i][0]*s0 + cs[i][1]*c0)/(y*y));
+        }
+        else
+        {
+            // special handling for 'x' values:
+            // - ~0.0: 0 0 0 1 0 0 0 0
+            // - ~1.0: 0 0 0 0 1 0 0 0
+            coeffs[i] = 1e30f;
+        }
+        sum += coeffs[i];
+    }
+
+    sum = 1.f/sum;
+    for(int i = 0; i < 8; i++ )
+        coeffs[i] *= sum;
+}
+```
+
+* The above function computes the weights assigned to each pixel in each row. Each row has `8` pixels, hence `coeffs` is a C-style array that can hold 8 values.
+* We have encountered the parameter `x` before. It is computed using the following code:
+
+```c++
+float x_Value(int index, float scale)
+{
+    auto x = static_cast<float>((index + 0.5) * scale - 0.5);
+    auto sx = cvFloor(x);
+    x -= sx;
+    return x;
+
+}
+```
+* When interpolating along the x-axis, `index` is the column index of the unknown pixel (in the output image). `scale` is the ratio `input image width / output image width`. We can extend these parameters when computing interpolation along the y-axis, `index` becomes the row index of the unknown pixel, `scale` would be the ratio `input image height / output image height`.
+
+4. **Separable Filter**: Lanczos is a separable filter, meaning it can be applied in two independent one-dimensional passes (first horizontally along each row, then vertically), which makes it computationally efficient for image processing.
+
+### When to Use Lanczos Resampling
+
+:memo: Lanczos resampling is a popular choice for high-quality image and video scaling in applications like FFmpeg and AviSynth. It is widely used in professional software for tasks where visual fidelity is a priority, and it is often preferred over bicubic interpolation for general upsampling tasks. 
+
+### Advantages and Disadvantages
+
+| Pros | Cons |
+| ---- | ---- |
+| **High Quality:** Preserves image detail and sharpness effectively, especially when enlarging (upscaling) images. | **Ringing Artifacts:** Can introduce "ringing" or halo artifacts (light and dark bands) along sharp edges due to the nature of the sinc function's oscillations. | 
+| **Reduced Aliasing:** Minimizes jagged edges (aliasing artifacts) that often appear with simpler methods. | **Computational Cost:** More computationally intensive than bilinear or simple bicubic methods because it considers more surrounding pixels. |
+| **Flexibility:** The parameter **a** (no. of oscillations/lobes) allows a trade-off between sharpness/detail preservation and the reduction of ringing artifacts.| **Edge Cropping:** Using a larger kernel size requires data from further away, which can lead to issues or cropping near the image borders. |
+
+
+### Key Considerations in OpenCV
+
+* **Kernel Size:** OpenCV's Lanczos interpolation uses a **fixed** 8x8 kernel size (4 lobes) for both upsampling and downsampling.
+
+* **Downsampling Behavior:** For significant downsampling (e.g., reducing the image size by more than half), standard signal processing theory recommends applying a low-pass filter (like a Gaussian blur) before resampling to prevent aliasing artifacts. Unlike some other libraries (like **PIL**), OpenCV's `cv::resize()` function when used with Lanczos interpolation (`cv::INTER_LANCZOS4`) does not automatically include this preliminary low-pass filtering step, which may lead to suboptimal results for drastic downscaling. For general downsampling in OpenCV, `cv2.INTER_AREA` interpolation is often recommended for better results.
+
+* **Upsampling:** For upsampling (enlarging images), OpenCV's Lanczos interpolation (`cv::INTER_LANCZOS4`) works very well, producing sharp results. 
