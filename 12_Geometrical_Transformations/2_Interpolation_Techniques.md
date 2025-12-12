@@ -438,3 +438,76 @@ float x_Value(int index, float scale)
 * **Downsampling Behavior:** For significant downsampling (e.g., reducing the image size by more than half), standard signal processing theory recommends applying a low-pass filter (like a Gaussian blur) before resampling to prevent aliasing artifacts. Unlike some other libraries (like **PIL**), OpenCV's `cv::resize()` function when used with Lanczos interpolation (`cv::INTER_LANCZOS4`) does not automatically include this preliminary low-pass filtering step, which may lead to suboptimal results for drastic downscaling. For general downsampling in OpenCV, `cv2.INTER_AREA` interpolation is often recommended for better results.
 
 * **Upsampling:** For upsampling (enlarging images), OpenCV's Lanczos interpolation (`cv::INTER_LANCZOS4`) works very well, producing sharp results. 
+
+
+## Area-based interpolation
+
+:memo: OpenCV offers a specialized resampling method for downscaling images, which is based on computing a weighted average value based on an area. You are able to access this method by selecting `cv::INTER_AREA` as the interpolation technique when using any geometric transformation function.
+
+:memo: When shrinking an image, `cv2.INTER_AREA` calculates the value of an output pixel by taking a weighted average of all the pixels in the original image area that correspond to that single output pixel. This averaging process reduces noise and helps preserve edges better than other simple methods during size reduction.
+
+:memo: There are two scenarios that arise when using `cv2.INTER_AREA`, downscaling using (i) integer or (ii) non-integer scale factors. When using `cv2.INTER_AREA` with integer scale factors, a simple average is calculated using the equation $I\rq(x\rq, y\rq) = \frac{1}{A}\displaystyle\sum_{i=1}^{m}\sum_{j=1}^{n}I(x+i, y+j)$, where:
+
+* $I\rq(x\rq, y\rq)$ is the pixel value in the resized (downscaled) image at coordinates $(x\rq, y\rq)$.
+* $I(x+i, y+j)$ are the pixel values in the original image that fall within the corresponding area.
+* $A = m \times n$ is the area in the original image that corresponds to a single pixel in the new image. $m$ is the number of columns, and $n$ is the number of rows occupied by $A$. For integer scale factors, each destination pixel maps exactly to an $m \times n$ block of source pixels, and a simple average is calculated.
+
+:memo: As an example, we will shrink an `8x8` grayscale image by a factor of 2, meaning the output image should be `4x4` (Figure 14).
+
+<p align = "center"><b>Figure 14: </b> Downscaling using area-based interpolation</p>
+
+<p align = "center">
+    <img src = "./images/inter-area-integer-scale-factor.png" alt = "Downscaling using area-based interpolation">
+</p>
+
+:memo: In Figure 14, the matching colors highlight which pixels in the input `8x8` image will be used for computing the intensity values in the output `4x4` image. For example, to obtain pixel value for $P1 = \frac{1}{2 \times 2} \times (3 + 106 + 62 + 173) = 86$. After computing values for each pixel in the output image, you should get an image with the following pixel values:
+
+<p align = "center"><b>Figure 15: </b> Downscaled image using area-based interpolation</p>
+
+<p align = "center">
+    <img src = "./images/inter-area-output_1.png" alt = "Downscaled image using area-based interpolation">
+</p>
+
+:memo: In practice, this means the method calculates the average pixel intensity of the region in the original image that maps onto the single new pixel in the output image, which acts as a form of anti-aliasing during decimation.
+
+:memo: When using `cv::INTER_AREA` with a non-integer scale factor (e.g., shrinking by a factor of 1.5), OpenCV calculates a weighted average of the source pixels that overlap with the destination pixel's corresponding area in the original image. The weights are determined by the proportional area of each source pixel that falls within the destination pixel's bounds. 
+
+:memo: The algorithm effectively performs the following for each destination pixel: 
+
+1. Define Target Area: The new pixel at $(x\rq, y\rq)$ corresponds to a continuous rectangular region in the source image defined by the non-integer scaling factors.
+2. Identify Overlapping Pixels: The algorithm identifies all source pixels that partially or fully overlap with this target area.
+3. Calculate Weights: The weight for each overlapping source pixel is the proportion of its area that lies within the target area, $A$. For example, if `0.3` of pixel is contained in the window, then its weight is `0.3/A`.
+4. Compute Weighted Average: The value of the destination pixel is the sum of each source pixel's value multiplied by its calculated weight, as given by the following equation
+
+$I\rq(x\rq, y\rq) = \frac{1}{A\rq}\displaystyle\sum_{i,j \in Area}I(i,j) \times Weight(i,j)$ , where:
+
+* $I\rq(x\rq, y\rq)$ is the resulting pixel value in the scaled image.
+* $I(i,j)$ is the value of a source pixel.
+* $Weight(i,j)$ is the fractional area of the source pixel $(i,j)$ that overlaps with the destination pixel's corresponding area.
+* $A\rq$ is the total area (sum of weights) of the region, which is the area of the destination pixel mapped back to the source image.
+
+:memo: It is highly recommended you do not use `cv2.INTER_AREA` for upsampling/enlarging images as it often results in blocky or pixelated artifacts.
+
+## How to choose the right interpolation method
+
+:memo: The ideal interpolation method depends on your specific needs:
+
+* For maximum speed and real-time processing: Use Nearest-neighbor.
+
+* For a balance of speed and quality: Use Bilinear.
+
+* For the highest image quality (slower): Use Bicubic or Lanczos.
+
+* For shrinking images: Area interpolation is often a preferred method as it can produce moiré-free results. 
+
+
+## References
+
+1. https://en.wikipedia.org/wiki/Bilinear_interpolation
+2. https://x-engineer.org/bilinear-interpolation/#google_vignette
+3. https://how.dev/answers/what-is-bilinear-interpolation
+4. https://www.geeksforgeeks.org/maths/what-is-bilinear-interpolation/
+5. R. Keys (1981). "Cubic convolution interpolation for digital image processing". IEEE Transactions on Acoustics, Speech, and Signal Processing. 29 (6): 1153–1160. Bibcode:1981ITASS..29.1153K. CiteSeerX 10.1.1.320.776. doi:10.1109/TASSP.1981.1163711
+6. https://theailearner.com/2018/12/29/image-processing-bicubic-interpolation/
+7. https://journals.ametsoc.org/view/journals/apme/18/8/1520-0450_1979_018_1016_lfioat_2_0_co_2.xml
+8. https://en.wikipedia.org/wiki/Lanczos_resampling
